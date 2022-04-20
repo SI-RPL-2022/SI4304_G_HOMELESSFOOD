@@ -31,7 +31,10 @@ abstract class AbstractSessionHandler implements \SessionHandlerInterface, \Sess
     /**
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function open($savePath, $sessionName)
     {
         $this->sessionName = $sessionName;
@@ -60,7 +63,10 @@ abstract class AbstractSessionHandler implements \SessionHandlerInterface, \Sess
     /**
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function validateId($sessionId)
     {
         $this->prefetchData = $this->read($sessionId);
@@ -81,7 +87,10 @@ abstract class AbstractSessionHandler implements \SessionHandlerInterface, \Sess
     /**
      * @return string
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function read($sessionId)
     {
         if (null !== $this->prefetchId) {
@@ -105,7 +114,10 @@ abstract class AbstractSessionHandler implements \SessionHandlerInterface, \Sess
     /**
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function write($sessionId, $data)
     {
         if (null === $this->igbinaryEmptyData) {
@@ -123,7 +135,10 @@ abstract class AbstractSessionHandler implements \SessionHandlerInterface, \Sess
     /**
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function destroy($sessionId)
     {
         if (!headers_sent() && filter_var(ini_get('session.use_cookies'), \FILTER_VALIDATE_BOOLEAN)) {

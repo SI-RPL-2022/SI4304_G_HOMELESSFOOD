@@ -20,20 +20,29 @@ use Symfony\Component\HttpKernel\Attribute\ArgumentInterface;
  */
 class ArgumentMetadata
 {
+<<<<<<< HEAD
     public const IS_INSTANCEOF = 2;
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     private $name;
     private $type;
     private $isVariadic;
     private $hasDefaultValue;
     private $defaultValue;
     private $isNullable;
+<<<<<<< HEAD
     private $attributes;
 
     /**
      * @param object[] $attributes
      */
     public function __construct(string $name, ?string $type, bool $isVariadic, bool $hasDefaultValue, $defaultValue, bool $isNullable = false, $attributes = [])
+=======
+    private $attribute;
+
+    public function __construct(string $name, ?string $type, bool $isVariadic, bool $hasDefaultValue, $defaultValue, bool $isNullable = false, ?ArgumentInterface $attribute = null)
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         $this->name = $name;
         $this->type = $type;
@@ -41,6 +50,7 @@ class ArgumentMetadata
         $this->hasDefaultValue = $hasDefaultValue;
         $this->defaultValue = $defaultValue;
         $this->isNullable = $isNullable || null === $type || ($hasDefaultValue && null === $defaultValue);
+<<<<<<< HEAD
 
         if (null === $attributes || $attributes instanceof ArgumentInterface) {
             trigger_deprecation('symfony/http-kernel', '5.3', 'The "%s" constructor expects an array of PHP attributes as last argument, %s given.', __CLASS__, get_debug_type($attributes));
@@ -48,6 +58,9 @@ class ArgumentMetadata
         }
 
         $this->attributes = $attributes;
+=======
+        $this->attribute = $attribute;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     }
 
     /**
@@ -122,6 +135,7 @@ class ArgumentMetadata
 
     /**
      * Returns the attribute (if any) that was set on the argument.
+<<<<<<< HEAD
      */
     public function getAttribute(): ?ArgumentInterface
     {
@@ -136,28 +150,11 @@ class ArgumentMetadata
 
     /**
      * @return object[]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
-    public function getAttributes(string $name = null, int $flags = 0): array
+    public function getAttribute(): ?ArgumentInterface
     {
-        if (!$name) {
-            return $this->attributes;
-        }
-
-        $attributes = [];
-        if ($flags & self::IS_INSTANCEOF) {
-            foreach ($this->attributes as $attribute) {
-                if ($attribute instanceof $name) {
-                    $attributes[] = $attribute;
-                }
-            }
-        } else {
-            foreach ($this->attributes as $attribute) {
-                if (\get_class($attribute) === $name) {
-                    $attributes[] = $attribute;
-                }
-            }
-        }
-
-        return $attributes;
+        return $this->attribute;
     }
 }

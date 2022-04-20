@@ -2,21 +2,18 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
-use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
-use Illuminate\Database\Eloquent\Relations\Concerns\InteractsWithDictionary;
-use Illuminate\Database\Eloquent\Relations\Concerns\InteractsWithPivotTable;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class BelongsToMany extends Relation
 {
-    use InteractsWithDictionary, InteractsWithPivotTable;
+    use Concerns\InteractsWithPivotTable;
 
     /**
      * The intermediate table for the relation.
@@ -278,11 +275,9 @@ class BelongsToMany extends Relation
 
         // Once we have an array dictionary of child objects we can easily match the
         // children back to their parent using the dictionary and the keys on the
-        // parent models. Then we should return these hydrated models back out.
+        // the parent models. Then we will return the hydrated models back out.
         foreach ($models as $model) {
-            $key = $this->getDictionaryKey($model->{$this->parentKey});
-
-            if (isset($dictionary[$key])) {
+            if (isset($dictionary[$key = $model->{$this->parentKey}])) {
                 $model->setRelation(
                     $relation, $this->related->newCollection($dictionary[$key])
                 );
@@ -306,9 +301,7 @@ class BelongsToMany extends Relation
         $dictionary = [];
 
         foreach ($results as $result) {
-            $value = $this->getDictionaryKey($result->{$this->accessor}->{$this->foreignPivotKey});
-
-            $dictionary[$value][] = $result;
+            $dictionary[$result->{$this->accessor}->{$this->foreignPivotKey}][] = $result;
         }
 
         return $dictionary;
@@ -576,7 +569,7 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Find a related model by its primary key or return a new instance of the related model.
+     * Find a related model by its primary key or return new instance of the related model.
      *
      * @param  mixed  $id
      * @param  array  $columns
@@ -754,28 +747,6 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Execute the query and get the first result or call a callback.
-     *
-     * @param  \Closure|array  $columns
-     * @param  \Closure|null  $callback
-     * @return \Illuminate\Database\Eloquent\Model|static|mixed
-     */
-    public function firstOr($columns = ['*'], Closure $callback = null)
-    {
-        if ($columns instanceof Closure) {
-            $callback = $columns;
-
-            $columns = ['*'];
-        }
-
-        if (! is_null($model = $this->first($columns))) {
-            return $model;
-        }
-
-        return $callback();
-    }
-
-    /**
      * Get the results of the relationship.
      *
      * @return mixed
@@ -796,7 +767,7 @@ class BelongsToMany extends Relation
     public function get($columns = ['*'])
     {
         // First we'll add the proper select columns onto the query so it is run with
-        // the proper columns. Then, we will get the results and hydrate our pivot
+        // the proper columns. Then, we will get the results and hydrate out pivot
         // models with the result of those columns as a separate model relation.
         $builder = $this->query->applyScopes();
 
@@ -886,24 +857,6 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Paginate the given query into a cursor paginator.
-     *
-     * @param  int|null  $perPage
-     * @param  array  $columns
-     * @param  string  $cursorName
-     * @param  string|null  $cursor
-     * @return \Illuminate\Contracts\Pagination\CursorPaginator
-     */
-    public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null)
-    {
-        $this->query->addSelect($this->shouldSelect($columns));
-
-        return tap($this->query->cursorPaginate($perPage, $columns, $cursorName, $cursor), function ($paginator) {
-            $this->hydratePivotRelation($paginator->items());
-        });
-    }
-
-    /**
      * Chunk the results of the query.
      *
      * @param  int  $count
@@ -912,7 +865,9 @@ class BelongsToMany extends Relation
      */
     public function chunk($count, callable $callback)
     {
-        return $this->prepareQueryBuilder()->chunk($count, function ($results, $page) use ($callback) {
+        $this->query->addSelect($this->shouldSelect());
+
+        return $this->query->chunk($count, function ($results, $page) use ($callback) {
             $this->hydratePivotRelation($results->all());
 
             return $callback($results, $page);
@@ -930,7 +885,7 @@ class BelongsToMany extends Relation
      */
     public function chunkById($count, callable $callback, $column = null, $alias = null)
     {
-        $this->prepareQueryBuilder();
+        $this->query->addSelect($this->shouldSelect());
 
         $column = $column ?? $this->getRelated()->qualifyColumn(
             $this->getRelatedKeyName()
@@ -964,6 +919,7 @@ class BelongsToMany extends Relation
     }
 
     /**
+<<<<<<< HEAD
      * Query lazily, by chunks of the given size.
      *
      * @param  int  $chunkSize
@@ -1002,27 +958,21 @@ class BelongsToMany extends Relation
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Get a lazy collection for the given query.
      *
      * @return \Illuminate\Support\LazyCollection
      */
     public function cursor()
     {
-        return $this->prepareQueryBuilder()->cursor()->map(function ($model) {
+        $this->query->addSelect($this->shouldSelect());
+
+        return $this->query->cursor()->map(function ($model) {
             $this->hydratePivotRelation([$model]);
 
             return $model;
         });
-    }
-
-    /**
-     * Prepare the query builder for query execution.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    protected function prepareQueryBuilder()
-    {
-        return $this->query->addSelect($this->shouldSelect());
     }
 
     /**

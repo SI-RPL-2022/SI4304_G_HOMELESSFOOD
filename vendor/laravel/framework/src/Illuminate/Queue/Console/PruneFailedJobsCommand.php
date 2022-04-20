@@ -5,7 +5,13 @@ namespace Illuminate\Queue\Console;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Queue\Failed\PrunableFailedJobProvider;
+<<<<<<< HEAD
+=======
+use Illuminate\Support\Carbon;
+use Symfony\Component\Console\Attribute\AsCommand;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
+#[AsCommand(name: 'queue:prune-failed')]
 class PruneFailedJobsCommand extends Command
 {
     /**

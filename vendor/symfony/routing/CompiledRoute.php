@@ -94,7 +94,11 @@ class CompiledRoute implements \Serializable
     /**
      * Returns the static prefix.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The static prefix
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getStaticPrefix()
     {
@@ -104,7 +108,11 @@ class CompiledRoute implements \Serializable
     /**
      * Returns the regex.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The regex
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getRegex()
     {
@@ -114,7 +122,11 @@ class CompiledRoute implements \Serializable
     /**
      * Returns the host regex.
      *
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The host regex or null
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getHostRegex()
     {
@@ -124,7 +136,11 @@ class CompiledRoute implements \Serializable
     /**
      * Returns the tokens.
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array The tokens
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getTokens()
     {
@@ -134,7 +150,11 @@ class CompiledRoute implements \Serializable
     /**
      * Returns the host tokens.
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array The tokens
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getHostTokens()
     {
@@ -144,7 +164,11 @@ class CompiledRoute implements \Serializable
     /**
      * Returns the variables.
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array The variables
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getVariables()
     {
@@ -154,7 +178,11 @@ class CompiledRoute implements \Serializable
     /**
      * Returns the path variables.
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array The variables
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getPathVariables()
     {
@@ -164,7 +192,11 @@ class CompiledRoute implements \Serializable
     /**
      * Returns the host variables.
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array The variables
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getHostVariables()
     {

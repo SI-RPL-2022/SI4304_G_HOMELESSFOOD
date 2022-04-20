@@ -2,11 +2,8 @@
 
 namespace Illuminate\Database\Eloquent\Concerns;
 
-use BadMethodCallException;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\RelationNotFoundException;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -226,7 +223,7 @@ trait QueriesRelationships
                         };
                     }
 
-                    $query->where($this->qualifyColumn($relation->getMorphType()), '=', (new $type)->getMorphClass())
+                    $query->where($this->query->from.'.'.$relation->getMorphType(), '=', (new $type)->getMorphClass())
                                 ->whereHas($belongsTo, $callback, $operator, $count);
                 });
             }
@@ -352,6 +349,7 @@ trait QueriesRelationships
     }
 
     /**
+<<<<<<< HEAD
      * Add a basic where clause to a relationship query.
      *
      * @param  string  $relation
@@ -509,6 +507,8 @@ trait QueriesRelationships
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Add subselect queries to include an aggregate value for a relationship.
      *
      * @param  mixed  $relations
@@ -547,11 +547,9 @@ trait QueriesRelationships
                                             ? "{$relation->getRelationCountHash(false)}.$column"
                                             : $column;
 
-                $wrappedColumn = $this->getQuery()->getGrammar()->wrap(
+                $expression = sprintf('%s(%s)', $function, $this->getQuery()->getGrammar()->wrap(
                     $column === '*' ? $column : $relation->getRelated()->qualifyColumn($hashedColumn)
-                );
-
-                $expression = $function === 'exists' ? $wrappedColumn : sprintf('%s(%s)', $function, $wrappedColumn);
+                ));
             } else {
                 $expression = $column;
             }
@@ -585,17 +583,10 @@ trait QueriesRelationships
                 preg_replace('/[^[:alnum:][:space:]_]/u', '', "$name $function $column")
             );
 
-            if ($function === 'exists') {
-                $this->selectRaw(
-                    sprintf('exists(%s) as %s', $query->toSql(), $this->getQuery()->grammar->wrap($alias)),
-                    $query->getBindings()
-                )->withCasts([$alias => 'bool']);
-            } else {
-                $this->selectSub(
-                    $function ? $query : $query->limit(1),
-                    $alias
-                );
-            }
+            $this->selectSub(
+                $function ? $query : $query->limit(1),
+                $alias
+            );
         }
 
         return $this;
@@ -658,17 +649,6 @@ trait QueriesRelationships
     public function withAvg($relation, $column)
     {
         return $this->withAggregate($relation, $column, 'avg');
-    }
-
-    /**
-     * Add subselect queries to include the existence of related models.
-     *
-     * @param  string|array  $relation
-     * @return $this
-     */
-    public function withExists($relation)
-    {
-        return $this->withAggregate($relation, '*', 'exists');
     }
 
     /**

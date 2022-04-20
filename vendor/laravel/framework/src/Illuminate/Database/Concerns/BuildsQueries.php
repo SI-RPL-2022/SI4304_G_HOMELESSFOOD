@@ -3,6 +3,7 @@
 namespace Illuminate\Database\Concerns;
 
 use Illuminate\Container\Container;
+<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\MultipleRecordsFoundException;
 use Illuminate\Database\RecordsNotFoundException;
@@ -15,11 +16,13 @@ use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Traits\Conditionable;
 use InvalidArgumentException;
 use RuntimeException;
+=======
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
 trait BuildsQueries
 {
-    use Conditionable;
-
     /**
      * Chunk the results of the query.
      *
@@ -61,33 +64,11 @@ trait BuildsQueries
     }
 
     /**
-     * Run a map over each item while chunking.
-     *
-     * @param  callable  $callback
-     * @param  int  $count
-     * @return \Illuminate\Support\Collection
-     */
-    public function chunkMap(callable $callback, $count = 1000)
-    {
-        $collection = Collection::make();
-
-        $this->chunk($count, function ($items) use ($collection, $callback) {
-            $items->each(function ($item) use ($collection, $callback) {
-                $collection->push($callback($item));
-            });
-        });
-
-        return $collection;
-    }
-
-    /**
      * Execute a callback over each item while chunking.
      *
      * @param  callable  $callback
      * @param  int  $count
      * @return bool
-     *
-     * @throws \RuntimeException
      */
     public function each(callable $callback, $count = 1000)
     {
@@ -142,10 +123,6 @@ trait BuildsQueries
 
             $lastId = $results->last()->{$alias};
 
-            if ($lastId === null) {
-                throw new RuntimeException("The chunkById operation was aborted because the [{$alias}] column is not present in the query result.");
-            }
-
             unset($results);
 
             $page++;
@@ -175,6 +152,7 @@ trait BuildsQueries
     }
 
     /**
+<<<<<<< HEAD
      * Query lazily, by chunks of the given size.
      *
      * @param  int  $chunkSize
@@ -284,6 +262,8 @@ trait BuildsQueries
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Execute the query and get the first result.
      *
      * @param  array|string  $columns
@@ -295,16 +275,16 @@ trait BuildsQueries
     }
 
     /**
-     * Execute the query and get the first result if it's the sole matching record.
+     * Apply the callback's query changes if the given "value" is true.
      *
-     * @param  array|string  $columns
-     * @return \Illuminate\Database\Eloquent\Model|object|static|null
-     *
-     * @throws \Illuminate\Database\RecordsNotFoundException
-     * @throws \Illuminate\Database\MultipleRecordsFoundException
+     * @param  mixed  $value
+     * @param  callable  $callback
+     * @param  callable|null  $default
+     * @return mixed|$this
      */
-    public function sole($columns = ['*'])
+    public function when($value, $callback, $default = null)
     {
+<<<<<<< HEAD
         $result = $this->take(2)->get($columns);
 
         if ($result->isEmpty()) {
@@ -313,22 +293,26 @@ trait BuildsQueries
 
         if ($result->count() > 1) {
             throw new MultipleRecordsFoundException;
+=======
+        if ($value) {
+            return $callback($this, $value) ?: $this;
+        } elseif ($default) {
+            return $default($this, $value) ?: $this;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
-        return $result->first();
+        return $this;
     }
 
     /**
-     * Paginate the given query using a cursor paginator.
+     * Pass the query to a given callback.
      *
-     * @param  int  $perPage
-     * @param  array  $columns
-     * @param  string  $cursorName
-     * @param  \Illuminate\Pagination\Cursor|string|null  $cursor
-     * @return \Illuminate\Contracts\Pagination\CursorPaginator
+     * @param  callable  $callback
+     * @return $this
      */
-    protected function paginateUsingCursor($perPage, $columns = ['*'], $cursorName = 'cursor', $cursor = null)
+    public function tap($callback)
     {
+<<<<<<< HEAD
         if (! $cursor instanceof Cursor) {
             $cursor = is_string($cursor)
                 ? Cursor::fromEncoded($cursor)
@@ -374,17 +358,22 @@ trait BuildsQueries
             'cursorName' => $cursorName,
             'parameters' => $orders->pluck('column')->toArray(),
         ]);
+=======
+        return $this->when(true, $callback);
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     }
 
     /**
-     * Get the original column name of the given column, without any aliasing.
+     * Apply the callback's query changes if the given "value" is false.
      *
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $builder
-     * @param  string  $parameter
-     * @return string
+     * @param  mixed  $value
+     * @param  callable  $callback
+     * @param  callable|null  $default
+     * @return mixed|$this
      */
-    protected function getOriginalColumnNameForCursorPagination($builder, string $parameter)
+    public function unless($value, $callback, $default = null)
     {
+<<<<<<< HEAD
         $columns = $builder instanceof Builder ? $builder->getQuery()->columns : $builder->columns;
 
         if (! is_null($columns)) {
@@ -399,9 +388,15 @@ trait BuildsQueries
                     }
                 }
             }
+=======
+        if (! $value) {
+            return $callback($this, $value) ?: $this;
+        } elseif ($default) {
+            return $default($this, $value) ?: $this;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
-        return $parameter;
+        return $this;
     }
 
     /**
@@ -436,6 +431,7 @@ trait BuildsQueries
             'items', 'perPage', 'currentPage', 'options'
         ));
     }
+<<<<<<< HEAD
 
     /**
      * Create a new cursor paginator instance.
@@ -463,4 +459,6 @@ trait BuildsQueries
     {
         return $this->when(true, $callback);
     }
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 }

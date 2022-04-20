@@ -14,7 +14,7 @@ class CacheLock extends Lock
     /**
      * Create a new lock instance.
      *
-     * @param  \Illuminate\Contracts\Cache\Store  $store
+     * @var \Illuminate\Contracts\Cache\Store
      * @param  string  $name
      * @param  int  $seconds
      * @param  string|null  $owner

@@ -26,12 +26,16 @@ interface UrlMatcherInterface extends RequestContextAwareInterface
     /**
      * Tries to match a URL path with a set of routes.
      *
-     * If the matcher cannot find information, it must throw one of the exceptions documented
+     * If the matcher can not find information, it must throw one of the exceptions documented
      * below.
      *
      * @param string $pathinfo The path info to be parsed (raw format, i.e. not urldecoded)
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array An array of parameters
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws NoConfigurationException  If no routing configuration could be found
      * @throws ResourceNotFoundException If the resource could not be found

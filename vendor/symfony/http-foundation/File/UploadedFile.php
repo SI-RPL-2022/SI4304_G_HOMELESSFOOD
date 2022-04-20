@@ -76,7 +76,11 @@ class UploadedFile extends File
      * It is extracted from the request from which the file has been uploaded.
      * Then it should not be considered as a safe value.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The original name
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getClientOriginalName()
     {
@@ -89,7 +93,11 @@ class UploadedFile extends File
      * It is extracted from the original file name that was uploaded.
      * Then it should not be considered as a safe value.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The extension
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getClientOriginalExtension()
     {
@@ -105,7 +113,11 @@ class UploadedFile extends File
      * For a trusted mime type, use getMimeType() instead (which guesses the mime
      * type based on the file content).
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The mime type
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @see getMimeType()
      */
@@ -126,7 +138,11 @@ class UploadedFile extends File
      * For a trusted extension, use guessExtension() instead (which guesses
      * the extension based on the guessed mime type for the file).
      *
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The guessed extension or null if it cannot be guessed
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @see guessExtension()
      * @see getClientMimeType()
@@ -146,7 +162,11 @@ class UploadedFile extends File
      * If the upload was successful, the constant UPLOAD_ERR_OK is returned.
      * Otherwise one of the other UPLOAD_ERR_XXX constants is returned.
      *
+<<<<<<< HEAD
      * @return int
+=======
+     * @return int The upload error
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getError()
     {
@@ -154,9 +174,15 @@ class UploadedFile extends File
     }
 
     /**
+<<<<<<< HEAD
      * Returns whether the file has been uploaded with HTTP and no error occurred.
      *
      * @return bool
+=======
+     * Returns whether the file was uploaded successfully.
+     *
+     * @return bool True if the file has been uploaded with HTTP and no error occurred
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function isValid()
     {
@@ -168,7 +194,11 @@ class UploadedFile extends File
     /**
      * Moves the file to a new location.
      *
+<<<<<<< HEAD
      * @return File
+=======
+     * @return File A File object representing the new file
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws FileException if, for any reason, the file could not have been moved
      */
@@ -182,11 +212,8 @@ class UploadedFile extends File
             $target = $this->getTargetFile($directory, $name);
 
             set_error_handler(function ($type, $msg) use (&$error) { $error = $msg; });
-            try {
-                $moved = move_uploaded_file($this->getPathname(), $target);
-            } finally {
-                restore_error_handler();
-            }
+            $moved = move_uploaded_file($this->getPathname(), $target);
+            restore_error_handler();
             if (!$moved) {
                 throw new FileException(sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target, strip_tags($error)));
             }
@@ -219,7 +246,7 @@ class UploadedFile extends File
     /**
      * Returns the maximum size of an uploaded file as configured in php.ini.
      *
-     * @return int|float The maximum size of an uploaded file in bytes (returns float if size > PHP_INT_MAX)
+     * @return int The maximum size of an uploaded file in bytes
      */
     public static function getMaxFilesize()
     {
@@ -231,10 +258,15 @@ class UploadedFile extends File
 
     /**
      * Returns the given size from an ini value in bytes.
+<<<<<<< HEAD
      *
      * @return int|float Returns float if size > PHP_INT_MAX
      */
     private static function parseFilesize(string $size)
+=======
+     */
+    private static function parseFilesize($size): int
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         if ('' === $size) {
             return 0;
@@ -243,9 +275,9 @@ class UploadedFile extends File
         $size = strtolower($size);
 
         $max = ltrim($size, '+');
-        if (str_starts_with($max, '0x')) {
+        if (0 === strpos($max, '0x')) {
             $max = \intval($max, 16);
-        } elseif (str_starts_with($max, '0')) {
+        } elseif (0 === strpos($max, '0')) {
             $max = \intval($max, 8);
         } else {
             $max = (int) $max;
@@ -267,7 +299,11 @@ class UploadedFile extends File
     /**
      * Returns an informative upload error message.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The error message regarding the specified error code
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getErrorMessage()
     {
@@ -283,7 +319,7 @@ class UploadedFile extends File
 
         $errorCode = $this->error;
         $maxFilesize = \UPLOAD_ERR_INI_SIZE === $errorCode ? self::getMaxFilesize() / 1024 : 0;
-        $message = $errors[$errorCode] ?? 'The file "%s" was not uploaded due to an unknown error.';
+        $message = isset($errors[$errorCode]) ? $errors[$errorCode] : 'The file "%s" was not uploaded due to an unknown error.';
 
         return sprintf($message, $this->getClientOriginalName(), $maxFilesize);
     }

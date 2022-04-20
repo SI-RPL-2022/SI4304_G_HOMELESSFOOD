@@ -18,6 +18,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Trait_;
+use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 
 /**
@@ -46,18 +47,18 @@ final class IgnoredLinesFindingVisitor extends NodeVisitorAbstract
         $this->ignoreDeprecated              = $ignoreDeprecated;
     }
 
-    public function enterNode(Node $node): void
+    public function enterNode(Node $node): ?int
     {
         if (!$node instanceof Class_ &&
             !$node instanceof Trait_ &&
             !$node instanceof Interface_ &&
             !$node instanceof ClassMethod &&
             !$node instanceof Function_) {
-            return;
+            return null;
         }
 
         if ($node instanceof Class_ && $node->isAnonymous()) {
-            return;
+            return null;
         }
 
         // Workaround for https://bugs.xdebug.org/view.php?id=1798
@@ -68,17 +69,17 @@ final class IgnoredLinesFindingVisitor extends NodeVisitorAbstract
         }
 
         if (!$this->useAnnotationsForIgnoringCode) {
-            return;
+            return null;
         }
 
         if ($node instanceof Interface_) {
-            return;
+            return null;
         }
 
         $docComment = $node->getDocComment();
 
         if ($docComment === null) {
-            return;
+            return null;
         }
 
         if (strpos($docComment->getText(), '@codeCoverageIgnore') !== false) {
@@ -94,6 +95,12 @@ final class IgnoredLinesFindingVisitor extends NodeVisitorAbstract
                 range($node->getStartLine(), $node->getEndLine())
             );
         }
+
+        if ($node instanceof ClassMethod || $node instanceof Function_) {
+            return NodeTraverser::DONT_TRAVERSE_CHILDREN;
+        }
+
+        return null;
     }
 
     /**

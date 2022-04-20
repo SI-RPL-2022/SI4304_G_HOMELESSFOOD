@@ -56,7 +56,11 @@ class Profile
     /**
      * Gets the token.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The token
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getToken()
     {
@@ -74,7 +78,11 @@ class Profile
     /**
      * Returns the parent profile.
      *
+<<<<<<< HEAD
      * @return self|null
+=======
+     * @return self
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getParent()
     {
@@ -84,7 +92,11 @@ class Profile
     /**
      * Returns the parent token.
      *
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The parent token
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getParentToken()
     {
@@ -94,7 +106,11 @@ class Profile
     /**
      * Returns the IP.
      *
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The IP
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getIp()
     {
@@ -109,7 +125,11 @@ class Profile
     /**
      * Returns the request method.
      *
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The request method
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getMethod()
     {
@@ -124,7 +144,11 @@ class Profile
     /**
      * Returns the URL.
      *
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The URL
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getUrl()
     {
@@ -137,11 +161,19 @@ class Profile
     }
 
     /**
+<<<<<<< HEAD
      * @return int
+=======
+     * @return int The time
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getTime()
     {
-        return $this->time ?? 0;
+        if (null === $this->time) {
+            return 0;
+        }
+
+        return $this->time;
     }
 
     public function setTime(int $time)
@@ -208,7 +240,11 @@ class Profile
     /**
      * Gets a Collector by name.
      *
+<<<<<<< HEAD
      * @return DataCollectorInterface
+=======
+     * @return DataCollectorInterface A DataCollectorInterface instance
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \InvalidArgumentException if the collector does not exist
      */

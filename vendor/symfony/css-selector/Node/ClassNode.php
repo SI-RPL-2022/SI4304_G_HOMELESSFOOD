@@ -24,7 +24,7 @@ namespace Symfony\Component\CssSelector\Node;
 class ClassNode extends AbstractNode
 {
     private $selector;
-    private string $name;
+    private $name;
 
     public function __construct(NodeInterface $selector, string $name)
     {
@@ -50,6 +50,9 @@ class ClassNode extends AbstractNode
         return $this->selector->getSpecificity()->plus(new Specificity(0, 1, 0));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function __toString(): string
     {
         return sprintf('%s[%s.%s]', $this->getNodeName(), $this->selector, $this->name);

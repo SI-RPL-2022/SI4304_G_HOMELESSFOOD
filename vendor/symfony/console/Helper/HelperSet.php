@@ -18,12 +18,16 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
  * HelperSet represents a set of helpers to be used with a command.
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @implements \IteratorAggregate<string, Helper>
  */
 class HelperSet implements \IteratorAggregate
 {
+<<<<<<< HEAD
     /** @var array<string, Helper> */
+=======
+    /**
+     * @var Helper[]
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     private $helpers = [];
     private $command;
 
@@ -50,7 +54,11 @@ class HelperSet implements \IteratorAggregate
     /**
      * Returns true if the helper if defined.
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool true if the helper is defined, false otherwise
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function has(string $name)
     {
@@ -60,7 +68,11 @@ class HelperSet implements \IteratorAggregate
     /**
      * Gets a helper value.
      *
+<<<<<<< HEAD
      * @return HelperInterface
+=======
+     * @return HelperInterface The helper instance
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws InvalidArgumentException if the helper is not defined
      */
@@ -73,6 +85,7 @@ class HelperSet implements \IteratorAggregate
         return $this->helpers[$name];
     }
 
+<<<<<<< HEAD
     /**
      * @deprecated since Symfony 5.4
      */
@@ -80,12 +93,17 @@ class HelperSet implements \IteratorAggregate
     {
         trigger_deprecation('symfony/console', '5.4', 'Method "%s()" is deprecated.', __METHOD__);
 
+=======
+    public function setCommand(Command $command = null)
+    {
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         $this->command = $command;
     }
 
     /**
      * Gets the command associated with this helper set.
      *
+<<<<<<< HEAD
      * @return Command
      *
      * @deprecated since Symfony 5.4
@@ -94,13 +112,24 @@ class HelperSet implements \IteratorAggregate
     {
         trigger_deprecation('symfony/console', '5.4', 'Method "%s()" is deprecated.', __METHOD__);
 
+=======
+     * @return Command A Command instance
+     */
+    public function getCommand()
+    {
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         return $this->command;
     }
 
     /**
+<<<<<<< HEAD
      * @return \Traversable<string, Helper>
      */
     #[\ReturnTypeWillChange]
+=======
+     * @return Helper[]
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function getIterator()
     {
         return new \ArrayIterator($this->helpers);

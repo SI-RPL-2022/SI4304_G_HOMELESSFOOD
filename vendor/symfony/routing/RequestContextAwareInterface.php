@@ -21,7 +21,11 @@ interface RequestContextAwareInterface
     /**
      * Gets the request context.
      *
+<<<<<<< HEAD
      * @return RequestContext
+=======
+     * @return RequestContext The context
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getContext();
 }

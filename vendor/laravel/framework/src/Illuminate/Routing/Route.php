@@ -14,9 +14,12 @@ use Illuminate\Routing\Matching\UriValidator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
-use Laravel\SerializableClosure\SerializableClosure;
 use LogicException;
+<<<<<<< HEAD
 use Opis\Closure\SerializableClosure as OpisSerializableClosure;
+=======
+use Opis\Closure\SerializableClosure;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 use ReflectionFunction;
 use Symfony\Component\Routing\Route as SymfonyRoute;
 
@@ -93,13 +96,6 @@ class Route
      * @var array
      */
     protected $originalParameters;
-
-    /**
-     * Indicates "trashed" models can be retrieved when resolving implicit model bindings for this route.
-     *
-     * @var bool
-     */
-    protected $withTrashedBindings = false;
 
     /**
      * Indicates the maximum number of seconds the route should acquire a session lock for.
@@ -568,29 +564,6 @@ class Route
     }
 
     /**
-     * Allow "trashed" models to be retrieved when resolving implicit model bindings for this route.
-     *
-     * @param  bool  $withTrashed
-     * @return $this
-     */
-    public function withTrashed($withTrashed = true)
-    {
-        $this->withTrashedBindings = $withTrashed;
-
-        return $this;
-    }
-
-    /**
-     * Determines if the route allows "trashed" models to be retrieved when resolving implicit model bindings.
-     *
-     * @return bool
-     */
-    public function allowsTrashedBindings()
-    {
-        return $this->withTrashedBindings;
-    }
-
-    /**
      * Set a default value for the route.
      *
      * @param  string  $key
@@ -777,8 +750,11 @@ class Route
      */
     public function prefix($prefix)
     {
+<<<<<<< HEAD
         $prefix = $prefix ?? '';
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         $this->updatePrefixOnAction($prefix);
 
         $uri = rtrim($prefix, '/').'/'.ltrim($this->uri, '/');
@@ -967,6 +943,7 @@ class Route
     }
 
     /**
+<<<<<<< HEAD
      * Get the value of the action that should be taken on a missing model exception.
      *
      * @return \Closure|null
@@ -996,6 +973,8 @@ class Route
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Get all middleware, including the ones from the controller.
      *
      * @return array
@@ -1025,12 +1004,8 @@ class Route
             return (array) ($this->action['middleware'] ?? []);
         }
 
-        if (! is_array($middleware)) {
+        if (is_string($middleware)) {
             $middleware = func_get_args();
-        }
-
-        foreach ($middleware as $index => $value) {
-            $middleware[$index] = (string) $value;
         }
 
         $this->action['middleware'] = array_merge(
@@ -1038,20 +1013,6 @@ class Route
         );
 
         return $this;
-    }
-
-    /**
-     * Specify that the "Authorize" / "can" middleware should be applied to the route with the given options.
-     *
-     * @param  string  $ability
-     * @param  array|string  $models
-     * @return $this
-     */
-    public function can($ability, $models = [])
-    {
-        return empty($models)
-                    ? $this->middleware(['can:'.$ability])
-                    : $this->middleware(['can:'.$ability.','.implode(',', Arr::wrap($models))]);
     }
 
     /**
@@ -1096,6 +1057,7 @@ class Route
     }
 
     /**
+<<<<<<< HEAD
      * Indicate that the route should enforce scoping of multiple implicit Eloquent bindings.
      *
      * @return bool
@@ -1118,6 +1080,8 @@ class Route
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Specify that the route should not allow concurrent requests from the same session.
      *
      * @param  int|null  $lockSeconds
@@ -1268,6 +1232,7 @@ class Route
     public function prepareForSerialization()
     {
         if ($this->action['uses'] instanceof Closure) {
+<<<<<<< HEAD
             $this->action['uses'] = serialize(\PHP_VERSION_ID < 70400
                 ? new OpisSerializableClosure($this->action['uses'])
                 : new SerializableClosure($this->action['uses'])
@@ -1279,6 +1244,11 @@ class Route
                 ? new OpisSerializableClosure($this->action['missing'])
                 : new SerializableClosure($this->action['missing'])
             );
+=======
+            $this->action['uses'] = serialize(new SerializableClosure($this->action['uses']));
+
+            // throw new LogicException("Unable to prepare route [{$this->uri}] for serialization. Uses Closure.");
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
         $this->compileRoute();

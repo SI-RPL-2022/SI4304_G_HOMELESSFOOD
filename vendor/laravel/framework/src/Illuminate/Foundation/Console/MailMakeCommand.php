@@ -2,15 +2,11 @@
 
 namespace Illuminate\Foundation\Console;
 
-use Illuminate\Console\Concerns\CreatesMatchingTest;
 use Illuminate\Console\GeneratorCommand;
-use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 
 class MailMakeCommand extends GeneratorCommand
 {
-    use CreatesMatchingTest;
-
     /**
      * The console command name.
      *
@@ -43,7 +39,7 @@ class MailMakeCommand extends GeneratorCommand
             return;
         }
 
-        if ($this->option('markdown') !== false) {
+        if ($this->option('markdown')) {
             $this->writeMarkdownTemplate();
         }
     }
@@ -56,7 +52,7 @@ class MailMakeCommand extends GeneratorCommand
     protected function writeMarkdownTemplate()
     {
         $path = $this->viewPath(
-            str_replace('.', '/', $this->getView()).'.blade.php'
+            str_replace('.', '/', $this->option('markdown')).'.blade.php'
         );
 
         if (! $this->files->isDirectory(dirname($path))) {
@@ -76,14 +72,15 @@ class MailMakeCommand extends GeneratorCommand
     {
         $class = parent::buildClass($name);
 
-        if ($this->option('markdown') !== false) {
-            $class = str_replace(['DummyView', '{{ view }}'], $this->getView(), $class);
+        if ($this->option('markdown')) {
+            $class = str_replace('DummyView', $this->option('markdown'), $class);
         }
 
         return $class;
     }
 
     /**
+<<<<<<< HEAD
      * Get the view name.
      *
      * @return string
@@ -100,29 +97,17 @@ class MailMakeCommand extends GeneratorCommand
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Get the stub file for the generator.
      *
      * @return string
      */
     protected function getStub()
     {
-        return $this->resolveStubPath(
-            $this->option('markdown') !== false
-                ? '/stubs/markdown-mail.stub'
-                : '/stubs/mail.stub');
-    }
-
-    /**
-     * Resolve the fully-qualified path to the stub.
-     *
-     * @param  string  $stub
-     * @return string
-     */
-    protected function resolveStubPath($stub)
-    {
-        return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
-            ? $customPath
-            : __DIR__.$stub;
+        return $this->option('markdown')
+                        ? __DIR__.'/stubs/markdown-mail.stub'
+                        : __DIR__.'/stubs/mail.stub';
     }
 
     /**
@@ -146,7 +131,7 @@ class MailMakeCommand extends GeneratorCommand
         return [
             ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the mailable already exists'],
 
-            ['markdown', 'm', InputOption::VALUE_OPTIONAL, 'Create a new Markdown template for the mailable', false],
+            ['markdown', 'm', InputOption::VALUE_OPTIONAL, 'Create a new Markdown template for the mailable'],
         ];
     }
 }

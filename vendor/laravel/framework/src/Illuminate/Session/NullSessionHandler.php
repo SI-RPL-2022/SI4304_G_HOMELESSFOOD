@@ -8,10 +8,11 @@ class NullSessionHandler implements SessionHandlerInterface
 {
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function open($savePath, $sessionName)
     {
         return true;
@@ -19,10 +20,11 @@ class NullSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function close()
     {
         return true;
@@ -30,10 +32,14 @@ class NullSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
+<<<<<<< HEAD
      *
      * @return string|false
      */
     #[\ReturnTypeWillChange]
+=======
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function read($sessionId)
     {
         return '';
@@ -41,10 +47,11 @@ class NullSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function write($sessionId, $data)
     {
         return true;
@@ -52,10 +59,11 @@ class NullSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function destroy($sessionId)
     {
         return true;
@@ -63,10 +71,14 @@ class NullSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
+<<<<<<< HEAD
      *
      * @return int|false
      */
     #[\ReturnTypeWillChange]
+=======
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function gc($lifetime)
     {
         return true;

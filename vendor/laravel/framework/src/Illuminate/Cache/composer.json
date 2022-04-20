@@ -19,9 +19,12 @@
         "illuminate/contracts": "^8.0",
         "illuminate/macroable": "^8.0",
         "illuminate/support": "^8.0"
+<<<<<<< HEAD
     },
     "provide": {
         "psr/simple-cache-implementation": "1.0"
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     },
     "autoload": {
         "psr-4": {
@@ -38,7 +41,11 @@
         "illuminate/database": "Required to use the database cache driver (^8.0).",
         "illuminate/filesystem": "Required to use the file cache driver (^8.0).",
         "illuminate/redis": "Required to use the redis cache driver (^8.0).",
+<<<<<<< HEAD
         "symfony/cache": "Required to PSR-6 cache bridge (^5.4)."
+=======
+        "symfony/cache": "Required to PSR-6 cache bridge (^5.1)."
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     },
     "config": {
         "sort-packages": true

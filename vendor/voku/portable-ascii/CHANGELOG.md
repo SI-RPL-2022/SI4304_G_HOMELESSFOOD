@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 ### 1.6.1 (2021-01-24)
 
 - revert: prefer "Russian - Passport (2013), ICAO" instead of "Russian - GOST 7.79-2000(B)"
@@ -14,6 +15,8 @@
 - fix "ASCII::normalize_whitespace()" -> "CARRIAGE RETURN" is more like "<br>" and no "\n"
 - add "ASCII::to_ascii_remap()" -> this method will return broken characters and is only for special cases
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 ### 1.5.6 (2020-11-12)
     
 - "ASCII::normalize_whitespace()" -> can now also remove "control characters" if needed v2

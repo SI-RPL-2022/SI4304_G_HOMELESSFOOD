@@ -21,9 +21,9 @@ use Symfony\Component\Console\Exception\LogicException;
  */
 class InputArgument
 {
-    public const REQUIRED = 1;
-    public const OPTIONAL = 2;
-    public const IS_ARRAY = 4;
+    const REQUIRED = 1;
+    const OPTIONAL = 2;
+    const IS_ARRAY = 4;
 
     private $name;
     private $mode;
@@ -31,10 +31,10 @@ class InputArgument
     private $description;
 
     /**
-     * @param string                           $name        The argument name
-     * @param int|null                         $mode        The argument mode: self::REQUIRED or self::OPTIONAL
-     * @param string                           $description A description text
-     * @param string|bool|int|float|array|null $default     The default value (for self::OPTIONAL mode only)
+     * @param string               $name        The argument name
+     * @param int|null             $mode        The argument mode: self::REQUIRED or self::OPTIONAL
+     * @param string               $description A description text
+     * @param string|string[]|null $default     The default value (for self::OPTIONAL mode only)
      *
      * @throws InvalidArgumentException When argument mode is not valid
      */
@@ -56,7 +56,11 @@ class InputArgument
     /**
      * Returns the argument name.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The argument name
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getName()
     {
@@ -86,7 +90,11 @@ class InputArgument
     /**
      * Sets the default value.
      *
+<<<<<<< HEAD
      * @param string|bool|int|float|array|null $default
+=======
+     * @param string|string[]|null $default The default value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws LogicException When incorrect default value is given
      */
@@ -110,7 +118,11 @@ class InputArgument
     /**
      * Returns the default value.
      *
+<<<<<<< HEAD
      * @return string|bool|int|float|array|null
+=======
+     * @return string|string[]|null The default value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getDefault()
     {
@@ -120,7 +132,11 @@ class InputArgument
     /**
      * Returns the description text.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The description text
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getDescription()
     {

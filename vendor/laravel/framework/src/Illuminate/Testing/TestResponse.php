@@ -7,17 +7,13 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
 use Illuminate\Testing\Assert as PHPUnit;
 use Illuminate\Testing\Constraints\SeeInOrder;
-use Illuminate\Testing\Fluent\AssertableJson;
 use LogicException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -38,13 +34,6 @@ class TestResponse implements ArrayAccess
     public $baseResponse;
 
     /**
-     * The collection of logged exceptions for the request.
-     *
-     * @var \Illuminate\Support\Collection
-     */
-    protected $exceptions;
-
-    /**
      * The streamed content of the response.
      *
      * @var string
@@ -60,7 +49,6 @@ class TestResponse implements ArrayAccess
     public function __construct($response)
     {
         $this->baseResponse = $response;
-        $this->exceptions = new Collection;
     }
 
     /**
@@ -83,7 +71,7 @@ class TestResponse implements ArrayAccess
     {
         PHPUnit::assertTrue(
             $this->isSuccessful(),
-            $this->statusMessageWithDetails('>=200, <300', $this->getStatusCode())
+            'Response status code ['.$this->getStatusCode().'] is not a successful status code.'
         );
 
         return $this;
@@ -96,7 +84,12 @@ class TestResponse implements ArrayAccess
      */
     public function assertOk()
     {
-        return $this->assertStatus(200);
+        PHPUnit::assertTrue(
+            $this->isOk(),
+            'Response status code ['.$this->getStatusCode().'] does not match expected 200 status code.'
+        );
+
+        return $this;
     }
 
     /**
@@ -106,7 +99,14 @@ class TestResponse implements ArrayAccess
      */
     public function assertCreated()
     {
-        return $this->assertStatus(201);
+        $actual = $this->getStatusCode();
+
+        PHPUnit::assertSame(
+            201, $actual,
+            "Response status code [{$actual}] does not match expected 201 status code."
+        );
+
+        return $this;
     }
 
     /**
@@ -131,7 +131,12 @@ class TestResponse implements ArrayAccess
      */
     public function assertNotFound()
     {
-        return $this->assertStatus(404);
+        PHPUnit::assertTrue(
+            $this->isNotFound(),
+            'Response status code ['.$this->getStatusCode().'] is not a not found status code.'
+        );
+
+        return $this;
     }
 
     /**
@@ -141,7 +146,12 @@ class TestResponse implements ArrayAccess
      */
     public function assertForbidden()
     {
-        return $this->assertStatus(403);
+        PHPUnit::assertTrue(
+            $this->isForbidden(),
+            'Response status code ['.$this->getStatusCode().'] is not a forbidden status code.'
+        );
+
+        return $this;
     }
 
     /**
@@ -151,17 +161,14 @@ class TestResponse implements ArrayAccess
      */
     public function assertUnauthorized()
     {
-        return $this->assertStatus(401);
-    }
+        $actual = $this->getStatusCode();
 
-    /**
-     * Assert that the response has a 422 status code.
-     *
-     * @return $this
-     */
-    public function assertUnprocessable()
-    {
-        return $this->assertStatus(422);
+        PHPUnit::assertSame(
+            401, $actual,
+            "Response status code [{$actual}] is not an unauthorized status code."
+        );
+
+        return $this;
     }
 
     /**
@@ -172,14 +179,18 @@ class TestResponse implements ArrayAccess
      */
     public function assertStatus($status)
     {
-        $message = $this->statusMessageWithDetails($status, $actual = $this->getStatusCode());
+        $actual = $this->getStatusCode();
 
-        PHPUnit::assertSame($actual, $status, $message);
+        PHPUnit::assertSame(
+            $actual, $status,
+            "Expected status code {$status} but received {$actual}."
+        );
 
         return $this;
     }
 
     /**
+<<<<<<< HEAD
      * Get an assertion message for a status assertion containing extra details when available.
      *
      * @param  string|int  $expected
@@ -259,6 +270,8 @@ EOF;
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Assert whether the response is redirecting to a given URI.
      *
      * @param  string|null  $uri
@@ -267,70 +280,11 @@ EOF;
     public function assertRedirect($uri = null)
     {
         PHPUnit::assertTrue(
-            $this->isRedirect(),
-            $this->statusMessageWithDetails('201, 301, 302, 303, 307, 308', $this->getStatusCode()),
+            $this->isRedirect(), 'Response status code ['.$this->getStatusCode().'] is not a redirect status code.'
         );
 
         if (! is_null($uri)) {
             $this->assertLocation($uri);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Assert whether the response is redirecting to a URI that contains the given URI.
-     *
-     * @param  string  $uri
-     * @return $this
-     */
-    public function assertRedirectContains($uri)
-    {
-        PHPUnit::assertTrue(
-            $this->isRedirect(),
-            $this->statusMessageWithDetails('201, 301, 302, 303, 307, 308', $this->getStatusCode()),
-        );
-
-        PHPUnit::assertTrue(
-            Str::contains($this->headers->get('Location'), $uri), 'Redirect location ['.$this->headers->get('Location').'] does not contain ['.$uri.'].'
-        );
-
-        return $this;
-    }
-
-    /**
-     * Assert whether the response is redirecting to a given signed route.
-     *
-     * @param  string|null  $name
-     * @param  mixed  $parameters
-     * @return $this
-     */
-    public function assertRedirectToSignedRoute($name = null, $parameters = [])
-    {
-        if (! is_null($name)) {
-            $uri = route($name, $parameters);
-        }
-
-        PHPUnit::assertTrue(
-            $this->isRedirect(),
-            $this->statusMessageWithDetails('201, 301, 302, 303, 307, 308', $this->getStatusCode()),
-        );
-
-        $request = Request::create($this->headers->get('Location'));
-
-        PHPUnit::assertTrue(
-            $request->hasValidSignature(), 'The response is not a redirect to a signed route.'
-        );
-
-        if (! is_null($name)) {
-            $expectedUri = rtrim($request->fullUrlWithQuery([
-                'signature' => null,
-                'expires' => null,
-            ]), '?');
-
-            PHPUnit::assertEquals(
-                app('url')->to($uri), $expectedUri
-            );
         }
 
         return $this;
@@ -362,7 +316,7 @@ EOF;
     }
 
     /**
-     * Asserts that the response does not contain the given header.
+     * Asserts that the response does not contains the given header.
      *
      * @param  string  $headerName
      * @return $this
@@ -389,54 +343,6 @@ EOF;
         );
 
         return $this;
-    }
-
-    /**
-     * Assert that the response offers a file download.
-     *
-     * @param  string|null  $filename
-     * @return $this
-     */
-    public function assertDownload($filename = null)
-    {
-        $contentDisposition = explode(';', $this->headers->get('content-disposition'));
-
-        if (trim($contentDisposition[0]) !== 'attachment') {
-            PHPUnit::fail(
-                'Response does not offer a file download.'.PHP_EOL.
-                'Disposition ['.trim($contentDisposition[0]).'] found in header, [attachment] expected.'
-            );
-        }
-
-        if (! is_null($filename)) {
-            if (isset($contentDisposition[1]) &&
-                trim(explode('=', $contentDisposition[1])[0]) !== 'filename') {
-                PHPUnit::fail(
-                    'Unsupported Content-Disposition header provided.'.PHP_EOL.
-                    'Disposition ['.trim(explode('=', $contentDisposition[1])[0]).'] found in header, [filename] expected.'
-                );
-            }
-
-            $message = "Expected file [{$filename}] is not present in Content-Disposition header.";
-
-            if (! isset($contentDisposition[1])) {
-                PHPUnit::fail($message);
-            } else {
-                PHPUnit::assertSame(
-                    $filename,
-                    isset(explode('=', $contentDisposition[1])[1])
-                        ? trim(explode('=', $contentDisposition[1])[1], " \"'")
-                        : '',
-                    $message
-                );
-
-                return $this;
-            }
-        } else {
-            PHPUnit::assertTrue(true);
-
-            return $this;
-        }
     }
 
     /**
@@ -503,7 +409,11 @@ EOF;
         $expiresAt = Carbon::createFromTimestamp($cookie->getExpiresTime());
 
         PHPUnit::assertTrue(
+<<<<<<< HEAD
             0 !== $cookie->getExpiresTime() && $expiresAt->lessThan(Carbon::now()),
+=======
+            $expiresAt->lessThan(Carbon::now()),
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
             "Cookie [{$cookieName}] is not expired, it expires at [{$expiresAt}]."
         );
 
@@ -526,7 +436,11 @@ EOF;
         $expiresAt = Carbon::createFromTimestamp($cookie->getExpiresTime());
 
         PHPUnit::assertTrue(
+<<<<<<< HEAD
             0 === $cookie->getExpiresTime() || $expiresAt->greaterThan(Carbon::now()),
+=======
+            $expiresAt->greaterThan(Carbon::now()),
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
             "Cookie [{$cookieName}] is expired, it expired at [{$expiresAt}]."
         );
 
@@ -534,7 +448,7 @@ EOF;
     }
 
     /**
-     * Asserts that the response does not contain the given cookie.
+     * Asserts that the response does not contains the given cookie.
      *
      * @param  string  $cookieName
      * @return $this
@@ -555,7 +469,11 @@ EOF;
      * @param  string  $cookieName
      * @return \Symfony\Component\HttpFoundation\Cookie|null
      */
+<<<<<<< HEAD
     public function getCookie($cookieName)
+=======
+    protected function getCookie($cookieName)
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         foreach ($this->headers->getCookies() as $cookie) {
             if ($cookie->getName() === $cookieName) {
@@ -683,25 +601,13 @@ EOF;
     /**
      * Assert that the response is a superset of the given JSON.
      *
-     * @param  array|callable  $value
+     * @param  array  $data
      * @param  bool  $strict
      * @return $this
      */
-    public function assertJson($value, $strict = false)
+    public function assertJson(array $data, $strict = false)
     {
-        $json = $this->decodeResponseJson();
-
-        if (is_array($value)) {
-            $json->assertSubset($value, $strict);
-        } else {
-            $assert = AssertableJson::fromAssertableJsonString($json);
-
-            $value($assert);
-
-            if (Arr::isAssoc($assert->toArray())) {
-                $assert->interacted();
-            }
-        }
+        $this->decodeResponseJson()->assertSubset($data, $strict);
 
         return $this;
     }
@@ -835,57 +741,30 @@ EOF;
                 : 'Response does not have JSON validation errors.';
 
         foreach ($errors as $key => $value) {
-            if (is_int($key)) {
-                $this->assertJsonValidationErrorFor($value, $responseKey);
+            PHPUnit::assertArrayHasKey(
+                (is_int($key)) ? $value : $key,
+                $jsonErrors,
+                "Failed to find a validation error in the response for key: '{$value}'".PHP_EOL.PHP_EOL.$errorMessage
+            );
 
-                continue;
-            }
-
-            $this->assertJsonValidationErrorFor($key, $responseKey);
-
-            foreach (Arr::wrap($value) as $expectedMessage) {
-                $errorMissing = true;
+            if (! is_int($key)) {
+                $hasError = false;
 
                 foreach (Arr::wrap($jsonErrors[$key]) as $jsonErrorMessage) {
-                    if (Str::contains($jsonErrorMessage, $expectedMessage)) {
-                        $errorMissing = false;
+                    if (Str::contains($jsonErrorMessage, $value)) {
+                        $hasError = true;
 
                         break;
                     }
                 }
-            }
 
-            if ($errorMissing) {
-                PHPUnit::fail(
-                    "Failed to find a validation error in the response for key and message: '$key' => '$expectedMessage'".PHP_EOL.PHP_EOL.$errorMessage
-                );
+                if (! $hasError) {
+                    PHPUnit::fail(
+                        "Failed to find a validation error in the response for key and message: '$key' => '$value'".PHP_EOL.PHP_EOL.$errorMessage
+                    );
+                }
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * Assert the response has any JSON validation errors for the given key.
-     *
-     * @param  string  $key
-     * @param  string  $responseKey
-     * @return $this
-     */
-    public function assertJsonValidationErrorFor($key, $responseKey = 'errors')
-    {
-        $jsonErrors = Arr::get($this->json(), $responseKey) ?? [];
-
-        $errorMessage = $jsonErrors
-            ? 'Response has the following JSON validation errors:'.
-            PHP_EOL.PHP_EOL.json_encode($jsonErrors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).PHP_EOL
-            : 'Response does not have JSON validation errors.';
-
-        PHPUnit::assertArrayHasKey(
-            $key,
-            $jsonErrors,
-            "Failed to find a validation error in the response for key: '{$key}'".PHP_EOL.PHP_EOL.$errorMessage
-        );
 
         return $this;
     }
@@ -907,13 +786,13 @@ EOF;
 
         $json = $this->json();
 
-        if (! Arr::has($json, $responseKey)) {
-            PHPUnit::assertTrue(true);
+        if (! array_key_exists($responseKey, $json)) {
+            PHPUnit::assertArrayNotHasKey($responseKey, $json);
 
             return $this;
         }
 
-        $errors = Arr::get($json, $responseKey, []);
+        $errors = $json[$responseKey];
 
         if (is_null($keys) && count($errors) > 0) {
             PHPUnit::fail(
@@ -1082,6 +961,7 @@ EOF;
     }
 
     /**
+<<<<<<< HEAD
      * Assert that the given keys do not have validation errors.
      *
      * @param  string|array|null  $keys
@@ -1181,6 +1061,8 @@ EOF;
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Assert that the session has a given value.
      *
      * @param  string|array  $key
@@ -1389,43 +1271,6 @@ EOF;
     }
 
     /**
-     * Dump the content from the response and end the script.
-     *
-     * @return never
-     */
-    public function dd()
-    {
-        $this->dump();
-
-        exit(1);
-    }
-
-    /**
-     * Dump the headers from the response and end the script.
-     *
-     * @return never
-     */
-    public function ddHeaders()
-    {
-        $this->dumpHeaders();
-
-        exit(1);
-    }
-
-    /**
-     * Dump the session from the response and end the script.
-     *
-     * @param  string|array  $keys
-     * @return never
-     */
-    public function ddSession($keys = [])
-    {
-        $this->dumpSession($keys);
-
-        exit(1);
-    }
-
-    /**
      * Dump the content from the response.
      *
      * @return $this
@@ -1499,19 +1344,6 @@ EOF;
     }
 
     /**
-     * Set the previous exceptions on the response.
-     *
-     * @param  \Illuminate\Support\Collection  $exceptions
-     * @return $this
-     */
-    public function withExceptions(Collection $exceptions)
-    {
-        $this->exceptions = $exceptions;
-
-        return $this;
-    }
-
-    /**
      * Dynamically access base response parameters.
      *
      * @param  string  $key
@@ -1539,7 +1371,10 @@ EOF;
      * @param  string  $offset
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetExists($offset)
     {
         return $this->responseHasView()
@@ -1553,7 +1388,10 @@ EOF;
      * @param  string  $offset
      * @return mixed
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetGet($offset)
     {
         return $this->responseHasView()
@@ -1570,7 +1408,10 @@ EOF;
      *
      * @throws \LogicException
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetSet($offset, $value)
     {
         throw new LogicException('Response data may not be mutated using array access.');
@@ -1584,7 +1425,10 @@ EOF;
      *
      * @throws \LogicException
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetUnset($offset)
     {
         throw new LogicException('Response data may not be mutated using array access.');

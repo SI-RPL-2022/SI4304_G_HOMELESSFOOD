@@ -41,7 +41,11 @@ abstract class AbstractSurrogate implements SurrogateInterface
     /**
      * Returns a new cache strategy instance.
      *
+<<<<<<< HEAD
      * @return ResponseCacheStrategyInterface
+=======
+     * @return ResponseCacheStrategyInterface A ResponseCacheStrategyInterface instance
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function createCacheStrategy()
     {
@@ -57,7 +61,7 @@ abstract class AbstractSurrogate implements SurrogateInterface
             return false;
         }
 
-        return str_contains($value, sprintf('%s/1.0', strtoupper($this->getName())));
+        return false !== strpos($value, sprintf('%s/1.0', strtoupper($this->getName())));
     }
 
     /**

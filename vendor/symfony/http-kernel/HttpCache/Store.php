@@ -25,10 +25,15 @@ use Symfony\Component\HttpFoundation\Response;
 class Store implements StoreInterface
 {
     protected $root;
+<<<<<<< HEAD
     /** @var \SplObjectStorage<Request, string> */
     private $keyCache;
     /** @var array<string, resource> */
     private $locks = [];
+=======
+    private $keyCache;
+    private $locks;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
     /**
      * @throws \RuntimeException
@@ -40,6 +45,7 @@ class Store implements StoreInterface
             throw new \RuntimeException(sprintf('Unable to create the store directory (%s).', $this->root));
         }
         $this->keyCache = new \SplObjectStorage();
+        $this->locks = [];
     }
 
     /**
@@ -70,7 +76,7 @@ class Store implements StoreInterface
             if (!is_dir(\dirname($path)) && false === @mkdir(\dirname($path), 0777, true) && !is_dir(\dirname($path))) {
                 return $path;
             }
-            $h = fopen($path, 'c');
+            $h = fopen($path, 'cb');
             if (!flock($h, \LOCK_EX | \LOCK_NB)) {
                 fclose($h);
 
@@ -115,7 +121,7 @@ class Store implements StoreInterface
             return false;
         }
 
-        $h = fopen($path, 'r');
+        $h = fopen($path, 'rb');
         flock($h, \LOCK_EX | \LOCK_NB, $wouldBlock);
         flock($h, \LOCK_UN); // release the lock we just acquired
         fclose($h);
@@ -126,7 +132,11 @@ class Store implements StoreInterface
     /**
      * Locates a cached Response for the Request provided.
      *
+<<<<<<< HEAD
      * @return Response|null
+=======
+     * @return Response|null A Response instance, or null if no cache entry was found
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function lookup(Request $request)
     {
@@ -167,7 +177,11 @@ class Store implements StoreInterface
      * Existing entries are read and any that match the response are removed. This
      * method calls write with the new list of cache entries.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The key under which the response is stored
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \RuntimeException
      */
@@ -278,8 +292,8 @@ class Store implements StoreInterface
 
         foreach (preg_split('/[\s,]+/', $vary) as $header) {
             $key = str_replace('_', '-', strtolower($header));
-            $v1 = $env1[$key] ?? null;
-            $v2 = $env2[$key] ?? null;
+            $v1 = isset($env1[$key]) ? $env1[$key] : null;
+            $v2 = isset($env2[$key]) ? $env2[$key] : null;
             if ($v1 !== $v2) {
                 return false;
             }
@@ -299,7 +313,7 @@ class Store implements StoreInterface
             return [];
         }
 
-        return unserialize($entries) ?: [];
+        return unserialize($entries);
     }
 
     /**
@@ -348,7 +362,7 @@ class Store implements StoreInterface
     {
         $path = $this->getPath($key);
 
-        return is_file($path) && false !== ($contents = @file_get_contents($path)) ? $contents : null;
+        return is_file($path) && false !== ($contents = file_get_contents($path)) ? $contents : null;
     }
 
     /**
@@ -378,7 +392,7 @@ class Store implements StoreInterface
             }
 
             $tmpFile = tempnam(\dirname($path), basename($path));
-            if (false === $fp = @fopen($tmpFile, 'w')) {
+            if (false === $fp = @fopen($tmpFile, 'wb')) {
                 @unlink($tmpFile);
 
                 return false;
@@ -419,7 +433,11 @@ class Store implements StoreInterface
      * headers, use a Vary header to indicate them, and each representation will
      * be stored independently under the same cache key.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string A key for the given Request
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     protected function generateCacheKey(Request $request)
     {

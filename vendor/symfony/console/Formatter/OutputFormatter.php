@@ -34,13 +34,19 @@ class OutputFormatter implements WrappableOutputFormatterInterface
     }
 
     /**
+<<<<<<< HEAD
      * Escapes "<" and ">" special chars in given text.
      *
      * @return string
+=======
+     * Escapes "<" special char in given text.
+     *
+     * @return string Escaped text
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public static function escape(string $text)
     {
-        $text = preg_replace('/([^\\\\]|^)([<>])/', '$1\\\\$2', $text);
+        $text = preg_replace('/([^\\\\]?)</', '$1\\<', $text);
 
         return self::escapeTrailingBackslash($text);
     }
@@ -52,7 +58,7 @@ class OutputFormatter implements WrappableOutputFormatterInterface
      */
     public static function escapeTrailingBackslash(string $text): string
     {
-        if (str_ends_with($text, '\\')) {
+        if ('\\' === substr($text, -1)) {
             $len = \strlen($text);
             $text = rtrim($text, '\\');
             $text = str_replace("\0", '', $text);
@@ -140,16 +146,11 @@ class OutputFormatter implements WrappableOutputFormatterInterface
      */
     public function formatAndWrap(?string $message, int $width)
     {
-        if (null === $message) {
-            return '';
-        }
-
         $offset = 0;
         $output = '';
-        $openTagRegex = '[a-z](?:[^\\\\<>]*+ | \\\\.)*';
-        $closeTagRegex = '[a-z][^<>]*+';
+        $tagRegex = '[a-z][^<>]*+';
         $currentLineLength = 0;
-        preg_match_all("#<(($openTagRegex) | /($closeTagRegex)?)>#ix", $message, $matches, \PREG_OFFSET_CAPTURE);
+        preg_match_all("#<(($tagRegex) | /($tagRegex)?)>#ix", $message, $matches, \PREG_OFFSET_CAPTURE);
         foreach ($matches[0] as $i => $match) {
             $pos = $match[1];
             $text = $match[0];
@@ -166,7 +167,7 @@ class OutputFormatter implements WrappableOutputFormatterInterface
             if ($open = '/' != $text[1]) {
                 $tag = $matches[1][$i][0];
             } else {
-                $tag = $matches[3][$i][0] ?? '';
+                $tag = isset($matches[3][$i][0]) ? $matches[3][$i][0] : '';
             }
 
             if (!$open && !$tag) {
@@ -183,7 +184,11 @@ class OutputFormatter implements WrappableOutputFormatterInterface
 
         $output .= $this->applyCurrentStyle(substr($message, $offset), $output, $width, $currentLineLength);
 
-        return strtr($output, ["\0" => '\\', '\\<' => '<', '\\>' => '>']);
+        if (false !== strpos($output, "\0")) {
+            return strtr($output, ["\0" => '\\', '\\<' => '<']);
+        }
+
+        return str_replace('\\<', '<', $output);
     }
 
     /**
@@ -217,8 +222,7 @@ class OutputFormatter implements WrappableOutputFormatterInterface
             } elseif ('bg' == $match[0]) {
                 $style->setBackground(strtolower($match[1]));
             } elseif ('href' === $match[0]) {
-                $url = preg_replace('{\\\\([<>])}', '$1', $match[1]);
-                $style->setHref($url);
+                $style->setHref($match[1]);
             } elseif ('options' === $match[0]) {
                 preg_match_all('([^,;]+)', strtolower($match[1]), $options);
                 $options = array_shift($options);

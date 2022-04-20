@@ -137,7 +137,11 @@ class Message
     }
 
     /**
+<<<<<<< HEAD
      * Add a "reply to" address to the message.
+=======
+     * Add a reply to address to the message.
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @param  string|array  $address
      * @param  string|null  $name

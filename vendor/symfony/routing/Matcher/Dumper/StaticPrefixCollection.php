@@ -151,43 +151,40 @@ class StaticPrefixCollection
         $staticLength = null;
         set_error_handler([__CLASS__, 'handleError']);
 
-        try {
-            for ($i = $baseLength; $i < $end && $prefix[$i] === $anotherPrefix[$i]; ++$i) {
-                if ('(' === $prefix[$i]) {
-                    $staticLength = $staticLength ?? $i;
-                    for ($j = 1 + $i, $n = 1; $j < $end && 0 < $n; ++$j) {
-                        if ($prefix[$j] !== $anotherPrefix[$j]) {
-                            break 2;
-                        }
-                        if ('(' === $prefix[$j]) {
-                            ++$n;
-                        } elseif (')' === $prefix[$j]) {
-                            --$n;
-                        } elseif ('\\' === $prefix[$j] && (++$j === $end || $prefix[$j] !== $anotherPrefix[$j])) {
-                            --$j;
-                            break;
-                        }
+        for ($i = $baseLength; $i < $end && $prefix[$i] === $anotherPrefix[$i]; ++$i) {
+            if ('(' === $prefix[$i]) {
+                $staticLength = $staticLength ?? $i;
+                for ($j = 1 + $i, $n = 1; $j < $end && 0 < $n; ++$j) {
+                    if ($prefix[$j] !== $anotherPrefix[$j]) {
+                        break 2;
                     }
-                    if (0 < $n) {
+                    if ('(' === $prefix[$j]) {
+                        ++$n;
+                    } elseif (')' === $prefix[$j]) {
+                        --$n;
+                    } elseif ('\\' === $prefix[$j] && (++$j === $end || $prefix[$j] !== $anotherPrefix[$j])) {
+                        --$j;
                         break;
                     }
-                    if (('?' === ($prefix[$j] ?? '') || '?' === ($anotherPrefix[$j] ?? '')) && ($prefix[$j] ?? '') !== ($anotherPrefix[$j] ?? '')) {
-                        break;
-                    }
-                    $subPattern = substr($prefix, $i, $j - $i);
-                    if ($prefix !== $anotherPrefix && !preg_match('/^\(\[[^\]]++\]\+\+\)$/', $subPattern) && !preg_match('{(?<!'.$subPattern.')}', '')) {
-                        // sub-patterns of variable length are not considered as common prefixes because their greediness would break in-order matching
-                        break;
-                    }
-                    $i = $j - 1;
-                } elseif ('\\' === $prefix[$i] && (++$i === $end || $prefix[$i] !== $anotherPrefix[$i])) {
-                    --$i;
+                }
+                if (0 < $n) {
                     break;
                 }
+                if (('?' === ($prefix[$j] ?? '') || '?' === ($anotherPrefix[$j] ?? '')) && ($prefix[$j] ?? '') !== ($anotherPrefix[$j] ?? '')) {
+                    break;
+                }
+                $subPattern = substr($prefix, $i, $j - $i);
+                if ($prefix !== $anotherPrefix && !preg_match('/^\(\[[^\]]++\]\+\+\)$/', $subPattern) && !preg_match('{(?<!'.$subPattern.')}', '')) {
+                    // sub-patterns of variable length are not considered as common prefixes because their greediness would break in-order matching
+                    break;
+                }
+                $i = $j - 1;
+            } elseif ('\\' === $prefix[$i] && (++$i === $end || $prefix[$i] !== $anotherPrefix[$i])) {
+                --$i;
+                break;
             }
-        } finally {
-            restore_error_handler();
         }
+        restore_error_handler();
         if ($i < $end && 0b10 === (\ord($prefix[$i]) >> 6) && preg_match('//u', $prefix.' '.$anotherPrefix)) {
             do {
                 // Prevent cutting in the middle of an UTF-8 characters
@@ -198,8 +195,8 @@ class StaticPrefixCollection
         return [substr($prefix, 0, $i), substr($prefix, 0, $staticLength ?? $i)];
     }
 
-    public static function handleError(int $type, string $msg)
+    public static function handleError($type, $msg)
     {
-        return str_contains($msg, 'Compilation failed: lookbehind assertion is not fixed length');
+        return false !== strpos($msg, 'Compilation failed: lookbehind assertion is not fixed length');
     }
 }

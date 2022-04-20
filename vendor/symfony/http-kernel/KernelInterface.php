@@ -31,7 +31,7 @@ interface KernelInterface extends HttpKernelInterface
     /**
      * Returns an array of bundles to register.
      *
-     * @return iterable<mixed, BundleInterface>
+     * @return iterable|BundleInterface[] An iterable of bundle instances
      */
     public function registerBundles();
 
@@ -55,14 +55,18 @@ interface KernelInterface extends HttpKernelInterface
     /**
      * Gets the registered bundle instances.
      *
-     * @return array<string, BundleInterface>
+     * @return BundleInterface[] An array of registered bundle instances
      */
     public function getBundles();
 
     /**
      * Returns a bundle.
      *
+<<<<<<< HEAD
      * @return BundleInterface
+=======
+     * @return BundleInterface A BundleInterface instance
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \InvalidArgumentException when the bundle is not enabled
      */
@@ -80,7 +84,11 @@ interface KernelInterface extends HttpKernelInterface
      * where BundleName is the name of the bundle
      * and the remaining part is the relative path in the bundle.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The absolute path of the resource
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \InvalidArgumentException if the file cannot be found or the name is not valid
      * @throws \RuntimeException         if the name contains invalid/unsafe characters
@@ -90,14 +98,22 @@ interface KernelInterface extends HttpKernelInterface
     /**
      * Gets the environment.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The current environment
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getEnvironment();
 
     /**
      * Checks if debug mode is enabled.
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool true if debug mode is enabled, false otherwise
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function isDebug();
 
@@ -118,7 +134,11 @@ interface KernelInterface extends HttpKernelInterface
     /**
      * Gets the request start time (not available if debug is disabled).
      *
+<<<<<<< HEAD
      * @return float
+=======
+     * @return float The request start timestamp
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getStartTime();
 
@@ -129,21 +149,33 @@ interface KernelInterface extends HttpKernelInterface
      * For caches and artifacts that can be warmed at compile-time and deployed as read-only,
      * use the new "build directory" returned by the {@see getBuildDir()} method.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The cache directory
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getCacheDir();
 
     /**
      * Gets the log directory.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The log directory
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getLogDir();
 
     /**
      * Gets the charset of the application.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The charset
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getCharset();
 }

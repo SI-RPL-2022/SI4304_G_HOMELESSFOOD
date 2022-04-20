@@ -15,11 +15,6 @@ namespace Symfony\Component\Finder\Iterator;
  * MultiplePcreFilterIterator filters files using patterns (regexps, globs or strings).
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @template-covariant TKey
- * @template-covariant TValue
- *
- * @extends \FilterIterator<TKey, TValue>
  */
 abstract class MultiplePcreFilterIterator extends \FilterIterator
 {

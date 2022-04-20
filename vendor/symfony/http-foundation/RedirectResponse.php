@@ -58,7 +58,11 @@ class RedirectResponse extends Response
      */
     public static function create($url = '', int $status = 302, array $headers = [])
     {
+<<<<<<< HEAD
         trigger_deprecation('symfony/http-foundation', '5.1', 'The "%s()" method is deprecated, use "new %s()" instead.', __METHOD__, static::class);
+=======
+        trigger_deprecation('symfony/http-foundation', '5.1', 'The "%s()" method is deprecated, use "new %s()" instead.', __METHOD__, \get_called_class());
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
         return new static($url, $status, $headers);
     }
@@ -66,7 +70,11 @@ class RedirectResponse extends Response
     /**
      * Returns the target URL.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string target URL
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getTargetUrl()
     {

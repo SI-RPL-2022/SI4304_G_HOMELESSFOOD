@@ -8,7 +8,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ReflectsClosures;
 use PHPUnit\Framework\Assert as PHPUnit;
-use ReflectionFunction;
 
 class EventFake implements Dispatcher
 {
@@ -50,6 +49,7 @@ class EventFake implements Dispatcher
     }
 
     /**
+<<<<<<< HEAD
      * Assert if an event has a listener attached to it.
      *
      * @param  string  $expectedEvent
@@ -86,6 +86,8 @@ class EventFake implements Dispatcher
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Assert if an event was dispatched based on a truth-test callback.
      *
      * @param  string|\Closure  $event
@@ -141,21 +143,6 @@ class EventFake implements Dispatcher
         PHPUnit::assertCount(
             0, $this->dispatched($event, $callback),
             "The unexpected [{$event}] event was dispatched."
-        );
-    }
-
-    /**
-     * Assert that no events were dispatched.
-     *
-     * @return void
-     */
-    public function assertNothingDispatched()
-    {
-        $count = count(Arr::flatten($this->events));
-
-        PHPUnit::assertSame(
-            0, $count,
-            "{$count} unexpected events were dispatched."
         );
     }
 
@@ -316,7 +303,7 @@ class EventFake implements Dispatcher
      *
      * @param  string|object  $event
      * @param  mixed  $payload
-     * @return array|null
+     * @return void
      */
     public function until($event, $payload = [])
     {

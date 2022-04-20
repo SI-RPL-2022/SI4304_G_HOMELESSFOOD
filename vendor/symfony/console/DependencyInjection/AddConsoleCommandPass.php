@@ -12,14 +12,11 @@
 namespace Symfony\Component\Console\DependencyInjection;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Command\LazyCommand;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
-use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\TypedReference;
 
 /**
@@ -32,6 +29,7 @@ class AddConsoleCommandPass implements CompilerPassInterface
     private $commandLoaderServiceId;
     private $commandTag;
     private $noPreloadTag;
+<<<<<<< HEAD
     private $privateTagName;
 
     public function __construct(string $commandLoaderServiceId = 'console.command_loader', string $commandTag = 'console.command', string $noPreloadTag = 'container.no_preload', string $privateTagName = 'container.private')
@@ -44,6 +42,14 @@ class AddConsoleCommandPass implements CompilerPassInterface
         $this->commandTag = $commandTag;
         $this->noPreloadTag = $noPreloadTag;
         $this->privateTagName = $privateTagName;
+=======
+
+    public function __construct(string $commandLoaderServiceId = 'console.command_loader', string $commandTag = 'console.command', string $noPreloadTag = 'container.no_preload')
+    {
+        $this->commandLoaderServiceId = $commandLoaderServiceId;
+        $this->commandTag = $commandTag;
+        $this->noPreloadTag = $noPreloadTag;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     }
 
     public function process(ContainerBuilder $container)
@@ -59,7 +65,7 @@ class AddConsoleCommandPass implements CompilerPassInterface
             $class = $container->getParameterBag()->resolveValue($definition->getClass());
 
             if (isset($tags[0]['command'])) {
-                $aliases = $tags[0]['command'];
+                $commandName = $tags[0]['command'];
             } else {
                 if (!$r = $container->getReflectionClass($class)) {
                     throw new InvalidArgumentException(sprintf('Class "%s" used for service "%s" cannot be found.', $class, $id));
@@ -67,18 +73,15 @@ class AddConsoleCommandPass implements CompilerPassInterface
                 if (!$r->isSubclassOf(Command::class)) {
                     throw new InvalidArgumentException(sprintf('The service "%s" tagged "%s" must be a subclass of "%s".', $id, $this->commandTag, Command::class));
                 }
-                $aliases = $class::getDefaultName();
-            }
-
-            $aliases = explode('|', $aliases ?? '');
-            $commandName = array_shift($aliases);
-
-            if ($isHidden = '' === $commandName) {
-                $commandName = array_shift($aliases);
+                $commandName = $class::getDefaultName();
             }
 
             if (null === $commandName) {
+<<<<<<< HEAD
                 if (!$definition->isPublic() || $definition->isPrivate() || $definition->hasTag($this->privateTagName)) {
+=======
+                if (!$definition->isPublic() || $definition->isPrivate()) {
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
                     $commandId = 'console.command.public_alias.'.$id;
                     $container->setAlias($commandId, $id)->setPublic(true);
                     $id = $commandId;
@@ -88,23 +91,16 @@ class AddConsoleCommandPass implements CompilerPassInterface
                 continue;
             }
 
-            $description = $tags[0]['description'] ?? null;
-
             unset($tags[0]);
             $lazyCommandMap[$commandName] = $id;
             $lazyCommandRefs[$id] = new TypedReference($id, $class);
-
-            foreach ($aliases as $alias) {
-                $lazyCommandMap[$alias] = $id;
-            }
+            $aliases = [];
 
             foreach ($tags as $tag) {
                 if (isset($tag['command'])) {
                     $aliases[] = $tag['command'];
                     $lazyCommandMap[$tag['command']] = $id;
                 }
-
-                $description = $description ?? $tag['description'] ?? null;
             }
 
             $definition->addMethodCall('setName', [$commandName]);
@@ -112,6 +108,7 @@ class AddConsoleCommandPass implements CompilerPassInterface
             if ($aliases) {
                 $definition->addMethodCall('setAliases', [$aliases]);
             }
+<<<<<<< HEAD
 
             if ($isHidden) {
                 $definition->addMethodCall('setHidden', [true]);
@@ -135,6 +132,8 @@ class AddConsoleCommandPass implements CompilerPassInterface
 
                 $lazyCommandRefs[$id] = new Reference('.'.$id.'.lazy');
             }
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
         $container

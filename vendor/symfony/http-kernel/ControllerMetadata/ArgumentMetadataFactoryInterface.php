@@ -19,7 +19,11 @@ namespace Symfony\Component\HttpKernel\ControllerMetadata;
 interface ArgumentMetadataFactoryInterface
 {
     /**
+<<<<<<< HEAD
      * @param string|object|array $controller The controller to resolve the arguments for
+=======
+     * @param mixed $controller The controller to resolve the arguments for
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @return ArgumentMetadata[]
      */

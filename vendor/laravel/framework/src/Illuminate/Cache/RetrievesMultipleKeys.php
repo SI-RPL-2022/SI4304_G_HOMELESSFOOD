@@ -16,12 +16,8 @@ trait RetrievesMultipleKeys
     {
         $return = [];
 
-        $keys = collect($keys)->mapWithKeys(function ($value, $key) {
-            return [is_string($key) ? $key : $value => is_string($key) ? $value : null];
-        })->all();
-
-        foreach ($keys as $key => $default) {
-            $return[$key] = $this->get($key, $default);
+        foreach ($keys as $key) {
+            $return[$key] = $this->get($key);
         }
 
         return $return;

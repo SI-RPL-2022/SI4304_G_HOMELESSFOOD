@@ -43,13 +43,18 @@ trait ManagesTransactions
             try {
                 if ($this->transactions == 1) {
                     $this->getPdo()->commit();
+
+                    optional($this->transactionsManager)->commit($this->getName());
                 }
 
                 $this->transactions = max(0, $this->transactions - 1);
+<<<<<<< HEAD
 
                 if ($this->transactions == 0) {
                     optional($this->transactionsManager)->commit($this->getName());
                 }
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
             } catch (Throwable $e) {
                 $this->handleCommitTransactionException(
                     $e, $currentAttempt, $attempts
@@ -189,14 +194,19 @@ trait ManagesTransactions
     {
         if ($this->transactions == 1) {
             $this->getPdo()->commit();
+
+            optional($this->transactionsManager)->commit($this->getName());
         }
 
         $this->transactions = max(0, $this->transactions - 1);
 
+<<<<<<< HEAD
         if ($this->transactions == 0) {
             optional($this->transactionsManager)->commit($this->getName());
         }
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         $this->fireConnectionEvent('committed');
     }
 
@@ -318,10 +328,7 @@ trait ManagesTransactions
     /**
      * Execute the callback after a transaction commits.
      *
-     * @param  callable  $callback
      * @return void
-     *
-     * @throws \RuntimeException
      */
     public function afterCommit($callback)
     {

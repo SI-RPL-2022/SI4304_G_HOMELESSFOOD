@@ -24,10 +24,16 @@
         "illuminate/filesystem": "^8.0",
         "illuminate/pipeline": "^8.0",
         "illuminate/support": "^8.0",
+<<<<<<< HEAD
         "laravel/serializable-closure": "^1.0",
         "opis/closure": "^3.6",
         "ramsey/uuid": "^4.2.2",
         "symfony/process": "^5.4"
+=======
+        "opis/closure": "^3.6",
+        "ramsey/uuid": "^4.0",
+        "symfony/process": "^5.1"
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     },
     "autoload": {
         "psr-4": {
@@ -42,7 +48,11 @@
     "suggest": {
         "ext-pcntl": "Required to use all features of the queue worker.",
         "ext-posix": "Required to use all features of the queue worker.",
+<<<<<<< HEAD
         "aws/aws-sdk-php": "Required to use the SQS queue driver and DynamoDb failed job storage (^3.198.1).",
+=======
+        "aws/aws-sdk-php": "Required to use the SQS queue driver and DynamoDb failed job storage (^3.155).",
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         "illuminate/redis": "Required to use the Redis queue driver (^8.0).",
         "pda/pheanstalk": "Required to use the Beanstalk queue driver (^4.0)."
     },

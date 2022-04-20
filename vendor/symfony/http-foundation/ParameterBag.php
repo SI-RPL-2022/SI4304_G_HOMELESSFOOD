@@ -17,8 +17,6 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
  * ParameterBag is a container for key/value pairs.
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @implements \IteratorAggregate<string, mixed>
  */
 class ParameterBag implements \IteratorAggregate, \Countable
 {
@@ -37,7 +35,11 @@ class ParameterBag implements \IteratorAggregate, \Countable
      *
      * @param string|null $key The name of the parameter to return or null to get them all
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array An array of parameters
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function all(/*string $key = null*/)
     {
@@ -57,7 +59,11 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the parameter keys.
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array An array of parameter keys
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function keys()
     {
@@ -105,7 +111,11 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns true if the parameter is defined.
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool true if the parameter exists, false otherwise
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function has(string $key)
     {
@@ -123,7 +133,11 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the alphabetic characters of the parameter value.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The filtered value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getAlpha(string $key, string $default = '')
     {
@@ -133,7 +147,11 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the alphabetic characters and digits of the parameter value.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The filtered value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getAlnum(string $key, string $default = '')
     {
@@ -143,7 +161,11 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the digits of the parameter value.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The filtered value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getDigits(string $key, string $default = '')
     {
@@ -154,7 +176,11 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the parameter value converted to integer.
      *
+<<<<<<< HEAD
      * @return int
+=======
+     * @return int The filtered value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getInt(string $key, int $default = 0)
     {
@@ -164,7 +190,11 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the parameter value converted to boolean.
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool The filtered value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getBoolean(string $key, bool $default = false)
     {
@@ -207,9 +237,12 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns an iterator for parameters.
      *
-     * @return \ArrayIterator<string, mixed>
+     * @return \ArrayIterator An \ArrayIterator instance
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function getIterator()
     {
         return new \ArrayIterator($this->parameters);
@@ -218,9 +251,14 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the number of parameters.
      *
+<<<<<<< HEAD
      * @return int
      */
     #[\ReturnTypeWillChange]
+=======
+     * @return int The number of parameters
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function count()
     {
         return \count($this->parameters);

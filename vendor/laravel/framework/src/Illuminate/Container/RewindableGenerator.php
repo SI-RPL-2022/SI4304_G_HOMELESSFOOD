@@ -39,7 +39,10 @@ class RewindableGenerator implements Countable, IteratorAggregate
      *
      * @return mixed
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function getIterator()
     {
         return ($this->generator)();
@@ -50,7 +53,10 @@ class RewindableGenerator implements Countable, IteratorAggregate
      *
      * @return int
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function count()
     {
         if (is_callable($count = $this->count)) {

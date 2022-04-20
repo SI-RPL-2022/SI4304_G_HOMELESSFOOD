@@ -16,7 +16,11 @@
     "require": {
         "php": "^7.3|^8.0",
         "ext-json": "*",
+<<<<<<< HEAD
         "psr/log": "^1.0|^2.0",
+=======
+        "psr/log": "^1.0",
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         "illuminate/bus": "^8.0",
         "illuminate/collections": "^8.0",
         "illuminate/contracts": "^8.0",
@@ -34,8 +38,12 @@
         }
     },
     "suggest": {
+<<<<<<< HEAD
         "ably/ably-php": "Required to use the Ably broadcast driver (^1.0).",
         "pusher/pusher-php-server": "Required to use the Pusher broadcast driver (^4.0|^5.0|^6.0|^7.0)."
+=======
+        "pusher/pusher-php-server": "Required to use the Pusher broadcast driver (^4.0)."
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     },
     "config": {
         "sort-packages": true

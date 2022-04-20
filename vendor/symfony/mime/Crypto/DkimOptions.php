@@ -28,7 +28,11 @@ final class DkimOptions
     /**
      * @return $this
      */
+<<<<<<< HEAD
     public function algorithm(string $algo): self
+=======
+    public function algorithm(int $algo): self
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         $this->options['algorithm'] = $algo;
 

@@ -24,7 +24,11 @@ interface ArgumentResolverInterface
     /**
      * Returns the arguments to pass to the controller.
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array An array of arguments to pass to the controller
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \RuntimeException When no value could be provided for a required argument
      */

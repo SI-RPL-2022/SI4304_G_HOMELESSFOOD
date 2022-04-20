@@ -130,7 +130,7 @@ trait HasTimestamps
     /**
      * Get the fully qualified "created at" column.
      *
-     * @return string|null
+     * @return string
      */
     public function getQualifiedCreatedAtColumn()
     {
@@ -140,7 +140,7 @@ trait HasTimestamps
     /**
      * Get the fully qualified "updated at" column.
      *
-     * @return string|null
+     * @return string
      */
     public function getQualifiedUpdatedAtColumn()
     {

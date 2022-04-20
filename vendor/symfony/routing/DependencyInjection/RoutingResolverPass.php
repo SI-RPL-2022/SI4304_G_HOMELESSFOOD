@@ -30,10 +30,13 @@ class RoutingResolverPass implements CompilerPassInterface
 
     public function __construct(string $resolverServiceId = 'routing.resolver', string $loaderTag = 'routing.loader')
     {
+<<<<<<< HEAD
         if (0 < \func_num_args()) {
             trigger_deprecation('symfony/routing', '5.3', 'Configuring "%s" is deprecated.', __CLASS__);
         }
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         $this->resolverServiceId = $resolverServiceId;
         $this->loaderTag = $loaderTag;
     }

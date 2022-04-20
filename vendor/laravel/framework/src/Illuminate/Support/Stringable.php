@@ -3,15 +3,12 @@
 namespace Illuminate\Support;
 
 use Closure;
-use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use JsonSerializable;
 use Symfony\Component\VarDumper\VarDumper;
 
-class Stringable implements JsonSerializable
+class Stringable
 {
-    use Conditionable, Macroable, Tappable;
+    use Macroable;
 
     /**
      * The underlying string value.
@@ -259,16 +256,6 @@ class Stringable implements JsonSerializable
     }
 
     /**
-     * Determine if a given string is a valid UUID.
-     *
-     * @return bool
-     */
-    public function isUuid()
-    {
-        return Str::isUuid($this->value);
-    }
-
-    /**
      * Determine if the given string is empty.
      *
      * @return bool
@@ -332,39 +319,20 @@ class Stringable implements JsonSerializable
     }
 
     /**
-     * Convert GitHub flavored Markdown into HTML.
-     *
-     * @param  array  $options
-     * @return static
-     */
-    public function markdown(array $options = [])
-    {
-        return new static(Str::markdown($this->value, $options));
-    }
-
-    /**
-     * Masks a portion of a string with a repeated character.
-     *
-     * @param  string  $character
-     * @param  int  $index
-     * @param  int|null  $length
-     * @param  string  $encoding
-     * @return static
-     */
-    public function mask($character, $index, $length = null, $encoding = 'UTF-8')
-    {
-        return new static(Str::mask($this->value, $character, $index, $length, $encoding));
-    }
-
-    /**
      * Get the string matching the given pattern.
      *
      * @param  string  $pattern
-     * @return static
+     * @return static|null
      */
     public function match($pattern)
     {
-        return new static(Str::match($pattern, $this->value));
+        preg_match($pattern, $this->value, $matches);
+
+        if (! $matches) {
+            return new static;
+        }
+
+        return new static($matches[1] ?? $matches[0]);
     }
 
     /**
@@ -375,18 +343,13 @@ class Stringable implements JsonSerializable
      */
     public function matchAll($pattern)
     {
-        return Str::matchAll($pattern, $this->value);
-    }
+        preg_match_all($pattern, $this->value, $matches);
 
-    /**
-     * Determine if the string matches the given pattern.
-     *
-     * @param  string  $pattern
-     * @return bool
-     */
-    public function test($pattern)
-    {
-        return $this->match($pattern)->isNotEmpty();
+        if (empty($matches[0])) {
+            return collect();
+        }
+
+        return collect($matches[1] ?? $matches[0]);
     }
 
     /**
@@ -437,6 +400,7 @@ class Stringable implements JsonSerializable
     }
 
     /**
+<<<<<<< HEAD
      * Call the given callback and return a new string.
      *
      * @param  callable  $callback
@@ -448,6 +412,8 @@ class Stringable implements JsonSerializable
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Get the plural form of an English word.
      *
      * @param  int  $count
@@ -481,6 +447,7 @@ class Stringable implements JsonSerializable
     }
 
     /**
+<<<<<<< HEAD
      * Remove any occurrence of the given string in the subject.
      *
      * @param  string|array<string>  $search
@@ -514,6 +481,8 @@ class Stringable implements JsonSerializable
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Replace the given value in the given string.
      *
      * @param  string|string[]  $search
@@ -579,17 +548,6 @@ class Stringable implements JsonSerializable
     }
 
     /**
-     * Parse input from a string to a collection, according to a format.
-     *
-     * @param  string  $format
-     * @return \Illuminate\Support\Collection
-     */
-    public function scan($format)
-    {
-        return collect(sscanf($this->value, $format));
-    }
-
-    /**
      * Begin a string with a single instance of a given value.
      *
      * @param  string  $prefix
@@ -598,17 +556,6 @@ class Stringable implements JsonSerializable
     public function start($prefix)
     {
         return new static(Str::start($this->value, $prefix));
-    }
-
-    /**
-     * Strip HTML and PHP tags from the given string.
-     *
-     * @param  string  $allowedTags
-     * @return static
-     */
-    public function stripTags($allowedTags = null)
-    {
-        return new static(strip_tags($this->value, $allowedTags));
     }
 
     /**
@@ -629,16 +576,6 @@ class Stringable implements JsonSerializable
     public function title()
     {
         return new static(Str::title($this->value));
-    }
-
-    /**
-     * Convert the given string to title case for each word.
-     *
-     * @return static
-     */
-    public function headline()
-    {
-        return new static(Str::headline($this->value));
     }
 
     /**
@@ -696,7 +633,7 @@ class Stringable implements JsonSerializable
     }
 
     /**
-     * Returns the portion of the string specified by the start and length parameters.
+     * Returns the portion of string specified by the start and length parameters.
      *
      * @param  int  $start
      * @param  int|null  $length
@@ -717,31 +654,7 @@ class Stringable implements JsonSerializable
      */
     public function substrCount($needle, $offset = null, $length = null)
     {
-        return Str::substrCount($this->value, $needle, $offset ?? 0, $length);
-    }
-
-    /**
-     * Replace text within a portion of a string.
-     *
-     * @param  string|array  $replace
-     * @param  array|int  $offset
-     * @param  array|int|null  $length
-     * @return static
-     */
-    public function substrReplace($replace, $offset = 0, $length = null)
-    {
-        return new static(Str::substrReplace($this->value, $replace, $offset, $length));
-    }
-
-    /**
-     * Swap multiple keywords in a string with other keywords.
-     *
-     * @param  array  $map
-     * @return static
-     */
-    public function swap(array $map)
-    {
-        return new static(strtr($this->value, $map));
+        return Str::substrCount($this->value, $needle, $offset, $length);
     }
 
     /**
@@ -788,8 +701,9 @@ class Stringable implements JsonSerializable
     }
 
     /**
-     * Split a string by uppercase characters.
+     * Apply the callback's string changes if the given "value" is true.
      *
+<<<<<<< HEAD
      * @return \Illuminate\Support\Collection
      */
     public function ucsplit()
@@ -801,52 +715,36 @@ class Stringable implements JsonSerializable
      * Execute the given callback if the string contains a given substring.
      *
      * @param  string|array  $needles
+=======
+     * @param  mixed  $value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @param  callable  $callback
      * @param  callable|null  $default
-     * @return static
+     * @return mixed|$this
      */
-    public function whenContains($needles, $callback, $default = null)
+    public function when($value, $callback, $default = null)
     {
-        return $this->when($this->contains($needles), $callback, $default);
-    }
+        if ($value) {
+            return $callback($this, $value) ?: $this;
+        } elseif ($default) {
+            return $default($this, $value) ?: $this;
+        }
 
-    /**
-     * Execute the given callback if the string contains all array values.
-     *
-     * @param  array  $needles
-     * @param  callable  $callback
-     * @param  callable|null  $default
-     * @return static
-     */
-    public function whenContainsAll(array $needles, $callback, $default = null)
-    {
-        return $this->when($this->containsAll($needles), $callback, $default);
+        return $this;
     }
 
     /**
      * Execute the given callback if the string is empty.
      *
      * @param  callable  $callback
-     * @param  callable|null  $default
      * @return static
      */
-    public function whenEmpty($callback, $default = null)
+    public function whenEmpty($callback)
     {
-        return $this->when($this->isEmpty(), $callback, $default);
-    }
+        if ($this->isEmpty()) {
+            $result = $callback($this);
 
-    /**
-     * Execute the given callback if the string is not empty.
-     *
-     * @param  callable  $callback
-     * @param  callable|null  $default
-     * @return static
-     */
-    public function whenNotEmpty($callback, $default = null)
-    {
-        return $this->when($this->isNotEmpty(), $callback, $default);
-    }
-
+<<<<<<< HEAD
     /**
      * Execute the given callback if the string ends with a given substring.
      *
@@ -922,18 +820,12 @@ class Stringable implements JsonSerializable
     {
         return $this->when($this->startsWith($needles), $callback, $default);
     }
+=======
+            return is_null($result) ? $this : $result;
+        }
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
-    /**
-     * Execute the given callback if the string matches the given pattern.
-     *
-     * @param  string  $pattern
-     * @param  callable  $callback
-     * @param  callable|null  $default
-     * @return static
-     */
-    public function whenTest($pattern, $callback, $default = null)
-    {
-        return $this->when($this->test($pattern), $callback, $default);
+        return $this;
     }
 
     /**
@@ -949,6 +841,7 @@ class Stringable implements JsonSerializable
     }
 
     /**
+<<<<<<< HEAD
      * Get the number of words a string contains.
      *
      * @return int
@@ -969,6 +862,8 @@ class Stringable implements JsonSerializable
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Dump the string.
      *
      * @return $this
@@ -983,7 +878,7 @@ class Stringable implements JsonSerializable
     /**
      * Dump the string and end the script.
      *
-     * @return never
+     * @return void
      */
     public function dd()
     {
@@ -993,6 +888,7 @@ class Stringable implements JsonSerializable
     }
 
     /**
+<<<<<<< HEAD
      * Convert the object to a string when JSON encoded.
      *
      * @return string
@@ -1004,6 +900,8 @@ class Stringable implements JsonSerializable
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Proxy dynamic properties onto methods.
      *
      * @param  string  $key

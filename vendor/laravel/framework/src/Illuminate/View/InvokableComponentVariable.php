@@ -43,7 +43,10 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
      *
      * @return \ArrayIterator
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function getIterator()
     {
         $result = $this->__invoke();

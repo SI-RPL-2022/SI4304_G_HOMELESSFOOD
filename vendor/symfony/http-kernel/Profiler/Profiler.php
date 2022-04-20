@@ -63,7 +63,11 @@ class Profiler implements ResetInterface
     /**
      * Loads the Profile for the given Response.
      *
+<<<<<<< HEAD
      * @return Profile|null
+=======
+     * @return Profile|null A Profile instance
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function loadProfileFromResponse(Response $response)
     {
@@ -77,7 +81,11 @@ class Profiler implements ResetInterface
     /**
      * Loads the Profile for the given token.
      *
+<<<<<<< HEAD
      * @return Profile|null
+=======
+     * @return Profile|null A Profile instance
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function loadProfile(string $token)
     {
@@ -120,7 +128,11 @@ class Profiler implements ResetInterface
      * @param string|null $start The start date to search from
      * @param string|null $end   The end date to search to
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array An array of tokens
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @see https://php.net/datetime.formats for the supported date/time formats
      */
@@ -132,7 +144,11 @@ class Profiler implements ResetInterface
     /**
      * Collects data for the given Response.
      *
+<<<<<<< HEAD
      * @return Profile|null
+=======
+     * @return Profile|null A Profile instance or null if the profiler is disabled
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
@@ -178,7 +194,11 @@ class Profiler implements ResetInterface
     /**
      * Gets the Collectors associated with this profiler.
      *
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array An array of collectors
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function all()
     {
@@ -223,7 +243,11 @@ class Profiler implements ResetInterface
      *
      * @param string $name A collector name
      *
+<<<<<<< HEAD
      * @return DataCollectorInterface
+=======
+     * @return DataCollectorInterface A DataCollectorInterface instance
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \InvalidArgumentException if the collector does not exist
      */

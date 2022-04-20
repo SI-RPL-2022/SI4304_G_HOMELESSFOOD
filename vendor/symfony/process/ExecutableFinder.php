@@ -44,7 +44,11 @@ class ExecutableFinder
      * @param string|null $default   The default to return if no executable is found
      * @param array       $extraDirs Additional dirs to check into
      *
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The executable path or default value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function find(string $name, string $default = null, array $extraDirs = [])
     {

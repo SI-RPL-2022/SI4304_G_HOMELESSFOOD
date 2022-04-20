@@ -47,10 +47,11 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function open($savePath, $sessionName)
     {
         return true;
@@ -58,10 +59,11 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function close()
     {
         return true;
@@ -69,10 +71,11 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return string|false
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function read($sessionId)
     {
         $value = $this->request->cookies->get($sessionId) ?: '';
@@ -88,10 +91,11 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function write($sessionId, $data)
     {
         $this->cookie->queue($sessionId, json_encode([
@@ -104,10 +108,11 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function destroy($sessionId)
     {
         $this->cookie->queue($this->cookie->forget($sessionId));
@@ -117,10 +122,14 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
+<<<<<<< HEAD
      *
      * @return int|false
      */
     #[\ReturnTypeWillChange]
+=======
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function gc($lifetime)
     {
         return true;

@@ -2,8 +2,15 @@
 
 namespace Illuminate\Support;
 
+<<<<<<< HEAD
 use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
+=======
+use Doctrine\Inflector\CachedWordInflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\Rules\English;
+use Doctrine\Inflector\RulesetInflector;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
 class Pluralizer
 {
@@ -62,16 +69,12 @@ class Pluralizer
      * Get the plural form of an English word.
      *
      * @param  string  $value
-     * @param  int|array|\Countable  $count
+     * @param  int  $count
      * @return string
      */
     public static function plural($value, $count = 2)
     {
-        if (is_countable($count)) {
-            $count = count($count);
-        }
-
-        if ((int) abs($count) === 1 || static::uncountable($value) || preg_match('/^(.*)[A-Za-z0-9\x{0080}-\x{FFFF}]$/u', $value) == 0) {
+        if ((int) abs($count) === 1 || static::uncountable($value)) {
             return $value;
         }
 
@@ -134,7 +137,14 @@ class Pluralizer
         static $inflector;
 
         if (is_null($inflector)) {
-            $inflector = InflectorFactory::createForLanguage('english')->build();
+            $inflector = new Inflector(
+                new CachedWordInflector(new RulesetInflector(
+                    English\Rules::getSingularRuleset()
+                )),
+                new CachedWordInflector(new RulesetInflector(
+                    English\Rules::getPluralRuleset()
+                ))
+            );
         }
 
         return $inflector;

@@ -179,7 +179,7 @@ abstract class Grammar
      * Get the value of a raw expression.
      *
      * @param  \Illuminate\Database\Query\Expression  $expression
-     * @return mixed
+     * @return string
      */
     public function getValue($expression)
     {

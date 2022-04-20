@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
 
 /**
+ * LogDataCollector.
+ *
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @final
@@ -28,9 +30,12 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
     private $containerPathPrefix;
     private $currentRequest;
     private $requestStack;
+<<<<<<< HEAD
     private $processedLogs;
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
-    public function __construct(object $logger = null, string $containerPathPrefix = null, RequestStack $requestStack = null)
+    public function __construct($logger = null, string $containerPathPrefix = null, RequestStack $requestStack = null)
     {
         if (null !== $logger && $logger instanceof DebugLoggerInterface) {
             $this->logger = $logger;
@@ -45,7 +50,7 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
      */
     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
-        $this->currentRequest = $this->requestStack && $this->requestStack->getMainRequest() !== $request ? $request : null;
+        $this->currentRequest = $this->requestStack && $this->requestStack->getMasterRequest() !== $request ? $request : null;
     }
 
     /**
@@ -78,108 +83,32 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
 
     public function getLogs()
     {
-        return $this->data['logs'] ?? [];
-    }
-
-    public function getProcessedLogs()
-    {
-        if (null !== $this->processedLogs) {
-            return $this->processedLogs;
-        }
-
-        $rawLogs = $this->getLogs();
-        if ([] === $rawLogs) {
-            return $this->processedLogs = $rawLogs;
-        }
-
-        $logs = [];
-        foreach ($this->getLogs()->getValue() as $rawLog) {
-            $rawLogData = $rawLog->getValue();
-
-            if ($rawLogData['priority']->getValue() > 300) {
-                $logType = 'error';
-            } elseif (isset($rawLogData['scream']) && false === $rawLogData['scream']->getValue()) {
-                $logType = 'deprecation';
-            } elseif (isset($rawLogData['scream']) && true === $rawLogData['scream']->getValue()) {
-                $logType = 'silenced';
-            } else {
-                $logType = 'regular';
-            }
-
-            $logs[] = [
-                'type' => $logType,
-                'errorCount' => $rawLog['errorCount'] ?? 1,
-                'timestamp' => $rawLogData['timestamp_rfc3339']->getValue(),
-                'priority' => $rawLogData['priority']->getValue(),
-                'priorityName' => $rawLogData['priorityName']->getValue(),
-                'channel' => $rawLogData['channel']->getValue(),
-                'message' => $rawLogData['message'],
-                'context' => $rawLogData['context'],
-            ];
-        }
-
-        // sort logs from oldest to newest
-        usort($logs, static function ($logA, $logB) {
-            return $logA['timestamp'] <=> $logB['timestamp'];
-        });
-
-        return $this->processedLogs = $logs;
-    }
-
-    public function getFilters()
-    {
-        $filters = [
-            'channel' => [],
-            'priority' => [
-                'Debug' => 100,
-                'Info' => 200,
-                'Notice' => 250,
-                'Warning' => 300,
-                'Error' => 400,
-                'Critical' => 500,
-                'Alert' => 550,
-                'Emergency' => 600,
-            ],
-        ];
-
-        $allChannels = [];
-        foreach ($this->getProcessedLogs() as $log) {
-            if ('' === trim($log['channel'])) {
-                continue;
-            }
-
-            $allChannels[] = $log['channel'];
-        }
-        $channels = array_unique($allChannels);
-        sort($channels);
-        $filters['channel'] = $channels;
-
-        return $filters;
+        return isset($this->data['logs']) ? $this->data['logs'] : [];
     }
 
     public function getPriorities()
     {
-        return $this->data['priorities'] ?? [];
+        return isset($this->data['priorities']) ? $this->data['priorities'] : [];
     }
 
     public function countErrors()
     {
-        return $this->data['error_count'] ?? 0;
+        return isset($this->data['error_count']) ? $this->data['error_count'] : 0;
     }
 
     public function countDeprecations()
     {
-        return $this->data['deprecation_count'] ?? 0;
+        return isset($this->data['deprecation_count']) ? $this->data['deprecation_count'] : 0;
     }
 
     public function countWarnings()
     {
-        return $this->data['warning_count'] ?? 0;
+        return isset($this->data['warning_count']) ? $this->data['warning_count'] : 0;
     }
 
     public function countScreams()
     {
-        return $this->data['scream_count'] ?? 0;
+        return isset($this->data['scream_count']) ? $this->data['scream_count'] : 0;
     }
 
     public function getCompilerLogs()
@@ -190,7 +119,7 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName()
     {
         return 'logger';
     }
@@ -210,7 +139,6 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
         foreach (unserialize($logContent) as $log) {
             $log['context'] = ['exception' => new SilencedErrorContext($log['type'], $log['file'], $log['line'], $log['trace'], $log['count'])];
             $log['timestamp'] = $bootTime;
-            $log['timestamp_rfc3339'] = (new \DateTimeImmutable())->setTimestamp($bootTime)->format(\DateTimeInterface::RFC3339_EXTENDED);
             $log['priority'] = 100;
             $log['priorityName'] = 'DEBUG';
             $log['channel'] = null;

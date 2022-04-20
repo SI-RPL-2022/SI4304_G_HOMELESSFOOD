@@ -136,14 +136,4 @@ class DatabaseLock extends Lock
     {
         return optional($this->connection->table($this->table)->where('key', $this->name)->first())->owner;
     }
-
-    /**
-     * Get the name of the database connection being used to manage the lock.
-     *
-     * @return string
-     */
-    public function getConnectionName()
-    {
-        return $this->connection->getName();
-    }
 }

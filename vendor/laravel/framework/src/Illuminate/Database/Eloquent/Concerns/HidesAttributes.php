@@ -94,7 +94,9 @@ trait HidesAttributes
      */
     public function makeVisibleIf($condition, $attributes)
     {
-        return value($condition, $this) ? $this->makeVisible($attributes) : $this;
+        $condition = $condition instanceof Closure ? $condition($this) : $condition;
+
+        return $condition ? $this->makeVisible($attributes) : $this;
     }
 
     /**
@@ -121,6 +123,8 @@ trait HidesAttributes
      */
     public function makeHiddenIf($condition, $attributes)
     {
-        return value($condition, $this) ? $this->makeHidden($attributes) : $this;
+        $condition = $condition instanceof Closure ? $condition($this) : $condition;
+
+        return value($condition) ? $this->makeHidden($attributes) : $this;
     }
 }

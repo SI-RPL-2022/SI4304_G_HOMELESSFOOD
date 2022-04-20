@@ -1,6 +1,7 @@
 CHANGELOG
 =========
 
+<<<<<<< HEAD
 5.4
 ---
 
@@ -23,6 +24,8 @@ CHANGELOG
  * Add `#[AsController]` attribute for declaring standalone controllers on PHP 8
  * Add `FragmentUriGeneratorInterface` and `FragmentUriGenerator` to generate the URI of a fragment
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 5.2.0
 -----
 

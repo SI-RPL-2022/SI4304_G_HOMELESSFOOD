@@ -43,7 +43,11 @@ trait ServiceLocatorTrait
      *
      * @return bool
      */
+<<<<<<< HEAD
     public function has(string $id)
+=======
+    public function has($id)
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         return isset($this->factories[$id]);
     }
@@ -53,7 +57,11 @@ trait ServiceLocatorTrait
      *
      * @return mixed
      */
+<<<<<<< HEAD
     public function get(string $id)
+=======
+    public function get($id)
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         if (!isset($this->factories[$id])) {
             throw $this->createNotFoundException($id);

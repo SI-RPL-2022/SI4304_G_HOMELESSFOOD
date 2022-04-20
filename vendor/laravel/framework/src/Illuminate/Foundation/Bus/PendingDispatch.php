@@ -2,7 +2,6 @@
 
 namespace Illuminate\Foundation\Bus;
 
-use Illuminate\Bus\UniqueLock;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Cache\Repository as Cache;
@@ -101,30 +100,6 @@ class PendingDispatch
     }
 
     /**
-     * Indicate that the job should be dispatched after all database transactions have committed.
-     *
-     * @return $this
-     */
-    public function afterCommit()
-    {
-        $this->job->afterCommit();
-
-        return $this;
-    }
-
-    /**
-     * Indicate that the job should not wait until database transactions have been committed before dispatching.
-     *
-     * @return $this
-     */
-    public function beforeCommit()
-    {
-        $this->job->beforeCommit();
-
-        return $this;
-    }
-
-    /**
      * Set the jobs that should run if this job is successful.
      *
      * @param  array  $chain
@@ -160,8 +135,18 @@ class PendingDispatch
             return true;
         }
 
-        return (new UniqueLock(Container::getInstance()->make(Cache::class)))
-                    ->acquire($this->job);
+        $uniqueId = method_exists($this->job, 'uniqueId')
+                    ? $this->job->uniqueId()
+                    : ($this->job->uniqueId ?? '');
+
+        $cache = method_exists($this->job, 'uniqueVia')
+                    ? $this->job->uniqueVia()
+                    : Container::getInstance()->make(Cache::class);
+
+        return (bool) $cache->lock(
+            $key = 'laravel_unique_job:'.get_class($this->job).$uniqueId,
+            $this->job->uniqueFor ?? 0
+        )->get();
     }
 
     /**

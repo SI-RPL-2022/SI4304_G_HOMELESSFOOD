@@ -10,7 +10,6 @@ class RedisTaggedCache extends TaggedCache
      * @var string
      */
     const REFERENCE_KEY_FOREVER = 'forever_ref';
-
     /**
      * Standard reference key.
      *
@@ -42,13 +41,13 @@ class RedisTaggedCache extends TaggedCache
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return int|bool
+     * @return void
      */
     public function increment($key, $value = 1)
     {
         $this->pushStandardKeys($this->tags->getNamespace(), $key);
 
-        return parent::increment($key, $value);
+        parent::increment($key, $value);
     }
 
     /**
@@ -56,13 +55,13 @@ class RedisTaggedCache extends TaggedCache
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return int|bool
+     * @return void
      */
     public function decrement($key, $value = 1)
     {
         $this->pushStandardKeys($this->tags->getNamespace(), $key);
 
-        return parent::decrement($key, $value);
+        parent::decrement($key, $value);
     }
 
     /**
@@ -89,9 +88,7 @@ class RedisTaggedCache extends TaggedCache
         $this->deleteForeverKeys();
         $this->deleteStandardKeys();
 
-        $this->tags->flush();
-
-        return true;
+        return parent::flush();
     }
 
     /**
@@ -178,26 +175,13 @@ class RedisTaggedCache extends TaggedCache
      */
     protected function deleteValues($referenceKey)
     {
-        $cursor = $defaultCursorValue = '0';
+        $values = array_unique($this->store->connection()->smembers($referenceKey));
 
-        do {
-            [$cursor, $valuesChunk] = $this->store->connection()->sscan(
-                $referenceKey, $cursor, ['match' => '*', 'count' => 1000]
-            );
-
-            // PhpRedis client returns false if set does not exist or empty. Array destruction
-            // on false stores null in each variable. If valuesChunk is null, it means that
-            // there were not results from the previously executed "sscan" Redis command.
-            if (is_null($valuesChunk)) {
-                break;
-            }
-
-            $valuesChunk = array_unique($valuesChunk);
-
-            if (count($valuesChunk) > 0) {
+        if (count($values) > 0) {
+            foreach (array_chunk($values, 1000) as $valuesChunk) {
                 $this->store->connection()->del(...$valuesChunk);
             }
-        } while (((string) $cursor) !== $defaultCursorValue);
+        }
     }
 
     /**

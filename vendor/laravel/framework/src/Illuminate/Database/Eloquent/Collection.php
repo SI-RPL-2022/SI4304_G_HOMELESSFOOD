@@ -92,9 +92,7 @@ class Collection extends BaseCollection implements QueueableCollection
         $this->each(function ($model) use ($models, $attributes) {
             $extraAttributes = Arr::only($models->get($model->getKey())->getAttributes(), $attributes);
 
-            $model->forceFill($extraAttributes)
-                ->syncOriginalAttributes($attributes)
-                ->mergeCasts($models->get($model->getKey())->getCasts());
+            $model->forceFill($extraAttributes)->syncOriginalAttributes($attributes);
         });
 
         return $this;
@@ -160,6 +158,7 @@ class Collection extends BaseCollection implements QueueableCollection
     }
 
     /**
+<<<<<<< HEAD
      * Load a set of related existences onto the collection.
      *
      * @param  array|string  $relations
@@ -171,6 +170,8 @@ class Collection extends BaseCollection implements QueueableCollection
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Load a set of relationships onto the collection if they are not already eager loaded.
      *
      * @param  array|string  $relations
@@ -234,7 +235,7 @@ class Collection extends BaseCollection implements QueueableCollection
             return;
         }
 
-        $models = $models->pluck($name)->whereNotNull();
+        $models = $models->pluck($name);
 
         if ($models->first() instanceof BaseCollection) {
             $models = $models->collapse();
@@ -694,7 +695,7 @@ class Collection extends BaseCollection implements QueueableCollection
         } elseif (count($relations) === 1) {
             return reset($relations);
         } else {
-            return array_intersect(...array_values($relations));
+            return array_intersect(...$relations);
         }
     }
 

@@ -34,9 +34,15 @@ class LogTransport extends Transport
     public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
         $this->beforeSendPerformed($message);
+<<<<<<< HEAD
 
         $this->logger->debug($this->getMimeEntityString($message));
 
+=======
+
+        $this->logger->debug($this->getMimeEntityString($message));
+
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         $this->sendPerformed($message);
 
         return $this->numberOfRecipients($message);

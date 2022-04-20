@@ -33,7 +33,10 @@ class StrictSessionHandler extends AbstractSessionHandler
     /**
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function open($savePath, $sessionName)
     {
         parent::open($savePath, $sessionName);
@@ -52,7 +55,10 @@ class StrictSessionHandler extends AbstractSessionHandler
     /**
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function updateTimestamp($sessionId, $data)
     {
         return $this->write($sessionId, $data);
@@ -69,7 +75,10 @@ class StrictSessionHandler extends AbstractSessionHandler
     /**
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function destroy($sessionId)
     {
         $this->doDestroy = true;
@@ -91,16 +100,24 @@ class StrictSessionHandler extends AbstractSessionHandler
     /**
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function close()
     {
         return $this->handler->close();
     }
 
     /**
+<<<<<<< HEAD
      * @return int|false
      */
     #[\ReturnTypeWillChange]
+=======
+     * @return bool
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function gc($maxlifetime)
     {
         return $this->handler->gc($maxlifetime);

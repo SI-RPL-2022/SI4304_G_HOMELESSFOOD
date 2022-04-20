@@ -19,13 +19,6 @@ class Grammar extends BaseGrammar
     protected $operators = [];
 
     /**
-     * The grammar specific bitwise operators.
-     *
-     * @var array
-     */
-    protected $bitwiseOperators = [];
-
-    /**
      * The components that make up a select clause.
      *
      * @var string[]
@@ -52,7 +45,7 @@ class Grammar extends BaseGrammar
      */
     public function compileSelect(Builder $query)
     {
-        if (($query->unions || $query->havings) && $query->aggregate) {
+        if ($query->unions && $query->aggregate) {
             return $this->compileUnionAggregate($query);
         }
 
@@ -263,18 +256,6 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * Compile a bitwise operator where clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    protected function whereBitwise(Builder $query, $where)
-    {
-        return $this->whereBasic($query, $where);
-    }
-
-    /**
      * Compile a "where in" clause.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
@@ -478,7 +459,7 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * Compile a where clause comparing two columns.
+     * Compile a where clause comparing two columns..
      *
      * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $where
@@ -590,8 +571,7 @@ class Grammar extends BaseGrammar
         $not = $where['not'] ? 'not ' : '';
 
         return $not.$this->compileJsonContains(
-            $where['column'],
-            $this->parameter($where['value'])
+            $where['column'], $this->parameter($where['value'])
         );
     }
 
@@ -630,9 +610,7 @@ class Grammar extends BaseGrammar
     protected function whereJsonLength(Builder $query, $where)
     {
         return $this->compileJsonLength(
-            $where['column'],
-            $where['operator'],
-            $this->parameter($where['value'])
+            $where['column'], $where['operator'], $this->parameter($where['value'])
         );
     }
 
@@ -649,18 +627,6 @@ class Grammar extends BaseGrammar
     protected function compileJsonLength($column, $operator, $value)
     {
         throw new RuntimeException('This database engine does not support JSON length operations.');
-    }
-
-    /**
-     * Compile a "where fulltext" clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    public function whereFullText(Builder $query, $where)
-    {
-        throw new RuntimeException('This database engine does not support fulltext search operations.');
     }
 
     /**
@@ -1032,7 +998,7 @@ class Grammar extends BaseGrammar
     /**
      * Compile an "upsert" statement into SQL.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  \Illuminate\Database\Query\Builder $query
      * @param  array  $values
      * @param  array  $uniqueBy
      * @param  array  $update
@@ -1317,15 +1283,5 @@ class Grammar extends BaseGrammar
     public function getOperators()
     {
         return $this->operators;
-    }
-
-    /**
-     * Get the grammar specific bitwise operators.
-     *
-     * @return array
-     */
-    public function getBitwiseOperators()
-    {
-        return $this->bitwiseOperators;
     }
 }

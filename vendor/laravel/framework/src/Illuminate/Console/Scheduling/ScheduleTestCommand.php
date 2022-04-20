@@ -3,7 +3,13 @@
 namespace Illuminate\Console\Scheduling;
 
 use Illuminate\Console\Command;
+<<<<<<< HEAD
+=======
+use Illuminate\Support\Carbon;
+use Symfony\Component\Console\Attribute\AsCommand;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
+#[AsCommand(name: 'schedule:test')]
 class ScheduleTestCommand extends Command
 {
     /**

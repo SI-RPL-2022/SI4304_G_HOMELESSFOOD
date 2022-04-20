@@ -38,14 +38,14 @@ class Command extends SymfonyCommand
     /**
      * The console command description.
      *
-     * @var string
+     * @var string|null
      */
     protected $description;
 
     /**
      * The console command help text.
      *
-     * @var string
+     * @var string|null
      */
     protected $help;
 
@@ -163,8 +163,6 @@ class Command extends SymfonyCommand
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function isHidden()
     {

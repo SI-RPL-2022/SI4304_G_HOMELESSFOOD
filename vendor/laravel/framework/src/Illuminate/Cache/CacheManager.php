@@ -199,11 +199,7 @@ class CacheManager implements FactoryContract
 
         $connection = $config['connection'] ?? 'default';
 
-        $store = new RedisStore($redis, $this->getPrefix($config), $connection);
-
-        return $this->repository(
-            $store->setLockConnection($config['lock_connection'] ?? $connection)
-        );
+        return $this->repository(new RedisStore($redis, $this->getPrefix($config), $connection));
     }
 
     /**
@@ -216,17 +212,15 @@ class CacheManager implements FactoryContract
     {
         $connection = $this->app['db']->connection($config['connection'] ?? null);
 
-        $store = new DatabaseStore(
-            $connection,
-            $config['table'],
-            $this->getPrefix($config),
-            $config['lock_table'] ?? 'cache_locks',
-            $config['lock_lottery'] ?? [2, 100]
+        return $this->repository(
+            new DatabaseStore(
+                $connection,
+                $config['table'],
+                $this->getPrefix($config),
+                $config['lock_table'] ?? 'cache_locks',
+                $config['lock_lottery'] ?? [2, 100]
+            )
         );
-
-        return $this->repository($store->setLockConnection(
-            $this->app['db']->connection($config['lock_connection'] ?? $config['connection'] ?? null)
-        ));
     }
 
     /**
@@ -237,6 +231,7 @@ class CacheManager implements FactoryContract
      */
     protected function createDynamodbDriver(array $config)
     {
+<<<<<<< HEAD
         $client = $this->newDynamodbClient($config);
 
         return $this->repository(
@@ -258,19 +253,34 @@ class CacheManager implements FactoryContract
      */
     protected function newDynamodbClient(array $config)
     {
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         $dynamoConfig = [
             'region' => $config['region'],
             'version' => 'latest',
             'endpoint' => $config['endpoint'] ?? null,
         ];
 
+<<<<<<< HEAD
         if (isset($config['key']) && isset($config['secret'])) {
+=======
+        if ($config['key'] && $config['secret']) {
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
             $dynamoConfig['credentials'] = Arr::only(
                 $config, ['key', 'secret', 'token']
             );
         }
 
-        return new DynamoDbClient($dynamoConfig);
+        return $this->repository(
+            new DynamoDbStore(
+                new DynamoDbClient($dynamoConfig),
+                $config['table'],
+                $config['attributes']['key'] ?? 'key',
+                $config['attributes']['value'] ?? 'value',
+                $config['attributes']['expiration'] ?? 'expires_at',
+                $this->getPrefix($config)
+            )
+        );
     }
 
     /**

@@ -15,9 +15,8 @@ use function date;
 use function dirname;
 use function substr;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
-use SebastianBergmann\CodeCoverage\InvalidArgumentException;
+use SebastianBergmann\CodeCoverage\Directory as DirectoryUtil;
 use SebastianBergmann\CodeCoverage\Node\Directory as DirectoryNode;
-use SebastianBergmann\CodeCoverage\Util\Filesystem;
 
 final class Facade
 {
@@ -43,12 +42,6 @@ final class Facade
 
     public function __construct(int $lowUpperBound = 50, int $highLowerBound = 90, string $generator = '')
     {
-        if ($lowUpperBound > $highLowerBound) {
-            throw new InvalidArgumentException(
-                '$lowUpperBound must not be larger than $highLowerBound'
-            );
-        }
-
         $this->generator      = $generator;
         $this->highLowerBound = $highLowerBound;
         $this->lowUpperBound  = $lowUpperBound;
@@ -59,7 +52,7 @@ final class Facade
     {
         $target = $this->directory($target);
         $report = $coverage->getReport();
-        $date   = date('D M j G:i:s T Y');
+        $date   = (string) date('D M j G:i:s T Y');
 
         $dashboard = new Dashboard(
             $this->templatePath,
@@ -95,14 +88,14 @@ final class Facade
             $id = $node->id();
 
             if ($node instanceof DirectoryNode) {
-                Filesystem::createDirectory($target . $id);
+                DirectoryUtil::create($target . $id);
 
                 $directory->render($node, $target . $id . '/index.html');
                 $dashboard->render($node, $target . $id . '/dashboard.html');
             } else {
                 $dir = dirname($target . $id);
 
-                Filesystem::createDirectory($dir);
+                DirectoryUtil::create($dir);
 
                 $file->render($node, $target . $id);
             }
@@ -140,7 +133,7 @@ final class Facade
             $directory .= DIRECTORY_SEPARATOR;
         }
 
-        Filesystem::createDirectory($directory);
+        DirectoryUtil::create($directory);
 
         return $directory;
     }

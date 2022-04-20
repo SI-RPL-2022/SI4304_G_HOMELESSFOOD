@@ -67,8 +67,11 @@ class RouteListCommand extends Command
      */
     public function handle()
     {
+<<<<<<< HEAD
         $this->router->flushMiddlewareGroups();
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         if (empty($this->router->getRoutes())) {
             return $this->error("Your application doesn't have any routes.");
         }
@@ -91,7 +94,11 @@ class RouteListCommand extends Command
             return $this->getRouteInformation($route);
         })->filter()->all();
 
+<<<<<<< HEAD
         if (($sort = $this->option('sort')) !== 'precedence') {
+=======
+        if ($sort = $this->option('sort')) {
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
             $routes = $this->sortRoutes($sort, $routes);
         }
 
@@ -113,8 +120,8 @@ class RouteListCommand extends Command
         return $this->filterRoute([
             'domain' => $route->domain(),
             'method' => implode('|', $route->methods()),
-            'uri' => $route->uri(),
-            'name' => $route->getName(),
+            'uri'    => $route->uri(),
+            'name'   => $route->getName(),
             'action' => ltrim($route->getActionName(), '\\'),
             'middleware' => $this->getMiddleware($route),
         ]);
@@ -156,7 +163,11 @@ class RouteListCommand extends Command
     protected function displayRoutes(array $routes)
     {
         if ($this->option('json')) {
+<<<<<<< HEAD
             $this->line($this->asJson($routes));
+=======
+            $this->line(json_encode(array_values($routes)));
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
             return;
         }
@@ -165,7 +176,7 @@ class RouteListCommand extends Command
     }
 
     /**
-     * Get the middleware for the route.
+     * Get before filters.
      *
      * @param  \Illuminate\Routing\Route  $route
      * @return string
@@ -191,6 +202,7 @@ class RouteListCommand extends Command
             return;
         }
 
+<<<<<<< HEAD
         if ($this->option('except-path')) {
             foreach (explode(',', $this->option('except-path')) as $path) {
                 if (Str::contains($route['uri'], $path)) {
@@ -199,6 +211,8 @@ class RouteListCommand extends Command
             }
         }
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         return $route;
     }
 
@@ -254,6 +268,7 @@ class RouteListCommand extends Command
     }
 
     /**
+<<<<<<< HEAD
      * Convert the given routes to JSON.
      *
      * @param  array  $routes
@@ -272,6 +287,8 @@ class RouteListCommand extends Command
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Get the console command options.
      *
      * @return array
@@ -284,10 +301,16 @@ class RouteListCommand extends Command
             ['json', null, InputOption::VALUE_NONE, 'Output the route list as JSON'],
             ['method', null, InputOption::VALUE_OPTIONAL, 'Filter the routes by method'],
             ['name', null, InputOption::VALUE_OPTIONAL, 'Filter the routes by name'],
+<<<<<<< HEAD
             ['path', null, InputOption::VALUE_OPTIONAL, 'Only show routes matching the given path pattern'],
             ['except-path', null, InputOption::VALUE_OPTIONAL, 'Do not display the routes matching the given path pattern'],
             ['reverse', 'r', InputOption::VALUE_NONE, 'Reverse the ordering of the routes'],
             ['sort', null, InputOption::VALUE_OPTIONAL, 'The column (precedence, domain, method, uri, name, action, middleware) to sort by', 'uri'],
+=======
+            ['path', null, InputOption::VALUE_OPTIONAL, 'Filter the routes by path'],
+            ['reverse', 'r', InputOption::VALUE_NONE, 'Reverse the ordering of the routes'],
+            ['sort', null, InputOption::VALUE_OPTIONAL, 'The column (domain, method, uri, name, action, middleware) to sort by', 'uri'],
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         ];
     }
 }

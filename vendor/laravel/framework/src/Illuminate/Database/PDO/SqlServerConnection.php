@@ -102,7 +102,7 @@ class SqlServerConnection implements ServerInfoAwareConnection
     }
 
     /**
-     * Rollback a database transaction.
+     * Roll back a database transaction.
      *
      * @return void
      */
@@ -114,8 +114,8 @@ class SqlServerConnection implements ServerInfoAwareConnection
     /**
      * Wrap quotes around the given input.
      *
-     * @param  string  $value
-     * @param  int  $type
+     * @param  string  $input
+     * @param  string  $type
      * @return string
      */
     public function quote($value, $type = ParameterType::STRING)

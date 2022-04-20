@@ -2,6 +2,7 @@
 
 All notable changes of the PHPUnit 9.5 release series are documented in this file using the [Keep a CHANGELOG](https://keepachangelog.com/) principles.
 
+<<<<<<< HEAD
 ## [9.5.20] - 2022-04-01
 
 ### Fixed
@@ -144,6 +145,8 @@ All notable changes of the PHPUnit 9.5 release series are documented in this fil
 
 * [#4572](https://github.com/sebastianbergmann/phpunit/issues/4572): Schema validation does not work with `%xx` sequences in path to `phpunit.xsd`
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 ## [9.5.0] - 2020-12-04
 
 ### Changed
@@ -157,6 +160,7 @@ All notable changes of the PHPUnit 9.5 release series are documented in this fil
 
 * [#4535](https://github.com/sebastianbergmann/phpunit/issues/4535): `getMockFromWsdl()` does not handle methods that do not have parameters correctly
 
+<<<<<<< HEAD
 [9.5.20]: https://github.com/sebastianbergmann/phpunit/compare/9.5.19...9.5.20
 [9.5.19]: https://github.com/sebastianbergmann/phpunit/compare/9.5.18...9.5.19
 [9.5.18]: https://github.com/sebastianbergmann/phpunit/compare/9.5.17...9.5.18
@@ -177,4 +181,6 @@ All notable changes of the PHPUnit 9.5 release series are documented in this fil
 [9.5.3]: https://github.com/sebastianbergmann/phpunit/compare/9.5.2...9.5.3
 [9.5.2]: https://github.com/sebastianbergmann/phpunit/compare/9.5.1...9.5.2
 [9.5.1]: https://github.com/sebastianbergmann/phpunit/compare/9.5.0...9.5.1
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 [9.5.0]: https://github.com/sebastianbergmann/phpunit/compare/9.4.4...9.5.0

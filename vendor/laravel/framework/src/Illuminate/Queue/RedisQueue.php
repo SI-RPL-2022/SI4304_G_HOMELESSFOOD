@@ -53,22 +53,15 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
      * @param  string|null  $connection
      * @param  int  $retryAfter
      * @param  int|null  $blockFor
-     * @param  bool  $dispatchAfterCommit
      * @return void
      */
-    public function __construct(Redis $redis,
-                                $default = 'default',
-                                $connection = null,
-                                $retryAfter = 60,
-                                $blockFor = null,
-                                $dispatchAfterCommit = false)
+    public function __construct(Redis $redis, $default = 'default', $connection = null, $retryAfter = 60, $blockFor = null)
     {
         $this->redis = $redis;
         $this->default = $default;
         $this->blockFor = $blockFor;
         $this->connection = $connection;
         $this->retryAfter = $retryAfter;
-        $this->dispatchAfterCommit = $dispatchAfterCommit;
     }
 
     /**
@@ -209,7 +202,11 @@ class RedisQueue extends Queue implements QueueContract, ClearableQueue
     {
         $this->migrate($prefixed = $this->getQueue($queue));
 
-        [$job, $reserved] = $this->retrieveNextJob($prefixed);
+        if (empty($nextJob = $this->retrieveNextJob($prefixed))) {
+            return;
+        }
+
+        [$job, $reserved] = $nextJob;
 
         if ($reserved) {
             return new RedisJob(

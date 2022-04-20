@@ -47,7 +47,11 @@ class File extends \SplFileInfo
      * This method uses the mime type as guessed by getMimeType()
      * to guess the file extension.
      *
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The guessed extension or null if it cannot be guessed
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @see MimeTypes
      * @see getMimeType()
@@ -68,7 +72,11 @@ class File extends \SplFileInfo
      * which uses finfo_file() then the "file" system binary,
      * depending on which of those are available.
      *
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The guessed mime type (e.g. "application/pdf")
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @see MimeTypes
      */
@@ -84,7 +92,11 @@ class File extends \SplFileInfo
     /**
      * Moves the file to a new location.
      *
+<<<<<<< HEAD
      * @return self
+=======
+     * @return self A File object representing the new file
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws FileException if the target file could not be created
      */
@@ -93,11 +105,8 @@ class File extends \SplFileInfo
         $target = $this->getTargetFile($directory, $name);
 
         set_error_handler(function ($type, $msg) use (&$error) { $error = $msg; });
-        try {
-            $renamed = rename($this->getPathname(), $target);
-        } finally {
-            restore_error_handler();
-        }
+        $renamed = rename($this->getPathname(), $target);
+        restore_error_handler();
         if (!$renamed) {
             throw new FileException(sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target, strip_tags($error)));
         }

@@ -23,8 +23,13 @@
         "illuminate/macroable": "^8.0",
         "illuminate/support": "^8.0",
         "illuminate/translation": "^8.0",
+<<<<<<< HEAD
         "symfony/http-foundation": "^5.4",
         "symfony/mime": "^5.4"
+=======
+        "symfony/http-foundation": "^5.1",
+        "symfony/mime": "^5.1"
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     },
     "autoload": {
         "psr-4": {
@@ -37,7 +42,10 @@
         }
     },
     "suggest": {
+<<<<<<< HEAD
         "ext-bcmath": "Required to use the multiple_of validation rule.",
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         "illuminate/database": "Required to use the database presence verifier (^8.0)."
     },
     "config": {

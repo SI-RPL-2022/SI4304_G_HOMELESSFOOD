@@ -33,7 +33,11 @@ class PhpFileLoader extends FileLoader
      * @param string      $file A PHP file path
      * @param string|null $type The resource type
      *
+<<<<<<< HEAD
      * @return RouteCollection
+=======
+     * @return RouteCollection A RouteCollection instance
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function load($file, string $type = null)
     {
@@ -71,7 +75,7 @@ class PhpFileLoader extends FileLoader
     {
         $collection = new RouteCollection();
 
-        $result(new RoutingConfigurator($collection, $this, $path, $file, $this->env));
+        $result(new RoutingConfigurator($collection, $this, $path, $file));
 
         return $collection;
     }

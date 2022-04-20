@@ -36,10 +36,11 @@ class ArraySessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function open($savePath, $sessionName)
     {
         return true;
@@ -47,10 +48,11 @@ class ArraySessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function close()
     {
         return true;
@@ -58,10 +60,11 @@ class ArraySessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return string|false
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function read($sessionId)
     {
         if (! isset($this->storage[$sessionId])) {
@@ -81,10 +84,11 @@ class ArraySessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function write($sessionId, $data)
     {
         $this->storage[$sessionId] = [
@@ -97,10 +101,11 @@ class ArraySessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function destroy($sessionId)
     {
         if (isset($this->storage[$sessionId])) {
@@ -112,10 +117,14 @@ class ArraySessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
+<<<<<<< HEAD
      *
      * @return int|false
      */
     #[\ReturnTypeWillChange]
+=======
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function gc($lifetime)
     {
         $expiration = $this->calculateExpiration($lifetime);

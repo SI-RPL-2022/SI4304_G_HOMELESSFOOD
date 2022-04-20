@@ -50,8 +50,14 @@ class RouterListener implements EventSubscriberInterface
     private $debug;
 
     /**
+<<<<<<< HEAD
      * @param UrlMatcherInterface|RequestMatcherInterface $matcher The Url or Request matcher
      * @param RequestContext|null                         $context The RequestContext (can be null when $matcher implements RequestContextAwareInterface)
+=======
+     * @param UrlMatcherInterface|RequestMatcherInterface $matcher    The Url or Request matcher
+     * @param RequestContext|null                         $context    The RequestContext (can be null when $matcher implements RequestContextAwareInterface)
+     * @param string                                      $projectDir
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \InvalidArgumentException
      */
@@ -66,7 +72,7 @@ class RouterListener implements EventSubscriberInterface
         }
 
         $this->matcher = $matcher;
-        $this->context = $context ?? $matcher->getContext();
+        $this->context = $context ?: $matcher->getContext();
         $this->requestStack = $requestStack;
         $this->logger = $logger;
         $this->projectDir = $projectDir;
@@ -115,7 +121,7 @@ class RouterListener implements EventSubscriberInterface
 
             if (null !== $this->logger) {
                 $this->logger->info('Matched route "{route}".', [
-                    'route' => $parameters['_route'] ?? 'n/a',
+                    'route' => isset($parameters['_route']) ? $parameters['_route'] : 'n/a',
                     'route_parameters' => $parameters,
                     'request_uri' => $request->getUri(),
                     'method' => $request->getMethod(),
@@ -126,7 +132,7 @@ class RouterListener implements EventSubscriberInterface
             unset($parameters['_route'], $parameters['_controller']);
             $request->attributes->set('_route_params', $parameters);
         } catch (ResourceNotFoundException $e) {
-            $message = sprintf('No route found for "%s %s"', $request->getMethod(), $request->getUriForPath($request->getPathInfo()));
+            $message = sprintf('No route found for "%s %s"', $request->getMethod(), $request->getPathInfo());
 
             if ($referer = $request->headers->get('referer')) {
                 $message .= sprintf(' (from "%s")', $referer);
@@ -134,7 +140,7 @@ class RouterListener implements EventSubscriberInterface
 
             throw new NotFoundHttpException($message, $e);
         } catch (MethodNotAllowedException $e) {
-            $message = sprintf('No route found for "%s %s": Method Not Allowed (Allow: %s)', $request->getMethod(), $request->getUriForPath($request->getPathInfo()), implode(', ', $e->getAllowedMethods()));
+            $message = sprintf('No route found for "%s %s": Method Not Allowed (Allow: %s)', $request->getMethod(), $request->getPathInfo(), implode(', ', $e->getAllowedMethods()));
 
             throw new MethodNotAllowedHttpException($e->getAllowedMethods(), $message, $e);
         }
@@ -163,7 +169,7 @@ class RouterListener implements EventSubscriberInterface
     private function createWelcomeResponse(): Response
     {
         $version = Kernel::VERSION;
-        $projectDir = realpath((string) $this->projectDir).\DIRECTORY_SEPARATOR;
+        $projectDir = realpath($this->projectDir).\DIRECTORY_SEPARATOR;
         $docVersion = substr(Kernel::VERSION, 0, 3);
 
         ob_start();

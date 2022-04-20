@@ -93,15 +93,15 @@ class RedisSessionHandler extends AbstractSessionHandler
 
         if ($unlink) {
             try {
-                $unlink = false !== $this->redis->unlink($this->prefix.$sessionId);
+                $this->redis->unlink($this->prefix.$sessionId);
+
+                return true;
             } catch (\Throwable $e) {
                 $unlink = false;
             }
         }
 
-        if (!$unlink) {
-            $this->redis->del($this->prefix.$sessionId);
-        }
+        $this->redis->del($this->prefix.$sessionId);
 
         return true;
     }
@@ -109,7 +109,6 @@ class RedisSessionHandler extends AbstractSessionHandler
     /**
      * {@inheritdoc}
      */
-    #[\ReturnTypeWillChange]
     public function close(): bool
     {
         return true;
@@ -117,19 +116,27 @@ class RedisSessionHandler extends AbstractSessionHandler
 
     /**
      * {@inheritdoc}
+<<<<<<< HEAD
      *
      * @return int|false
      */
     #[\ReturnTypeWillChange]
     public function gc($maxlifetime)
+=======
+     */
+    public function gc($maxlifetime): bool
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
-        return 0;
+        return true;
     }
 
     /**
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function updateTimestamp($sessionId, $data)
     {
         return (bool) $this->redis->expire($this->prefix.$sessionId, (int) ($this->ttl ?? ini_get('session.gc_maxlifetime')));

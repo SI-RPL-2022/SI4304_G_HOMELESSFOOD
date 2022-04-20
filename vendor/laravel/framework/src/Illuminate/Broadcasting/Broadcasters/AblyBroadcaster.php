@@ -3,7 +3,10 @@
 namespace Illuminate\Broadcasting\Broadcasters;
 
 use Ably\AblyRest;
+<<<<<<< HEAD
 use Ably\Models\Message as AblyMessage;
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -73,17 +76,11 @@ class AblyBroadcaster extends Broadcaster
 
         $channelName = $this->normalizeChannelName($request->channel_name);
 
-        $user = $this->retrieveUser($request, $channelName);
-
-        $broadcastIdentifier = method_exists($user, 'getAuthIdentifierForBroadcasting')
-                    ? $user->getAuthIdentifierForBroadcasting()
-                    : $user->getAuthIdentifier();
-
         $signature = $this->generateAblySignature(
             $request->channel_name,
             $request->socket_id,
             $userData = array_filter([
-                'user_id' => (string) $broadcastIdentifier,
+                'user_id' => $this->retrieveUser($request, $channelName)->getAuthIdentifier(),
                 'user_info' => $result,
             ])
         );
@@ -122,30 +119,18 @@ class AblyBroadcaster extends Broadcaster
     public function broadcast(array $channels, $event, array $payload = [])
     {
         foreach ($this->formatChannels($channels) as $channel) {
+<<<<<<< HEAD
             $this->ably->channels->get($channel)->publish(
                 $this->buildAblyMessage($event, $payload)
             );
+=======
+            $this->ably->channels->get($channel)->publish($event, $payload);
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
     }
 
     /**
-     * Build an Ably message object for broadcasting.
-     *
-     * @param  string  $event
-     * @param  array  $payload
-     * @return \Ably\Models\Message
-     */
-    protected function buildAblyMessage($event, array $payload = [])
-    {
-        return tap(new AblyMessage, function ($message) use ($event, $payload) {
-            $message->name = $event;
-            $message->data = $payload;
-            $message->connectionKey = data_get($payload, 'socket');
-        });
-    }
-
-    /**
-     * Return true if the channel is protected by authentication.
+     * Return true if channel is protected by authentication.
      *
      * @param  string  $channel
      * @return bool

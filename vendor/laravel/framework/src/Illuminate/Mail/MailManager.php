@@ -18,7 +18,10 @@ use Postmark\ThrowExceptionOnFailurePlugin;
 use Postmark\Transport as PostmarkTransport;
 use Psr\Log\LoggerInterface;
 use Swift_DependencyContainer;
+<<<<<<< HEAD
 use Swift_FailoverTransport as FailoverTransport;
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 use Swift_Mailer;
 use Swift_SendmailTransport as SendmailTransport;
 use Swift_SmtpTransport as SmtpTransport;
@@ -64,7 +67,7 @@ class MailManager implements FactoryContract
      * Get a mailer instance by name.
      *
      * @param  string|null  $name
-     * @return \Illuminate\Contracts\Mail\Mailer
+     * @return \Illuminate\Mail\Mailer
      */
     public function mailer($name = null)
     {
@@ -137,6 +140,7 @@ class MailManager implements FactoryContract
 
     /**
      * Create the SwiftMailer instance for the given configuration.
+<<<<<<< HEAD
      *
      * @param  array  $config
      * @return \Swift_Mailer
@@ -157,8 +161,28 @@ class MailManager implements FactoryContract
      *
      * @param  array  $config
      * @return \Swift_Transport
+=======
      *
-     * @throws \InvalidArgumentException
+     * @param  array  $config
+     * @return \Swift_Mailer
+     */
+    protected function createSwiftMailer(array $config)
+    {
+        if ($config['domain'] ?? false) {
+            Swift_DependencyContainer::getInstance()
+                ->register('mime.idgenerator.idright')
+                ->asValue($config['domain']);
+        }
+
+        return new Swift_Mailer($this->createTransport($config));
+    }
+
+    /**
+     * Create a new transport instance.
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
+     *
+     * @param  array  $config
+     * @return \Swift_Transport
      */
     public function createTransport(array $config)
     {
@@ -171,7 +195,7 @@ class MailManager implements FactoryContract
             return call_user_func($this->customCreators[$transport], $config);
         }
 
-        if (trim($transport ?? '') === '' || ! method_exists($this, $method = 'create'.ucfirst($transport).'Transport')) {
+        if (trim($transport) === '' || ! method_exists($this, $method = 'create'.ucfirst($transport).'Transport')) {
             throw new InvalidArgumentException("Unsupported mail transport [{$transport}].");
         }
 
@@ -222,6 +246,7 @@ class MailManager implements FactoryContract
         if (isset($config['stream'])) {
             $transport->setStreamOptions($config['stream']);
         }
+<<<<<<< HEAD
 
         if (isset($config['source_ip'])) {
             $transport->setSourceIp($config['source_ip']);
@@ -235,6 +260,21 @@ class MailManager implements FactoryContract
             $transport->setTimeout($config['timeout']);
         }
 
+=======
+
+        if (isset($config['source_ip'])) {
+            $transport->setSourceIp($config['source_ip']);
+        }
+
+        if (isset($config['local_domain'])) {
+            $transport->setLocalDomain($config['local_domain']);
+        }
+
+        if (isset($config['timeout'])) {
+            $transport->setTimeout($config['timeout']);
+        }
+
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         if (isset($config['auth_mode'])) {
             $transport->setAuthMode($config['auth_mode']);
         }
@@ -263,11 +303,11 @@ class MailManager implements FactoryContract
      */
     protected function createSesTransport(array $config)
     {
-        $config = array_merge(
-            $this->app['config']->get('services.ses', []),
-            ['version' => 'latest', 'service' => 'email'],
-            $config
-        );
+        if (! isset($config['secret'])) {
+            $config = array_merge($this->app['config']->get('services.ses', []), [
+                'version' => 'latest', 'service' => 'email',
+            ]);
+        }
 
         $config = Arr::except($config, ['transport']);
 
@@ -330,6 +370,7 @@ class MailManager implements FactoryContract
      */
     protected function createPostmarkTransport(array $config)
     {
+<<<<<<< HEAD
         $headers = isset($config['message_stream_id']) ? [
             'X-PM-Message-Stream' => $config['message_stream_id'],
         ] : [];
@@ -339,10 +380,17 @@ class MailManager implements FactoryContract
             $headers
         ), function ($transport) {
             $transport->registerPlugin(new ThrowExceptionOnFailurePlugin);
+=======
+        return tap(new PostmarkTransport(
+            $config['token'] ?? $this->app['config']->get('services.postmark.token')
+        ), function ($transport) {
+            $transport->registerPlugin(new ThrowExceptionOnFailurePlugin());
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         });
     }
 
     /**
+<<<<<<< HEAD
      * Create an instance of the Failover Swift Transport driver.
      *
      * @param  array  $config
@@ -371,6 +419,8 @@ class MailManager implements FactoryContract
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Create an instance of the Log Swift Transport driver.
      *
      * @param  array  $config
@@ -499,41 +549,6 @@ class MailManager implements FactoryContract
     public function extend($driver, Closure $callback)
     {
         $this->customCreators[$driver] = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Get the application instance used by the manager.
-     *
-     * @return \Illuminate\Contracts\Foundation\Application
-     */
-    public function getApplication()
-    {
-        return $this->app;
-    }
-
-    /**
-     * Set the application instance used by the manager.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return $this
-     */
-    public function setApplication($app)
-    {
-        $this->app = $app;
-
-        return $this;
-    }
-
-    /**
-     * Forget all of the resolved mailer instances.
-     *
-     * @return $this
-     */
-    public function forgetMailers()
-    {
-        $this->mailers = [];
 
         return $this;
     }

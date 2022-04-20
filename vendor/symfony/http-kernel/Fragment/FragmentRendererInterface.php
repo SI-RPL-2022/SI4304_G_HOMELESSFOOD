@@ -27,14 +27,22 @@ interface FragmentRendererInterface
      *
      * @param string|ControllerReference $uri A URI as a string or a ControllerReference instance
      *
+<<<<<<< HEAD
      * @return Response
+=======
+     * @return Response A Response instance
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function render($uri, Request $request, array $options = []);
 
     /**
      * Gets the name of the strategy.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The strategy name
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getName();
 }

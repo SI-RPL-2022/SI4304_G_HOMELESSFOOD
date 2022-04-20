@@ -1,6 +1,7 @@
 <?php
-
-declare(strict_types=1);
+/**
+ * @license http://www.opensource.org/licenses/mit-license.php MIT (see the LICENSE file)
+ */
 
 namespace Psr\Container;
 
@@ -19,7 +20,7 @@ interface ContainerInterface
      *
      * @return mixed Entry.
      */
-    public function get(string $id);
+    public function get($id);
 
     /**
      * Returns true if the container can return an entry for the given identifier.
@@ -32,5 +33,9 @@ interface ContainerInterface
      *
      * @return bool
      */
+<<<<<<< HEAD
     public function has(string $id);
+=======
+    public function has($id);
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 }

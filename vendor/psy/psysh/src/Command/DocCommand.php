@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2020 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -26,8 +26,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DocCommand extends ReflectingCommand
 {
-    const INHERIT_DOC_TAG = '{@inheritdoc}';
-
     /**
      * {@inheritdoc}
      */
@@ -93,8 +91,7 @@ HELP
             $output->writeln($doc);
         }
 
-        // Implicit --all if the original docblock has an {@inheritdoc} tag.
-        if ($input->getOption('all') || \stripos($doc, self::INHERIT_DOC_TAG) !== false) {
+        if ($input->getOption('all')) {
             $parent = $reflector;
             foreach ($this->getParentReflectors($reflector) as $parent) {
                 $output->writeln('');
@@ -169,44 +166,30 @@ HELP
      * yield Reflectors for the same-named method or property on all traits and
      * parent classes.
      *
-     * @return \Generator a whole bunch of \Reflector instances
+     * @return Generator a whole bunch of \Reflector instances
      */
-    private function getParentReflectors($reflector): \Generator
+    private function getParentReflectors($reflector)
     {
-        $seenClasses = [];
-
         switch (\get_class($reflector)) {
             case \ReflectionClass::class:
             case \ReflectionObject::class:
                 foreach ($reflector->getTraits() as $trait) {
-                    if (!\in_array($trait->getName(), $seenClasses)) {
-                        $seenClasses[] = $trait->getName();
-                        yield $trait;
-                    }
+                    yield $trait;
                 }
 
                 foreach ($reflector->getInterfaces() as $interface) {
-                    if (!\in_array($interface->getName(), $seenClasses)) {
-                        $seenClasses[] = $interface->getName();
-                        yield $interface;
-                    }
+                    yield $interface;
                 }
 
                 while ($reflector = $reflector->getParentClass()) {
                     yield $reflector;
 
                     foreach ($reflector->getTraits() as $trait) {
-                        if (!\in_array($trait->getName(), $seenClasses)) {
-                            $seenClasses[] = $trait->getName();
-                            yield $trait;
-                        }
+                        yield $trait;
                     }
 
                     foreach ($reflector->getInterfaces() as $interface) {
-                        if (!\in_array($interface->getName(), $seenClasses)) {
-                            $seenClasses[] = $interface->getName();
-                            yield $interface;
-                        }
+                        yield $interface;
                     }
                 }
 
@@ -215,11 +198,7 @@ HELP
             case \ReflectionMethod::class:
                 foreach ($this->getParentReflectors($reflector->getDeclaringClass()) as $parent) {
                     if ($parent->hasMethod($reflector->getName())) {
-                        $parentMethod = $parent->getMethod($reflector->getName());
-                        if (!\in_array($parentMethod->getDeclaringClass()->getName(), $seenClasses)) {
-                            $seenClasses[] = $parentMethod->getDeclaringClass()->getName();
-                            yield $parentMethod;
-                        }
+                        yield $parent->getMethod($reflector->getName());
                     }
                 }
 
@@ -228,11 +207,7 @@ HELP
             case \ReflectionProperty::class:
                 foreach ($this->getParentReflectors($reflector->getDeclaringClass()) as $parent) {
                     if ($parent->hasProperty($reflector->getName())) {
-                        $parentProperty = $parent->getProperty($reflector->getName());
-                        if (!\in_array($parentProperty->getDeclaringClass()->getName(), $seenClasses)) {
-                            $seenClasses[] = $parentProperty->getDeclaringClass()->getName();
-                            yield $parentProperty;
-                        }
+                        yield $parent->getProperty($reflector->getName());
                     }
                 }
                 break;

@@ -23,10 +23,13 @@ use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 class LazyLoadingFragmentHandler extends FragmentHandler
 {
     private $container;
+<<<<<<< HEAD
 
     /**
      * @var array<string, bool>
      */
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     private $initialized = [];
 
     public function __construct(ContainerInterface $container, RequestStack $requestStack, bool $debug = false)

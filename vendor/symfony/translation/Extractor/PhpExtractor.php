@@ -21,17 +21,21 @@ use Symfony\Component\Translation\MessageCatalogue;
  */
 class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
 {
-    public const MESSAGE_TOKEN = 300;
-    public const METHOD_ARGUMENTS_TOKEN = 1000;
-    public const DOMAIN_TOKEN = 1001;
+    const MESSAGE_TOKEN = 300;
+    const METHOD_ARGUMENTS_TOKEN = 1000;
+    const DOMAIN_TOKEN = 1001;
 
     /**
      * Prefix for new found message.
+     *
+     * @var string
      */
-    private string $prefix = '';
+    private $prefix = '';
 
     /**
      * The sequence that captures translation messages.
+     *
+     * @var array
      */
     protected $sequences = [
         [
@@ -131,7 +135,7 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
     /**
      * {@inheritdoc}
      */
-    public function extract(string|iterable $resource, MessageCatalogue $catalog)
+    public function extract($resource, MessageCatalogue $catalog)
     {
         $files = $this->extractFiles($resource);
         foreach ($files as $file) {
@@ -151,8 +155,12 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
 
     /**
      * Normalizes a token.
+     *
+     * @param mixed $token
+     *
+     * @return string|null
      */
-    protected function normalizeToken(mixed $token): ?string
+    protected function normalizeToken($token)
     {
         if (isset($token[1]) && 'b"' !== $token) {
             return $token[1];
@@ -228,19 +236,6 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
                     }
                     break;
                 case \T_END_HEREDOC:
-                    if ($indentation = strspn($t[1], ' ')) {
-                        $docPartWithLineBreaks = $docPart;
-                        $docPart = '';
-
-                        foreach (preg_split('~(\r\n|\n|\r)~', $docPartWithLineBreaks, -1, \PREG_SPLIT_DELIM_CAPTURE) as $str) {
-                            if (\in_array($str, ["\r\n", "\n", "\r"], true)) {
-                                $docPart .= $str;
-                            } else {
-                                $docPart .= substr($str, $indentation);
-                            }
-                        }
-                    }
-
                     $message .= PhpStringTokenParser::parseDocString($docToken, $docPart);
                     $docToken = '';
                     $docPart = '';
@@ -307,9 +302,11 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
     }
 
     /**
+     * @return bool
+     *
      * @throws \InvalidArgumentException
      */
-    protected function canBeExtracted(string $file): bool
+    protected function canBeExtracted(string $file)
     {
         return $this->isFile($file) && 'php' === pathinfo($file, \PATHINFO_EXTENSION);
     }
@@ -317,12 +314,8 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
     /**
      * {@inheritdoc}
      */
-    protected function extractFromDirectory(string|array $directory): iterable
+    protected function extractFromDirectory($directory)
     {
-        if (!class_exists(Finder::class)) {
-            throw new \LogicException(sprintf('You cannot use "%s" as the "symfony/finder" package is not installed. Try running "composer require symfony/finder".', static::class));
-        }
-
         $finder = new Finder();
 
         return $finder->files()->name('*.php')->in($directory);

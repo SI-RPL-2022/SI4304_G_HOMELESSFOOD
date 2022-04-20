@@ -39,7 +39,11 @@ class UriSigner
      * The given URI is signed by adding the query string parameter
      * which value depends on the URI and the secret.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string The signed URI
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function sign(string $uri)
     {
@@ -59,7 +63,11 @@ class UriSigner
     /**
      * Checks that a URI contains the correct hash.
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool True if the URI is signed correctly, false otherwise
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function check(string $uri)
     {
@@ -99,12 +107,12 @@ class UriSigner
         $url['query'] = http_build_query($params, '', '&');
 
         $scheme = isset($url['scheme']) ? $url['scheme'].'://' : '';
-        $host = $url['host'] ?? '';
+        $host = isset($url['host']) ? $url['host'] : '';
         $port = isset($url['port']) ? ':'.$url['port'] : '';
-        $user = $url['user'] ?? '';
+        $user = isset($url['user']) ? $url['user'] : '';
         $pass = isset($url['pass']) ? ':'.$url['pass'] : '';
         $pass = ($user || $pass) ? "$pass@" : '';
-        $path = $url['path'] ?? '';
+        $path = isset($url['path']) ? $url['path'] : '';
         $query = isset($url['query']) && $url['query'] ? '?'.$url['query'] : '';
         $fragment = isset($url['fragment']) ? '#'.$url['fragment'] : '';
 

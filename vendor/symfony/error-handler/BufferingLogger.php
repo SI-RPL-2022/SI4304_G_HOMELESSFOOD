@@ -35,6 +35,7 @@ class BufferingLogger extends AbstractLogger
         return $logs;
     }
 
+<<<<<<< HEAD
     /**
      * @return array
      */
@@ -48,6 +49,8 @@ class BufferingLogger extends AbstractLogger
         throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
     }
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function __destruct()
     {
         foreach ($this->logs as [$level, $message, $context]) {

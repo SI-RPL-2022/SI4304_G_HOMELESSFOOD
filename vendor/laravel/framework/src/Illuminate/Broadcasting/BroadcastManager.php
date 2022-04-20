@@ -112,10 +112,7 @@ class BroadcastManager implements FactoryContract
      */
     public function queue($event)
     {
-        if ($event instanceof ShouldBroadcastNow ||
-            (is_object($event) &&
-             method_exists($event, 'shouldBroadcastNow') &&
-             $event->shouldBroadcastNow())) {
+        if ($event instanceof ShouldBroadcastNow) {
             return $this->app->make(BusDispatcherContract::class)->dispatchNow(new BroadcastEvent(clone $event));
         }
 
@@ -333,41 +330,6 @@ class BroadcastManager implements FactoryContract
     public function extend($driver, Closure $callback)
     {
         $this->customCreators[$driver] = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Get the application instance used by the manager.
-     *
-     * @return \Illuminate\Contracts\Foundation\Application
-     */
-    public function getApplication()
-    {
-        return $this->app;
-    }
-
-    /**
-     * Set the application instance used by the manager.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return $this
-     */
-    public function setApplication($app)
-    {
-        $this->app = $app;
-
-        return $this;
-    }
-
-    /**
-     * Forget all of the resolved driver instances.
-     *
-     * @return $this
-     */
-    public function forgetDrivers()
-    {
-        $this->drivers = [];
 
         return $this;
     }

@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 class RouterDataCollector extends DataCollector
 {
     /**
-     * @var \SplObjectStorage<Request, callable>
+     * @var \SplObjectStorage
      */
     protected $controllers;
 
@@ -83,7 +83,11 @@ class RouterDataCollector extends DataCollector
     }
 
     /**
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The target URL
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getTargetUrl()
     {
@@ -91,7 +95,11 @@ class RouterDataCollector extends DataCollector
     }
 
     /**
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The target route
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getTargetRoute()
     {

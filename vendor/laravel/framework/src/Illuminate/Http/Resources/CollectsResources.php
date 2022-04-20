@@ -2,11 +2,17 @@
 
 namespace Illuminate\Http\Resources;
 
+<<<<<<< HEAD
 use Illuminate\Pagination\AbstractCursorPaginator;
 use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionClass;
+=======
+use Illuminate\Pagination\AbstractPaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
 trait CollectsResources
 {
@@ -32,7 +38,7 @@ trait CollectsResources
             ? $resource->mapInto($collects)
             : $resource->toBase();
 
-        return ($resource instanceof AbstractPaginator || $resource instanceof AbstractCursorPaginator)
+        return $resource instanceof AbstractPaginator
                     ? $resource->setCollection($this->collection)
                     : $this->collection;
     }
@@ -46,6 +52,7 @@ trait CollectsResources
     {
         if ($this->collects) {
             return $this->collects;
+<<<<<<< HEAD
         }
 
         if (Str::endsWith(class_basename($this), 'Collection') &&
@@ -66,11 +73,14 @@ trait CollectsResources
 
         if (! $collects) {
             return 0;
+=======
         }
 
-        return (new ReflectionClass($collects))
-                  ->newInstanceWithoutConstructor()
-                  ->jsonOptions();
+        if (Str::endsWith(class_basename($this), 'Collection') &&
+            class_exists($class = Str::replaceLast('Collection', '', get_class($this)))) {
+            return $class;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
+        }
     }
 
     /**
@@ -78,7 +88,10 @@ trait CollectsResources
      *
      * @return \ArrayIterator
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function getIterator()
     {
         return $this->collection->getIterator();

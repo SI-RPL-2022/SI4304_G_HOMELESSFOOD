@@ -91,20 +91,6 @@ class FilesystemManager implements FactoryContract
     }
 
     /**
-     * Build an on-demand disk.
-     *
-     * @param  string|array  $config
-     * @return \Illuminate\Contracts\Filesystem\Filesystem
-     */
-    public function build($config)
-    {
-        return $this->resolve('ondemand', is_array($config) ? $config : [
-            'driver' => 'local',
-            'root' => $config,
-        ]);
-    }
-
-    /**
      * Attempt to get the disk from the local cache.
      *
      * @param  string  $name
@@ -119,14 +105,17 @@ class FilesystemManager implements FactoryContract
      * Resolve the given disk.
      *
      * @param  string  $name
-     * @param  array|null  $config
      * @return \Illuminate\Contracts\Filesystem\Filesystem
      *
      * @throws \InvalidArgumentException
      */
-    protected function resolve($name, $config = null)
+    protected function resolve($name)
     {
+<<<<<<< HEAD
         $config = $config ?? $this->getConfig($name);
+=======
+        $config = $this->getConfig($name);
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
         if (empty($config['driver'])) {
             throw new InvalidArgumentException("Disk [{$name}] does not have a configured driver.");
@@ -140,11 +129,11 @@ class FilesystemManager implements FactoryContract
 
         $driverMethod = 'create'.ucfirst($name).'Driver';
 
-        if (! method_exists($this, $driverMethod)) {
+        if (method_exists($this, $driverMethod)) {
+            return $this->{$driverMethod}($config);
+        } else {
             throw new InvalidArgumentException("Driver [{$name}] is not supported.");
         }
-
-        return $this->{$driverMethod}($config);
     }
 
     /**
@@ -220,11 +209,19 @@ class FilesystemManager implements FactoryContract
         $s3Config = $this->formatS3Config($config);
 
         $root = $s3Config['root'] ?? null;
+<<<<<<< HEAD
 
         $options = $config['options'] ?? [];
 
         $streamReads = $config['stream_reads'] ?? false;
 
+=======
+
+        $options = $config['options'] ?? [];
+
+        $streamReads = $config['stream_reads'] ?? false;
+
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         return $this->adapt($this->createFlysystem(
             new S3Adapter(new S3Client($s3Config), $s3Config['bucket'], $root, $options, $streamReads), $config
         ));
@@ -253,6 +250,7 @@ class FilesystemManager implements FactoryContract
      * @param  \League\Flysystem\AdapterInterface  $adapter
      * @param  array  $config
      * @return \League\Flysystem\FilesystemInterface
+<<<<<<< HEAD
      */
     protected function createFlysystem(AdapterInterface $adapter, array $config)
     {
@@ -296,6 +294,51 @@ class FilesystemManager implements FactoryContract
      */
     protected function adapt(FilesystemInterface $filesystem)
     {
+=======
+     */
+    protected function createFlysystem(AdapterInterface $adapter, array $config)
+    {
+        $cache = Arr::pull($config, 'cache');
+
+        $config = Arr::only($config, ['visibility', 'disable_asserts', 'url']);
+
+        if ($cache) {
+            $adapter = new CachedAdapter($adapter, $this->createCacheStore($cache));
+        }
+
+        return new Flysystem($adapter, count($config) > 0 ? $config : null);
+    }
+
+    /**
+     * Create a cache store instance.
+     *
+     * @param  mixed  $config
+     * @return \League\Flysystem\Cached\CacheInterface
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function createCacheStore($config)
+    {
+        if ($config === true) {
+            return new MemoryStore;
+        }
+
+        return new Cache(
+            $this->app['cache']->store($config['store']),
+            $config['prefix'] ?? 'flysystem',
+            $config['expire'] ?? null
+        );
+    }
+
+    /**
+     * Adapt the filesystem implementation.
+     *
+     * @param  \League\Flysystem\FilesystemInterface  $filesystem
+     * @return \Illuminate\Contracts\Filesystem\Filesystem
+     */
+    protected function adapt(FilesystemInterface $filesystem)
+    {
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         return new FilesystemAdapter($filesystem);
     }
 
@@ -382,19 +425,6 @@ class FilesystemManager implements FactoryContract
     public function extend($driver, Closure $callback)
     {
         $this->customCreators[$driver] = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Set the application instance used by the manager.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return $this
-     */
-    public function setApplication($app)
-    {
-        $this->app = $app;
 
         return $this;
     }

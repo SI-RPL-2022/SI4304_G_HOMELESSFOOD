@@ -12,6 +12,8 @@
 namespace Symfony\Component\Finder\Comparator;
 
 /**
+ * Comparator.
+ *
  * @author Fabien Potencier <fabien@symfony.com>
  */
 class Comparator
@@ -19,13 +21,28 @@ class Comparator
     private $target;
     private $operator = '==';
 
+<<<<<<< HEAD
     public function __construct(string $target = null, string $operator = '==')
     {
         if (null === $target) {
             trigger_deprecation('symfony/finder', '5.4', 'Constructing a "%s" without setting "$target" is deprecated.', __CLASS__);
         }
+=======
+    /**
+     * Gets the target value.
+     *
+     * @return string The target value
+     */
+    public function getTarget()
+    {
+        return $this->target;
+    }
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
+    public function setTarget(string $target)
+    {
         $this->target = $target;
+<<<<<<< HEAD
         $this->doSetOperator($operator);
     }
 
@@ -59,8 +76,36 @@ class Comparator
      * @return string
      */
     public function getOperator()
+=======
+    }
+
+    /**
+     * Gets the comparison operator.
+     *
+     * @return string The operator
+     */
+    public function getOperator()
     {
         return $this->operator;
+    }
+
+    /**
+     * Sets the comparison operator.
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function setOperator(string $operator)
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
+    {
+        if ('' === $operator) {
+            $operator = '==';
+        }
+
+        if (!\in_array($operator, ['>', '<', '>=', '<=', '==', '!='])) {
+            throw new \InvalidArgumentException(sprintf('Invalid operator "%s".', $operator));
+        }
+
+        $this->operator = $operator;
     }
 
     /**

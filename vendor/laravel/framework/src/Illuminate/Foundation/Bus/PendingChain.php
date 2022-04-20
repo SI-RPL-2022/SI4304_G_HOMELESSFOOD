@@ -5,7 +5,11 @@ namespace Illuminate\Foundation\Bus;
 use Closure;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Queue\CallQueuedClosure;
+<<<<<<< HEAD
 use Illuminate\Queue\SerializableClosureFactory;
+=======
+use Illuminate\Queue\SerializableClosure;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
 class PendingChain
 {

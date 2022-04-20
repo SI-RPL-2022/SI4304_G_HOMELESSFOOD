@@ -36,7 +36,11 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+<<<<<<< HEAD
      * @return string|null
+=======
+     * @return string|null The type of the value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getType()
     {
@@ -65,11 +69,9 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
-     * Returns a native representation of the original value.
-     *
      * @param array|bool $recursive Whether values should be resolved recursively or not
      *
-     * @return string|int|float|bool|array|Data[]|null
+     * @return string|int|float|bool|array|Data[]|null A native representation of the original value
      */
     public function getValue($recursive = false)
     {
@@ -113,7 +115,10 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * @return int
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function count()
     {
         return \count($this->getValue());
@@ -122,7 +127,10 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * @return \Traversable
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function getIterator()
     {
         if (!\is_array($value = $this->getValue())) {
@@ -154,34 +162,46 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetExists($key)
     {
         return $this->__isset($key);
     }
 
+<<<<<<< HEAD
     /**
      * @return mixed
      */
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetGet($key)
     {
         return $this->__get($key);
     }
 
+<<<<<<< HEAD
     /**
      * @return void
      */
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetSet($key, $value)
     {
         throw new \BadMethodCallException(self::class.' objects are immutable.');
     }
 
+<<<<<<< HEAD
     /**
      * @return void
      */
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetUnset($key)
     {
         throw new \BadMethodCallException(self::class.' objects are immutable.');
@@ -209,7 +229,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     public function withMaxDepth(int $maxDepth)
     {
         $data = clone $this;
-        $data->maxDepth = $maxDepth;
+        $data->maxDepth = (int) $maxDepth;
 
         return $data;
     }
@@ -222,7 +242,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
     public function withMaxItemsPerDepth(int $maxItemsPerDepth)
     {
         $data = clone $this;
-        $data->maxItemsPerDepth = $maxItemsPerDepth;
+        $data->maxItemsPerDepth = (int) $maxItemsPerDepth;
 
         return $data;
     }
@@ -258,7 +278,11 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @param string|int $key The key to seek to
      *
+<<<<<<< HEAD
      * @return static|null
+=======
+     * @return static|null Null if the key is not set
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function seek($key)
     {
@@ -348,7 +372,7 @@ class Data implements \ArrayAccess, \Countable, \IteratorAggregate
                 }
                 $cursor->hardRefTo = $refs[$r];
                 $cursor->hardRefHandle = $this->useRefHandles & $item->handle;
-                $cursor->hardRefCount = 0 < $item->handle ? $item->refCount : 0;
+                $cursor->hardRefCount = $item->refCount;
             }
             $cursor->attr = $item->attr;
             $type = $item->class ?: \gettype($item->value);

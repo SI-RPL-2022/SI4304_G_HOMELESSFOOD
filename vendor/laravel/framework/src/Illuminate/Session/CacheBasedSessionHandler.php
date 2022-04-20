@@ -36,10 +36,11 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function open($savePath, $sessionName)
     {
         return true;
@@ -47,10 +48,11 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function close()
     {
         return true;
@@ -58,10 +60,14 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
+<<<<<<< HEAD
      *
      * @return string|false
      */
     #[\ReturnTypeWillChange]
+=======
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function read($sessionId)
     {
         return $this->cache->get($sessionId, '');
@@ -69,10 +75,11 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function write($sessionId, $data)
     {
         return $this->cache->put($sessionId, $data, $this->minutes * 60);
@@ -80,10 +87,11 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
+<<<<<<< HEAD
     #[\ReturnTypeWillChange]
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function destroy($sessionId)
     {
         return $this->cache->forget($sessionId);
@@ -91,10 +99,14 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
+<<<<<<< HEAD
      *
      * @return int|false
      */
     #[\ReturnTypeWillChange]
+=======
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function gc($lifetime)
     {
         return true;

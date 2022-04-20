@@ -21,7 +21,11 @@ interface RouteCompilerInterface
     /**
      * Compiles the current route instance.
      *
+<<<<<<< HEAD
      * @return CompiledRoute
+=======
+     * @return CompiledRoute A CompiledRoute instance
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \LogicException If the Route cannot be compiled because the
      *                         path or host pattern is invalid

@@ -15,13 +15,11 @@ namespace Symfony\Component\Finder\Iterator;
  * FileTypeFilterIterator only keeps files, directories, or both.
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @extends \FilterIterator<string, \SplFileInfo>
  */
 class FileTypeFilterIterator extends \FilterIterator
 {
-    public const ONLY_FILES = 1;
-    public const ONLY_DIRECTORIES = 2;
+    const ONLY_FILES = 1;
+    const ONLY_DIRECTORIES = 2;
 
     private $mode;
 
@@ -39,9 +37,14 @@ class FileTypeFilterIterator extends \FilterIterator
     /**
      * Filters the iterator values.
      *
+<<<<<<< HEAD
      * @return bool
      */
     #[\ReturnTypeWillChange]
+=======
+     * @return bool true if the value should be kept, false otherwise
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function accept()
     {
         $fileinfo = $this->current();

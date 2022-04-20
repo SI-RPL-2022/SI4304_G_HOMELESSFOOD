@@ -42,7 +42,11 @@ final class ViewEvent extends RequestEvent
     /**
      * Returns the return value of the controller.
      *
+<<<<<<< HEAD
      * @return mixed
+=======
+     * @return mixed The controller return value
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getControllerResult()
     {

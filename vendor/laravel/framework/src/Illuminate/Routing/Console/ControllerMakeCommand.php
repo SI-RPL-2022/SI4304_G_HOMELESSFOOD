@@ -2,15 +2,12 @@
 
 namespace Illuminate\Routing\Console;
 
-use Illuminate\Console\Concerns\CreatesMatchingTest;
 use Illuminate\Console\GeneratorCommand;
 use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputOption;
 
 class ControllerMakeCommand extends GeneratorCommand
 {
-    use CreatesMatchingTest;
-
     /**
      * The console command name.
      *
@@ -41,9 +38,7 @@ class ControllerMakeCommand extends GeneratorCommand
     {
         $stub = null;
 
-        if ($type = $this->option('type')) {
-            $stub = "/stubs/controller.{$type}.stub";
-        } elseif ($this->option('parent')) {
+        if ($this->option('parent')) {
             $stub = '/stubs/controller.nested.stub';
         } elseif ($this->option('model')) {
             $stub = '/stubs/controller.model.stub';
@@ -91,7 +86,7 @@ class ControllerMakeCommand extends GeneratorCommand
     /**
      * Build the class with the given name.
      *
-     * Remove the base controller import if we are already in the base namespace.
+     * Remove the base controller import if we are already in base namespace.
      *
      * @param  string  $name
      * @return string
@@ -161,8 +156,6 @@ class ControllerMakeCommand extends GeneratorCommand
             }
         }
 
-        $replace = $this->buildFormRequestReplacements($replace, $modelClass);
-
         return array_merge($replace, [
             'DummyFullModelClass' => $modelClass,
             '{{ namespacedModel }}' => $modelClass,
@@ -194,6 +187,7 @@ class ControllerMakeCommand extends GeneratorCommand
     }
 
     /**
+<<<<<<< HEAD
      * Build the model replacement values.
      *
      * @param  array  $replace
@@ -260,6 +254,8 @@ class ControllerMakeCommand extends GeneratorCommand
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Get the console command options.
      *
      * @return array
@@ -268,13 +264,11 @@ class ControllerMakeCommand extends GeneratorCommand
     {
         return [
             ['api', null, InputOption::VALUE_NONE, 'Exclude the create and edit methods from the controller.'],
-            ['type', null, InputOption::VALUE_REQUIRED, 'Manually specify the controller stub file to use.'],
             ['force', null, InputOption::VALUE_NONE, 'Create the class even if the controller already exists'],
             ['invokable', 'i', InputOption::VALUE_NONE, 'Generate a single method, invokable controller class.'],
             ['model', 'm', InputOption::VALUE_OPTIONAL, 'Generate a resource controller for the given model.'],
             ['parent', 'p', InputOption::VALUE_OPTIONAL, 'Generate a nested resource controller class.'],
             ['resource', 'r', InputOption::VALUE_NONE, 'Generate a resource controller class.'],
-            ['requests', 'R', InputOption::VALUE_NONE, 'Generate FormRequest classes for store and update.'],
         ];
     }
 }

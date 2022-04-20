@@ -41,7 +41,11 @@ final class Version
         }
 
         if (self::$version === '') {
+<<<<<<< HEAD
             self::$version = (new VersionId('9.5.20', dirname(__DIR__, 2)))->getVersion();
+=======
+            self::$version = (new VersionId('9.5.0', dirname(__DIR__, 2)))->getVersion();
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
         return self::$version;
@@ -60,6 +64,6 @@ final class Version
 
     public static function getVersionString(): string
     {
-        return 'PHPUnit ' . self::id() . ' #StandWithUkraine';
+        return 'PHPUnit ' . self::id() . ' by Sebastian Bergmann and contributors.';
     }
 }

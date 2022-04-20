@@ -16,17 +16,20 @@ namespace Symfony\Component\Finder\Iterator;
  *
  * @author Fabien Potencier  <fabien@symfony.com>
  * @author Włodzimierz Gajda <gajdaw@gajdaw.pl>
- *
- * @extends MultiplePcreFilterIterator<string, \SplFileInfo>
  */
 class PathFilterIterator extends MultiplePcreFilterIterator
 {
     /**
      * Filters the iterator values.
      *
+<<<<<<< HEAD
      * @return bool
      */
     #[\ReturnTypeWillChange]
+=======
+     * @return bool true if the value should be kept, false otherwise
+     */
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function accept()
     {
         $filename = $this->current()->getRelativePathname();
@@ -50,7 +53,11 @@ class PathFilterIterator extends MultiplePcreFilterIterator
      *
      * @param string $str Pattern: regexp or dirname
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string regexp corresponding to a given string or regexp
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     protected function toRegex(string $str)
     {

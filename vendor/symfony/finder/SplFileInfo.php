@@ -38,7 +38,11 @@ class SplFileInfo extends \SplFileInfo
      *
      * This path does not contain the file name.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string the relative path
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getRelativePath()
     {
@@ -50,7 +54,11 @@ class SplFileInfo extends \SplFileInfo
      *
      * This path contains the file name.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string the relative path name
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getRelativePathname()
     {
@@ -67,18 +75,19 @@ class SplFileInfo extends \SplFileInfo
     /**
      * Returns the contents of the file.
      *
+<<<<<<< HEAD
      * @return string
+=======
+     * @return string the contents of the file
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \RuntimeException
      */
     public function getContents()
     {
         set_error_handler(function ($type, $msg) use (&$error) { $error = $msg; });
-        try {
-            $content = file_get_contents($this->getPathname());
-        } finally {
-            restore_error_handler();
-        }
+        $content = file_get_contents($this->getPathname());
+        restore_error_handler();
         if (false === $content) {
             throw new \RuntimeException($error);
         }

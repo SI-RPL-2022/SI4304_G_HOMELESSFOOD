@@ -200,7 +200,7 @@ final class ASCII
      *
      * @return string[]
      *
-     * @phpstan-return array<string, string>
+     * @psalm-return array<string, string>
      */
     public static function getAllLanguages(): array
     {
@@ -238,7 +238,7 @@ final class ASCII
      *
      * @return array
      *
-     * @phpstan-return array<string, array<string , string>>
+     * @psalm-return array<string, array<string , string>>
      */
     public static function charsArray(bool $replace_extra_symbols = false): array
     {
@@ -268,7 +268,7 @@ final class ASCII
      * @return array
      *               <p>An array of replacements.</p>
      *
-     * @phpstan-return array<string, array<int, string>>
+     * @psalm-return array<string, array<int, string>>
      */
     public static function charsArrayWithMultiLanguageValues(bool $replace_extra_symbols = false): array
     {
@@ -300,7 +300,10 @@ final class ASCII
 
         $CHARS_ARRAY[$cacheKey] = $return;
 
-        /** @var array<string, array<int, string>> $return - hack for phpstan */
+        /** @noinspection PhpSillyAssignmentInspection - hack for phpstan */
+        /** @var array<string, array<int, string>> $return */
+        $return = $return;
+
         return $return;
     }
 
@@ -329,7 +332,11 @@ final class ASCII
      * @return array
      *               <p>An array of replacements.</p>
      *
+<<<<<<< HEAD
      * @phpstan-return array{orig: string[], replace: string[]}|array<string, string>
+=======
+     * @psalm-return array{orig: string[], replace: string[]}|array<string, string>
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public static function charsArrayWithOneLanguage(
         string $language = self::ENGLISH_LANGUAGE_CODE,
@@ -425,7 +432,7 @@ final class ASCII
      * @return array
      *               <p>An array of replacements.</p>
      *
-     * @phpstan-return array{orig: string[], replace: string[]}|array<string, string>
+     * @psalm-return array{orig: string[], replace: string[]}|array<string, string>
      */
     public static function charsArrayWithSingleLanguageValues(
         bool $replace_extra_symbols = false,
@@ -613,7 +620,7 @@ final class ASCII
      * @param bool   $keepNonBreakingSpace         [optional] <p>Set to true, to keep non-breaking-spaces.</p>
      * @param bool   $keepBidiUnicodeControls      [optional] <p>Set to true, to keep non-printable (for the web)
      *                                             bidirectional text chars.</p>
-     * @param bool   $normalize_control_characters [optional] <p>Set to true, to convert e.g. LINE-, PARAGRAPH-SEPARATOR with "\n" and LINE TABULATION with "\t".</p>
+     * @param bool   $normalize_control_characters [optional] <p>Set to true, to convert LINE-, PARAGRAPH-SEPARATOR with "\n" and LINE TABULATION with "\t".</p>
      *
      * @psalm-pure
      *
@@ -642,10 +649,12 @@ final class ASCII
                     "\x0d\x0c",     // 'END OF LINE'
                     "\xe2\x80\xa8", // 'LINE SEPARATOR'
                     "\xe2\x80\xa9", // 'PARAGRAPH SEPARATOR'
-                    "\x0c",         // 'FORM FEED' // "\f"
-                    "\x0b",         // 'VERTICAL TAB' // "\v"
+                    "\x0c",         // 'FORM FEED'
+                    "\x0d",         // 'CARRIAGE RETURN'
+                    "\x0b",         // 'VERTICAL TAB'
                 ],
                 [
+                    "\n",
                     "\n",
                     "\n",
                     "\n",
@@ -733,6 +742,7 @@ final class ASCII
     }
 
     /**
+<<<<<<< HEAD
      *  WARNING: This method will return broken characters and is only for special cases.
      *
      * Convert two UTF-8 encoded string to a single-byte strings suitable for
@@ -798,6 +808,8 @@ final class ASCII
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Returns an ASCII version of the string. A set of non-ASCII characters are
      * replaced with their closest ASCII counterparts, and the rest are removed
      * by default. The language or locale of the source string can be supplied
@@ -867,7 +879,7 @@ final class ASCII
             $EXTRA_SYMBOLS_CACHE === null
         ) {
             $EXTRA_SYMBOLS_CACHE = [];
-            foreach (self::$ASCII_EXTRAS ?? [] as $extrasDataTmp) {
+            foreach (self::$ASCII_EXTRAS ?? [] as $extrasLanguageTmp => $extrasDataTmp) {
                 foreach ($extrasDataTmp as $extrasDataKeyTmp => $extrasDataValueTmp) {
                     $EXTRA_SYMBOLS_CACHE[$extrasDataKeyTmp] = $extrasDataKeyTmp;
                 }
@@ -993,7 +1005,7 @@ final class ASCII
                 }
             }
 
-            foreach ($matches[0] as $char) {
+            foreach ($matches[0] as $keyTmp => $char) {
                 if (
                     !isset($charDone[$char])
                     &&

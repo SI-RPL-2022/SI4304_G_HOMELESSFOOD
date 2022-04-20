@@ -12,11 +12,10 @@
 namespace Symfony\Contracts\Service;
 
 use Psr\Container\ContainerInterface;
-use Symfony\Contracts\Service\Attribute\SubscribedService;
 
 /**
  * Implementation of ServiceSubscriberInterface that determines subscribed services from
- * method return types. Service ids are available as "ClassName::methodName".
+ * private method return types. Service ids are available as "ClassName::methodName".
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  */
@@ -25,9 +24,6 @@ trait ServiceSubscriberTrait
     /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedServices(): array
     {
         static $services;
@@ -39,6 +35,7 @@ trait ServiceSubscriberTrait
         $services = method_exists(get_parent_class(self::class) ?: '', __FUNCTION__) ? parent::getSubscribedServices() : [];
         $attributeOptIn = false;
 
+<<<<<<< HEAD
         if (\PHP_VERSION_ID >= 80000) {
             foreach ((new \ReflectionClass(self::class))->getMethods() as $method) {
                 if (self::class !== $method->getDeclaringClass()->name) {
@@ -92,6 +89,16 @@ trait ServiceSubscriberTrait
 
                 $services[self::class.'::'.$method->name] = '?'.($returnType instanceof \ReflectionNamedType ? $returnType->getName() : $returnType);
             }
+=======
+        foreach ((new \ReflectionClass(self::class))->getMethods() as $method) {
+            if ($method->isStatic() || $method->isAbstract() || $method->isGenerator() || $method->isInternal() || $method->getNumberOfRequiredParameters()) {
+                continue;
+            }
+
+            if (self::class === $method->getDeclaringClass()->name && ($returnType = $method->getReturnType()) && !$returnType->isBuiltin()) {
+                $services[self::class.'::'.$method->name] = '?'.($returnType instanceof \ReflectionNamedType ? $returnType->getName() : $type);
+            }
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
         return $services;

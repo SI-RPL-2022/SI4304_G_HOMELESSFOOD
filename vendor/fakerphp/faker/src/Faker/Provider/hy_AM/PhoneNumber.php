@@ -29,6 +29,9 @@ class PhoneNumber extends \Faker\Provider\PhoneNumber
         return static::randomElement(static::$codes);
     }
 
+    /**
+     * @return mixed
+     */
     public function numberFormat()
     {
         return static::randomElement(static::$numberFormats);

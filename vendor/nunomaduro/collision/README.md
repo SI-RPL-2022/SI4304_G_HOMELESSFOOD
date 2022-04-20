@@ -30,8 +30,9 @@ Require Collision using [Composer](https://getcomposer.org):
 composer require nunomaduro/collision --dev
 ```
 
-## Laravel Version Compatibility
+## Lumen adapter
 
+<<<<<<< HEAD
  Laravel  | Collision
 :---------|:----------
  6.x      | 3.x
@@ -42,6 +43,12 @@ As an example, here is how to require Collision on Laravel 6.x:
 
 ```bash
 composer require nunomaduro/collision:^3.0 --dev
+=======
+Configure the Collision service provider:
+```php
+// bootstrap/app.php:
+$app->register(\NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider::class);
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 ```
 
 ## Phpunit adapter

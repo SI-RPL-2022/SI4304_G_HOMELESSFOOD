@@ -95,8 +95,12 @@ class OutputFormatterStyle implements OutputFormatterStyleInterface
     public function apply(string $text)
     {
         if (null === $this->handlesHrefGracefully) {
+<<<<<<< HEAD
             $this->handlesHrefGracefully = 'JetBrains-JediTerm' !== getenv('TERMINAL_EMULATOR')
                 && (!getenv('KONSOLE_VERSION') || (int) getenv('KONSOLE_VERSION') > 201100);
+=======
+            $this->handlesHrefGracefully = 'JetBrains-JediTerm' !== getenv('TERMINAL_EMULATOR') && !getenv('KONSOLE_VERSION');
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
         if (null !== $this->href && $this->handlesHrefGracefully) {

@@ -184,8 +184,6 @@ class ResourceRegistrar
     {
         $uri = $this->getResourceUri($name);
 
-        unset($options['missing']);
-
         $action = $this->getResourceAction($name, $controller, 'index', $options);
 
         return $this->router->get($uri, $action);
@@ -204,8 +202,6 @@ class ResourceRegistrar
     {
         $uri = $this->getResourceUri($name).'/'.static::$verbs['create'];
 
-        unset($options['missing']);
-
         $action = $this->getResourceAction($name, $controller, 'create', $options);
 
         return $this->router->get($uri, $action);
@@ -223,8 +219,6 @@ class ResourceRegistrar
     protected function addResourceStore($name, $base, $controller, $options)
     {
         $uri = $this->getResourceUri($name);
-
-        unset($options['missing']);
 
         $action = $this->getResourceAction($name, $controller, 'store', $options);
 
@@ -425,10 +419,6 @@ class ResourceRegistrar
 
         if (isset($options['wheres'])) {
             $action['where'] = $options['wheres'];
-        }
-
-        if (isset($options['missing'])) {
-            $action['missing'] = $options['missing'];
         }
 
         return $action;

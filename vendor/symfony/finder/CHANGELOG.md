@@ -1,6 +1,7 @@
 CHANGELOG
 =========
 
+<<<<<<< HEAD
 5.4.0
 -----
 
@@ -9,6 +10,8 @@ CHANGELOG
  * Finder's iterator has now `Symfony\Component\Finder\SplFileInfo` inner type specified
  * Add recursive .gitignore files support
 
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 5.0.0
 -----
 

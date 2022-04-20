@@ -20,15 +20,15 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
  */
 interface OutputInterface
 {
-    public const VERBOSITY_QUIET = 16;
-    public const VERBOSITY_NORMAL = 32;
-    public const VERBOSITY_VERBOSE = 64;
-    public const VERBOSITY_VERY_VERBOSE = 128;
-    public const VERBOSITY_DEBUG = 256;
+    const VERBOSITY_QUIET = 16;
+    const VERBOSITY_NORMAL = 32;
+    const VERBOSITY_VERBOSE = 64;
+    const VERBOSITY_VERY_VERBOSE = 128;
+    const VERBOSITY_DEBUG = 256;
 
-    public const OUTPUT_NORMAL = 1;
-    public const OUTPUT_RAW = 2;
-    public const OUTPUT_PLAIN = 4;
+    const OUTPUT_NORMAL = 1;
+    const OUTPUT_RAW = 2;
+    const OUTPUT_PLAIN = 4;
 
     /**
      * Writes a message to the output.
@@ -55,35 +55,55 @@ interface OutputInterface
     /**
      * Gets the current verbosity of the output.
      *
+<<<<<<< HEAD
      * @return int
+=======
+     * @return int The current level of verbosity (one of the VERBOSITY constants)
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getVerbosity();
 
     /**
      * Returns whether verbosity is quiet (-q).
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool true if verbosity is set to VERBOSITY_QUIET, false otherwise
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function isQuiet();
 
     /**
      * Returns whether verbosity is verbose (-v).
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool true if verbosity is set to VERBOSITY_VERBOSE, false otherwise
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function isVerbose();
 
     /**
      * Returns whether verbosity is very verbose (-vv).
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool true if verbosity is set to VERBOSITY_VERY_VERBOSE, false otherwise
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function isVeryVerbose();
 
     /**
      * Returns whether verbosity is debug (-vvv).
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool true if verbosity is set to VERBOSITY_DEBUG, false otherwise
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function isDebug();
 
@@ -95,7 +115,11 @@ interface OutputInterface
     /**
      * Gets the decorated flag.
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool true if the output will decorate messages, false otherwise
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function isDecorated();
 

@@ -6,7 +6,11 @@ use Closure;
 use Illuminate\Bus\Events\BatchDispatched;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
+<<<<<<< HEAD
 use Illuminate\Queue\SerializableClosureFactory;
+=======
+use Illuminate\Queue\SerializableClosure;
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Throwable;
@@ -55,6 +59,7 @@ class PendingBatch
     }
 
     /**
+<<<<<<< HEAD
      * Add jobs to the batch.
      *
      * @param  iterable  $jobs
@@ -70,6 +75,8 @@ class PendingBatch
     }
 
     /**
+=======
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Add a callback to be executed after all jobs in the batch have executed successfully.
      *
      * @param  callable  $callback
@@ -224,20 +231,6 @@ class PendingBatch
     public function queue()
     {
         return $this->options['queue'] ?? null;
-    }
-
-    /**
-     * Add additional data into the batch's options array.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return $this
-     */
-    public function withOption(string $key, $value)
-    {
-        $this->options[$key] = $value;
-
-        return $this;
     }
 
     /**

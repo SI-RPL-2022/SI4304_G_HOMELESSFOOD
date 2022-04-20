@@ -49,7 +49,11 @@ class RequestEvent extends KernelEvent
     /**
      * Returns whether a response was set.
      *
+<<<<<<< HEAD
      * @return bool
+=======
+     * @return bool Whether a response was set
+>>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function hasResponse()
     {
