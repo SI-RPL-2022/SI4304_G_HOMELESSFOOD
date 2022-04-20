@@ -68,7 +68,7 @@ class ParallelRunner implements RunnerInterface
             return new WrapperRunner($options, $output);
         };
 
-        $this->runner = $runnerResolver($options, $output);
+        $this->runner = call_user_func($runnerResolver, $options, $output);
     }
 
     /**
@@ -135,7 +135,9 @@ class ParallelRunner implements RunnerInterface
     {
         collect(range(1, $this->options->processes()))->each(function ($token) use ($callback) {
             tap($this->createApplication(), function ($app) use ($callback, $token) {
-                ParallelTesting::resolveTokenUsing(fn () => $token);
+                ParallelTesting::resolveTokenUsing(function () use ($token) {
+                    return $token;
+                });
 
                 $callback($app);
             })->flush();
@@ -170,6 +172,6 @@ class ParallelRunner implements RunnerInterface
             throw new RuntimeException('Parallel Runner unable to resolve application.');
         };
 
-        return $applicationResolver();
+        return call_user_func($applicationResolver);
     }
 }

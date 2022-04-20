@@ -2,14 +2,12 @@
 
 namespace Illuminate\Queue\Console;
 
+use Carbon\Carbon;
 use Illuminate\Bus\BatchRepository;
 use Illuminate\Bus\DatabaseBatchRepository;
 use Illuminate\Bus\PrunableBatchRepository;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
-use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'queue:prune-batches')]
 class PruneBatchesCommand extends Command
 {
     /**
@@ -20,17 +18,6 @@ class PruneBatchesCommand extends Command
     protected $signature = 'queue:prune-batches
                 {--hours=24 : The number of hours to retain batch data}
                 {--unfinished= : The number of hours to retain unfinished batch data }';
-
-    /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'queue:prune-batches';
 
     /**
      * The console command description.
@@ -56,7 +43,7 @@ class PruneBatchesCommand extends Command
 
         $this->info("{$count} entries deleted!");
 
-        if ($this->option('unfinished')) {
+        if ($unfinished = $this->option('unfinished')) {
             $count = 0;
 
             if ($repository instanceof DatabaseBatchRepository) {

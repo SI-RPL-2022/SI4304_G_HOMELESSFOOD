@@ -4,14 +4,14 @@ namespace Faker\Provider\ro_MD;
 
 class Address extends \Faker\Provider\Address
 {
-    protected static $buildingNumber = ['###', '##', '#', '#/#', '#A', '#B'];
+    protected static $buildingNumber = ['%##', '%#', '%', '%/#', '#A', '#B'];
     protected static $apartmentNumber = ['#', '##'];
     protected static $floor = ['#', '##'];
     protected static $block = ['#', '##', 'A', 'B', 'C', 'D'];
     protected static $blockSegment = ['A', 'B', 'C', 'D'];
 
     protected static $streetPrefix = [
-        'Str.', 'B-dul.', 'Aleea', 'Calea', 'P-ța', 'Str-la'
+        'Str.', 'B-dul.', 'Aleea', 'Calea', 'P-ța', 'Str-la',
     ];
 
     // random selection of seemingly frequently used streets and naming categories
@@ -27,7 +27,7 @@ class Address extends \Faker\Provider\Address
         // work-related
         'Croitorilor', 'Meșterilor', 'Zidarilor', 'Păcurari', 'Muncii', 'Învățătorului',
         // geography related
-        'Chisinau', 'Paris'
+        'Chisinau', 'Paris',
     ];
 
     protected static $postcode = ['####'];
@@ -42,7 +42,7 @@ class Address extends \Faker\Provider\Address
         'Ocnița', 'Briceni', 'Otaci', 'Anenii Noi', 'Ștefan Vodă', 'Cupcini', 'Sângera', 'Criuleni',
         'Telenești', 'Șoldănești', 'Tvardița', 'Lipcani', 'Vadul lui Vodă', 'Iargara', 'Căinari',
         'Cantemir', 'Vatra', 'Biruința', 'Crasnoe', 'Cornești', 'Costești', 'Mărculești', 'Ghindești',
-        'Tiraspolul Nou', 'Frunză', 'Bucovăț', 'Maiac'
+        'Tiraspolul Nou', 'Frunză', 'Bucovăț', 'Maiac',
     ];
 
     // http://ro.wikipedia.org/wiki/Lista_statelor_lumii#Lista_statelor_lumii
@@ -60,7 +60,7 @@ class Address extends \Faker\Provider\Address
         'Qatar', 'Regatul Unit', 'România', 'Rusia', 'Rwanda', 'Samoa', 'San Marino', 'São Tomé și Príncipe', 'São Tomé e Príncipe', 'Senegal', 'Serbia', 'Seychelles', 'Sfânta Lucia',
         'Sfântul Cristofor și Nevis', 'Saint Vincent and the Grenadines', 'Sierra Leone', 'Singapore', 'Siria', 'Slovacia', 'Slovenia', 'Insulele Solomon', 'Somalia', 'Spania', 'Sri Lanka',
         'Statele Unite ale Americii', 'Sudan', 'Sudanul de Sud', 'Suedia', 'Surinam', 'Swaziland', 'Tadjikistan', 'Tanzania', 'Thailanda', 'Timorul de Est', 'Togo', 'Tonga', 'Trinidad-Tobago',
-        'Tunisia', 'Turcia', 'Turkmenistan', 'Tuvalu', 'Ucraina', 'Uganda', 'Ungaria', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
+        'Tunisia', 'Turcia', 'Turkmenistan', 'Tuvalu', 'Ucraina', 'Uganda', 'Ungaria', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe',
     ];
 
     protected static $cityFormats = [
@@ -82,7 +82,7 @@ class Address extends \Faker\Provider\Address
     ];
 
     protected static $addressFormats = [
-        "{{streetAddress}}, {{city}}, CP {{postcode}}",
+        '{{streetAddress}}, {{city}}, CP {{postcode}}',
     ];
 
     public function cityName()
@@ -121,29 +121,5 @@ class Address extends \Faker\Provider\Address
     public function streetPlainName()
     {
         return static::randomElement(static::$streetPlainName);
-    }
-
-    /**
-     * @example 'Splaiul Independenței'
-     */
-    public function streetName()
-    {
-        $format = static::randomElement(static::$streetNameFormats);
-
-        return $this->generator->parse($format);
-    }
-
-    public function address()
-    {
-        $format = static::randomElement(static::$addressFormats);
-
-        return $this->generator->parse($format);
-    }
-
-    public function streetAddress()
-    {
-        $format = static::randomElement(static::$streetAddressFormats);
-
-        return $this->generator->parse($format);
     }
 }

@@ -22,14 +22,14 @@ class RouteCompiler implements RouteCompilerInterface
     /**
      * @deprecated since Symfony 5.1, to be removed in 6.0
      */
-    const REGEX_DELIMITER = '#';
+    public const REGEX_DELIMITER = '#';
 
     /**
      * This string defines the characters that are automatically considered separators in front of
      * optional placeholders (with default and no static text following). Such a single separator
      * can be left out together with the optional placeholder from matching and generating URLs.
      */
-    const SEPARATORS = '/,;.:-_~+*=@|';
+    public const SEPARATORS = '/,;.:-_~+*=@|';
 
     /**
      * The maximum supported length of a PCRE subpattern name
@@ -37,7 +37,7 @@ class RouteCompiler implements RouteCompilerInterface
      *
      * @internal
      */
-    const VARIABLE_MAXIMUM_LENGTH = 32;
+    public const VARIABLE_MAXIMUM_LENGTH = 32;
 
     /**
      * {@inheritdoc}
@@ -138,7 +138,7 @@ class RouteCompiler implements RouteCompilerInterface
             } else {
                 $precedingChar = substr($precedingText, -1);
             }
-            $isSeparator = '' !== $precedingChar && false !== strpos(static::SEPARATORS, $precedingChar);
+            $isSeparator = '' !== $precedingChar && str_contains(static::SEPARATORS, $precedingChar);
 
             // A PCRE subpattern name must start with a non-digit. Also a PHP variable cannot start with a digit so the
             // variable would not be usable as a Controller action argument.
@@ -155,7 +155,7 @@ class RouteCompiler implements RouteCompilerInterface
 
             if ($isSeparator && $precedingText !== $precedingChar) {
                 $tokens[] = ['text', substr($precedingText, 0, -\strlen($precedingChar))];
-            } elseif (!$isSeparator && \strlen($precedingText) > 0) {
+            } elseif (!$isSeparator && '' !== $precedingText) {
                 $tokens[] = ['text', $precedingText];
             }
 
@@ -283,7 +283,7 @@ class RouteCompiler implements RouteCompilerInterface
             preg_match('/^./u', $pattern, $pattern);
         }
 
-        return false !== strpos(static::SEPARATORS, $pattern[0]) ? $pattern[0] : '';
+        return str_contains(static::SEPARATORS, $pattern[0]) ? $pattern[0] : '';
     }
 
     /**
@@ -292,8 +292,6 @@ class RouteCompiler implements RouteCompilerInterface
      * @param array $tokens        The route tokens
      * @param int   $index         The index of the current token
      * @param int   $firstOptional The index of the first optional token
-     *
-     * @return string The regexp pattern for a single token
      */
     private static function computeRegexp(array $tokens, int $index, int $firstOptional): string
     {

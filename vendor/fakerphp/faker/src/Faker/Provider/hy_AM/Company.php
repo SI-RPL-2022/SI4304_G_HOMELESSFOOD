@@ -24,7 +24,7 @@ class Company extends \Faker\Provider\Company
 
     ];
 
-    protected static $companySuffix = ['ՍՊԸ','և որդիներ','ՓԲԸ','ԲԲԸ'];
+    protected static $companySuffix = ['ՍՊԸ', 'և որդիներ', 'ՓԲԸ', 'ԲԲԸ'];
 
     /**
      * @example 'Robust full-range hub'
@@ -32,6 +32,7 @@ class Company extends \Faker\Provider\Company
     public function catchPhrase()
     {
         $result = [];
+
         foreach (static::$catchPhraseWords as &$word) {
             $result[] = static::randomElement($word);
         }
@@ -45,6 +46,7 @@ class Company extends \Faker\Provider\Company
     public function bs()
     {
         $result = [];
+
         foreach (static::$bsWords as &$word) {
             $result[] = static::randomElement($word);
         }
