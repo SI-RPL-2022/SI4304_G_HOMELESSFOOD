@@ -97,7 +97,7 @@ $prophecy->willImplement('SessionHandlerInterface');
 ```
 
 There are 2 interesting calls - `willExtend` and `willImplement`. The first one tells
-object prophecy that our object should extend a specific class. The second one says that
+object prophecy that our object should extend specific class, the second one says that
 it should implement some interface. Obviously, objects in PHP can implement multiple
 interfaces, but extend only one parent class.
 
@@ -402,10 +402,3 @@ $em->flush()->shouldHaveBeenCalled();
 ```
 
 Such manipulation with doubles is called spying. And with Prophecy it just works.
-
-
-## FAQ
-
-### Can I call the original methods on a prophesized class?
-
-Prophecy does not support calling the original methods on a phrophesized class. If you find yourself needing to mock some methods of a class while calling the original version of other methods, it's likely a sign that your class violates the [single-responsibility principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) and should be refactored.

@@ -67,13 +67,6 @@ class Factory implements FactoryContract
     protected $fallbackMessages = [];
 
     /**
-     * Indicates that unvalidated array keys should be excluded, even if the parent array was validated.
-     *
-     * @var bool
-     */
-    protected $excludeUnvalidatedArrayKeys = true;
-
-    /**
      * The Validator resolver instance.
      *
      * @var \Closure
@@ -121,8 +114,6 @@ class Factory implements FactoryContract
         if (! is_null($this->container)) {
             $validator->setContainer($this->container);
         }
-
-        $validator->excludeUnvalidatedArrayKeys = $this->excludeUnvalidatedArrayKeys;
 
         $this->addExtensions($validator);
 
@@ -174,8 +165,8 @@ class Factory implements FactoryContract
         $validator->addExtensions($this->extensions);
 
         // Next, we will add the implicit extensions, which are similar to the required
-        // and accepted rule in that they're run even if the attributes aren't in an
-        // array of data which is given to a validator instance via instantiation.
+        // and accepted rule in that they are run even if the attributes is not in a
+        // array of data that is given to a validator instances via instantiation.
         $validator->addImplicitExtensions($this->implicitExtensions);
 
         $validator->addDependentExtensions($this->dependentExtensions);
@@ -249,26 +240,6 @@ class Factory implements FactoryContract
     }
 
     /**
-     * Indicate that unvalidated array keys should be included in validated data when the parent array is validated.
-     *
-     * @return void
-     */
-    public function includeUnvalidatedArrayKeys()
-    {
-        $this->excludeUnvalidatedArrayKeys = false;
-    }
-
-    /**
-     * Indicate that unvalidated array keys should be excluded from the validated data, even if the parent array was validated.
-     *
-     * @return void
-     */
-    public function excludeUnvalidatedArrayKeys()
-    {
-        $this->excludeUnvalidatedArrayKeys = true;
-    }
-
-    /**
      * Set the Validator instance resolver.
      *
      * @param  \Closure  $resolver
@@ -308,28 +279,5 @@ class Factory implements FactoryContract
     public function setPresenceVerifier(PresenceVerifierInterface $presenceVerifier)
     {
         $this->verifier = $presenceVerifier;
-    }
-
-    /**
-     * Get the container instance used by the validation factory.
-     *
-     * @return \Illuminate\Contracts\Container\Container
-     */
-    public function getContainer()
-    {
-        return $this->container;
-    }
-
-    /**
-     * Set the container instance used by the validation factory.
-     *
-     * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return $this
-     */
-    public function setContainer(Container $container)
-    {
-        $this->container = $container;
-
-        return $this;
     }
 }

@@ -3,21 +3,21 @@
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Closure;
-use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\MultipleRecordsFoundException;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Illuminate\Support\Traits\Macroable;
 
-abstract class Relation implements BuilderContract
+/**
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ */
+abstract class Relation
 {
     use ForwardsCalls, Macroable {
-        Macroable::__call as macroCall;
+        __call as macroCall;
     }
 
     /**
@@ -49,18 +49,18 @@ abstract class Relation implements BuilderContract
     protected static $constraints = true;
 
     /**
-     * An array to map class names to their morph names in the database.
+     * An array to map class names to their morph names in database.
      *
      * @var array
      */
     public static $morphMap = [];
 
     /**
-     * Prevents morph relationships without a morph map.
+     * Indicates if the morph relation type should default to table name.
      *
      * @var bool
      */
-    protected static $requireMorphMap = false;
+    public static $tableNameAsMorphType = false;
 
     /**
      * The count of self joins.
@@ -159,32 +159,6 @@ abstract class Relation implements BuilderContract
     }
 
     /**
-     * Execute the query and get the first result if it's the sole matching record.
-     *
-     * @param  array|string  $columns
-     * @return \Illuminate\Database\Eloquent\Model
-     *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
-     * @throws \Illuminate\Database\MultipleRecordsFoundException
-     */
-    public function sole($columns = ['*'])
-    {
-        $result = $this->take(2)->get($columns);
-
-        $count = $result->count();
-
-        if ($count === 0) {
-            throw (new ModelNotFoundException)->setModel(get_class($this->related));
-        }
-
-        if ($count > 1) {
-            throw new MultipleRecordsFoundException($count);
-        }
-
-        return $result->first();
-    }
-
-    /**
      * Execute the query as a "select" statement.
      *
      * @param  array  $columns
@@ -256,7 +230,7 @@ abstract class Relation implements BuilderContract
     /**
      * Get a relationship join table hash.
      *
-     * @param  bool  $incrementJoinCount
+     * @param  bool $incrementJoinCount
      * @return string
      */
     public function getRelationCountHash($incrementJoinCount = true)
@@ -279,16 +253,6 @@ abstract class Relation implements BuilderContract
     }
 
     /**
-     * Get the query builder that will contain the relationship constraints.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    protected function getRelationQuery()
-    {
-        return $this->query;
-    }
-
-    /**
      * Get the underlying query for the relation.
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -301,21 +265,9 @@ abstract class Relation implements BuilderContract
     /**
      * Get the base query builder driving the Eloquent builder.
      *
-     * @deprecated Use toBase() instead
-     *
      * @return \Illuminate\Database\Query\Builder
      */
     public function getBaseQuery()
-    {
-        return $this->toBase();
-    }
-
-    /**
-     * Get a base query builder instance.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function toBase()
     {
         return $this->query->getQuery();
     }
@@ -396,41 +348,6 @@ abstract class Relation implements BuilderContract
     }
 
     /**
-     * Prevent polymorphic relationships from being used without model mappings.
-     *
-     * @param  bool  $requireMorphMap
-     * @return void
-     */
-    public static function requireMorphMap($requireMorphMap = true)
-    {
-        static::$requireMorphMap = $requireMorphMap;
-    }
-
-    /**
-     * Determine if polymorphic relationships require explicit model mapping.
-     *
-     * @return bool
-     */
-    public static function requiresMorphMap()
-    {
-        return static::$requireMorphMap;
-    }
-
-    /**
-     * Define the morph map for polymorphic relations and require all morphed models to be explicitly mapped.
-     *
-     * @param  array  $map
-     * @param  bool  $merge
-     * @return array
-     */
-    public static function enforceMorphMap(array $map, $merge = true)
-    {
-        static::requireMorphMap();
-
-        return static::morphMap($map, $merge);
-    }
-
-    /**
      * Set or get the morph map for polymorphic relations.
      *
      * @param  array|null  $map
@@ -447,6 +364,16 @@ abstract class Relation implements BuilderContract
         }
 
         return static::$morphMap;
+    }
+
+    /**
+     * Specifies that the morph types should be table names.
+     *
+     * @return void
+     */
+    public static function tableNameAsMorphType()
+    {
+        self::$tableNameAsMorphType = true;
     }
 
     /**
@@ -490,7 +417,13 @@ abstract class Relation implements BuilderContract
             return $this->macroCall($method, $parameters);
         }
 
-        return $this->forwardDecoratedCallTo($this->query, $method, $parameters);
+        $result = $this->forwardCallTo($this->query, $method, $parameters);
+
+        if ($result === $this->query) {
+            return $this;
+        }
+
+        return $result;
     }
 
     /**

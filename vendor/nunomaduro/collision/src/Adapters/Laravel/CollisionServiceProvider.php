@@ -47,10 +47,9 @@ class CollisionServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole() && !$this->app->runningUnitTests()) {
             $this->app->bind(ProviderContract::class, function () {
                 if ($this->app->has(\Facade\IgnitionContracts\SolutionProviderRepository::class)) {
-                    /** @var \Facade\IgnitionContracts\SolutionProviderRepository $solutionProviderRepository */
-                    $solutionProviderRepository = $this->app->get(\Facade\IgnitionContracts\SolutionProviderRepository::class);
-
-                    $solutionsRepository = new IgnitionSolutionsRepository($solutionProviderRepository);
+                    $solutionsRepository = new IgnitionSolutionsRepository(
+                        $this->app->get(\Facade\IgnitionContracts\SolutionProviderRepository::class)
+                    );
                 } else {
                     $solutionsRepository = new NullSolutionsRepository();
                 }
@@ -61,7 +60,6 @@ class CollisionServiceProvider extends ServiceProvider
                 return new Provider(null, $handler);
             });
 
-            /** @var \Illuminate\Contracts\Debug\ExceptionHandler $appExceptionHandler */
             $appExceptionHandler = $this->app->make(ExceptionHandlerContract::class);
 
             $this->app->singleton(

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace League\MimeTypeDetection;
 
-use const FILEINFO_MIME_TYPE;
-
-use const PATHINFO_EXTENSION;
 use finfo;
+
+use const FILEINFO_MIME_TYPE;
+use const PATHINFO_EXTENSION;
 
 class FinfoMimeTypeDetector implements MimeTypeDetector
 {
@@ -23,25 +23,16 @@ class FinfoMimeTypeDetector implements MimeTypeDetector
      */
     private $extensionMap;
 
-    /**
-     * @var int|null
-     */
-    private $bufferSampleSize;
-
-    public function __construct(
-        string $magicFile = '',
-        ExtensionToMimeTypeMap $extensionMap = null,
-        ?int $bufferSampleSize = null
-    ) {
+    public function __construct(string $magicFile = '', ExtensionToMimeTypeMap $extensionMap = null)
+    {
         $this->finfo = new finfo(FILEINFO_MIME_TYPE, $magicFile);
         $this->extensionMap = $extensionMap ?: new GeneratedExtensionToMimeTypeMap();
-        $this->bufferSampleSize = $bufferSampleSize;
     }
 
     public function detectMimeType(string $path, $contents): ?string
     {
         $mimeType = is_string($contents)
-            ? (@$this->finfo->buffer($this->takeSample($contents)) ?: null)
+            ? (@$this->finfo->buffer($contents) ?: null)
             : null;
 
         if ($mimeType !== null && ! in_array($mimeType, self::INCONCLUSIVE_MIME_TYPES)) {
@@ -65,15 +56,7 @@ class FinfoMimeTypeDetector implements MimeTypeDetector
 
     public function detectMimeTypeFromBuffer(string $contents): ?string
     {
-        return @$this->finfo->buffer($this->takeSample($contents)) ?: null;
-    }
-
-    private function takeSample(string $contents): string
-    {
-        if ($this->bufferSampleSize === null) {
-            return $contents;
-        }
-
-        return (string) substr($contents, 0, $this->bufferSampleSize);
+        return @$this->finfo->buffer($contents) ?: null;
     }
 }
+

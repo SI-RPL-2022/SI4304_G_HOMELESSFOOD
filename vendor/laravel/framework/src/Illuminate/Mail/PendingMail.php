@@ -5,12 +5,9 @@ namespace Illuminate\Mail;
 use Illuminate\Contracts\Mail\Mailable as MailableContract;
 use Illuminate\Contracts\Mail\Mailer as MailerContract;
 use Illuminate\Contracts\Translation\HasLocalePreference;
-use Illuminate\Support\Traits\Conditionable;
 
 class PendingMail
 {
-    use Conditionable;
-
     /**
      * The mailer instance.
      *
@@ -117,11 +114,12 @@ class PendingMail
      * Send a new mailable message instance.
      *
      * @param  \Illuminate\Contracts\Mail\Mailable  $mailable
-     * @return void
+     *
+     * @return mixed
      */
     public function send(MailableContract $mailable)
     {
-        $this->mailer->send($this->fill($mailable));
+        return $this->mailer->send($this->fill($mailable));
     }
 
     /**
@@ -136,7 +134,7 @@ class PendingMail
     }
 
     /**
-     * Deliver the queued message after (n) seconds.
+     * Deliver the queued message after the given delay.
      *
      * @param  \DateTimeInterface|\DateInterval|int  $delay
      * @param  \Illuminate\Contracts\Mail\Mailable  $mailable

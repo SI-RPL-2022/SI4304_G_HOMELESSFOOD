@@ -110,7 +110,7 @@ class Connection implements ServerInfoAwareConnection
     /**
      * Create a new statement instance.
      *
-     * @param  \PDOStatement  $stmt
+     * @param  \PDOStatement
      * @return \Doctrine\DBAL\Driver\PDO\Statement
      */
     protected function createStatement(PDOStatement $stmt): Statement
@@ -139,7 +139,7 @@ class Connection implements ServerInfoAwareConnection
     }
 
     /**
-     * Rollback a database transaction.
+     * Roll back a database transaction.
      *
      * @return void
      */

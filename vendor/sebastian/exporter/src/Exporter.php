@@ -14,7 +14,6 @@ use function count;
 use function function_exists;
 use function get_class;
 use function get_resource_type;
-use function gettype;
 use function implode;
 use function is_array;
 use function is_float;
@@ -233,11 +232,7 @@ class Exporter
         }
 
         if (is_float($value) && (float) ((int) $value) === $value) {
-            return "{$value}.0";
-        }
-
-        if (gettype($value) === 'resource (closed)') {
-            return 'resource (closed)';
+            return "$value.0";
         }
 
         if (is_resource($value)) {
@@ -267,7 +262,7 @@ class Exporter
             "'";
         }
 
-        $whitespace = str_repeat(' ', 4 * $indentation);
+        $whitespace = str_repeat(' ', (int) (4 * $indentation));
 
         if (!$processed) {
             $processed = new Context;

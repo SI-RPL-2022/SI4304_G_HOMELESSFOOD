@@ -138,7 +138,7 @@ class DceSecurityGenerator implements DceSecurityGeneratorInterface
         }
 
         $domainByte = pack('n', $localDomain)[1];
-        $identifierBytes = (string) hex2bin(str_pad($identifierHex, 8, '0', STR_PAD_LEFT));
+        $identifierBytes = hex2bin(str_pad($identifierHex, 8, '0', STR_PAD_LEFT));
 
         if ($node instanceof Hexadecimal) {
             $node = $node->toString();
@@ -149,6 +149,7 @@ class DceSecurityGenerator implements DceSecurityGeneratorInterface
             $clockSeq = $clockSeq << 8;
         }
 
+        /** @var string $bytes */
         $bytes = $this->timeGenerator->generate($node, $clockSeq);
 
         // Replace bytes in the time-based UUID with DCE Security values.

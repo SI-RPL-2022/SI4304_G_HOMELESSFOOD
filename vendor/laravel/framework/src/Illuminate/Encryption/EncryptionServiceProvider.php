@@ -4,7 +4,7 @@ namespace Illuminate\Encryption;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Laravel\SerializableClosure\SerializableClosure;
+use Opis\Closure\SerializableClosure;
 
 class EncryptionServiceProvider extends ServiceProvider
 {
@@ -16,7 +16,7 @@ class EncryptionServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerEncrypter();
-        $this->registerSerializableClosureSecurityKey();
+        $this->registerOpisSecurityKey();
     }
 
     /**
@@ -34,11 +34,11 @@ class EncryptionServiceProvider extends ServiceProvider
     }
 
     /**
-     * Configure Serializable Closure signing for security.
+     * Configure Opis Closure signing for security.
      *
      * @return void
      */
-    protected function registerSerializableClosureSecurityKey()
+    protected function registerOpisSecurityKey()
     {
         $config = $this->app->make('config')->get('app');
 
@@ -70,7 +70,7 @@ class EncryptionServiceProvider extends ServiceProvider
      * @param  array  $config
      * @return string
      *
-     * @throws \Illuminate\Encryption\MissingAppKeyException
+     * @throws \RuntimeException
      */
     protected function key(array $config)
     {

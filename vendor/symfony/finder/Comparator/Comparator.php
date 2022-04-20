@@ -12,43 +12,66 @@
 namespace Symfony\Component\Finder\Comparator;
 
 /**
+ * Comparator.
+ *
  * @author Fabien Potencier <fabien@symfony.com>
  */
 class Comparator
 {
-    private string $target;
-    private string $operator;
-
-    public function __construct(string $target, string $operator = '==')
-    {
-        if (!\in_array($operator, ['>', '<', '>=', '<=', '==', '!='])) {
-            throw new \InvalidArgumentException(sprintf('Invalid operator "%s".', $operator));
-        }
-
-        $this->target = $target;
-        $this->operator = $operator;
-    }
+    private $target;
+    private $operator = '==';
 
     /**
      * Gets the target value.
+     *
+     * @return string The target value
      */
-    public function getTarget(): string
+    public function getTarget()
     {
         return $this->target;
     }
 
+    public function setTarget(string $target)
+    {
+        $this->target = $target;
+    }
+
     /**
      * Gets the comparison operator.
+     *
+     * @return string The operator
      */
-    public function getOperator(): string
+    public function getOperator()
     {
         return $this->operator;
     }
 
     /**
-     * Tests against the target.
+     * Sets the comparison operator.
+     *
+     * @throws \InvalidArgumentException
      */
-    public function test(mixed $test): bool
+    public function setOperator(string $operator)
+    {
+        if ('' === $operator) {
+            $operator = '==';
+        }
+
+        if (!\in_array($operator, ['>', '<', '>=', '<=', '==', '!='])) {
+            throw new \InvalidArgumentException(sprintf('Invalid operator "%s".', $operator));
+        }
+
+        $this->operator = $operator;
+    }
+
+    /**
+     * Tests against the target.
+     *
+     * @param mixed $test A test value
+     *
+     * @return bool
+     */
+    public function test($test)
     {
         switch ($this->operator) {
             case '>':

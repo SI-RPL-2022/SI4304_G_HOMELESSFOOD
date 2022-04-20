@@ -17,17 +17,6 @@ class ViewCacheCommand extends Command
     protected $signature = 'view:cache';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'view:cache';
-
-    /**
      * The console command description.
      *
      * @var string
@@ -47,7 +36,7 @@ class ViewCacheCommand extends Command
             $this->compileViews($this->bladeFilesIn([$path]));
         });
 
-        $this->info('Blade templates cached successfully.');
+        $this->info('Blade templates cached successfully!');
     }
 
     /**

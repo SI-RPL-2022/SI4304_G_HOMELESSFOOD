@@ -25,7 +25,7 @@ class Arr
      * Add an element to an array using "dot" notation if it doesn't exist.
      *
      * @param  array  $array
-     * @param  string|int|float  $key
+     * @param  string  $key
      * @param  mixed  $value
      * @return array
      */
@@ -122,27 +122,10 @@ class Arr
     }
 
     /**
-     * Convert a flatten "dot" notation array into an expanded array.
-     *
-     * @param  iterable  $array
-     * @return array
-     */
-    public static function undot($array)
-    {
-        $results = [];
-
-        foreach ($array as $key => $value) {
-            static::set($results, $key, $value);
-        }
-
-        return $results;
-    }
-
-    /**
      * Get all of the given array except for a specified array of keys.
      *
      * @param  array  $array
-     * @param  array|string|int|float  $keys
+     * @param  array|string  $keys
      * @return array
      */
     public static function except($array, $keys)
@@ -167,10 +150,6 @@ class Arr
 
         if ($array instanceof ArrayAccess) {
             return $array->offsetExists($key);
-        }
-
-        if (is_float($key)) {
-            $key = (string) $key;
         }
 
         return array_key_exists($key, $array);
@@ -256,7 +235,7 @@ class Arr
      * Remove one or many array items from a given array using "dot" notation.
      *
      * @param  array  $array
-     * @param  array|string|int|float  $keys
+     * @param  array|string  $keys
      * @return void
      */
     public static function forget(&$array, $keys)
@@ -318,7 +297,7 @@ class Arr
             return $array[$key];
         }
 
-        if (! str_contains($key, '.')) {
+        if (strpos($key, '.') === false) {
             return $array[$key] ?? value($default);
         }
 
@@ -412,31 +391,6 @@ class Arr
         $keys = array_keys($array);
 
         return array_keys($keys) !== $keys;
-    }
-
-    /**
-     * Determines if an array is a list.
-     *
-     * An array is a "list" if all array keys are sequential integers starting from 0 with no gaps in between.
-     *
-     * @param  array  $array
-     * @return bool
-     */
-    public static function isList($array)
-    {
-        return ! self::isAssoc($array);
-    }
-
-    /**
-     * Key an associative array by a field or using a callback.
-     *
-     * @param  array  $array
-     * @param  callable|array|string
-     * @return array
-     */
-    public static function keyBy($array, $keyBy)
-    {
-        return Collection::make($array)->keyBy($keyBy)->all();
     }
 
     /**
@@ -540,17 +494,6 @@ class Arr
     }
 
     /**
-     * Convert the array into a query string.
-     *
-     * @param  array  $array
-     * @return string
-     */
-    public static function query($array)
-    {
-        return http_build_query($array, '', '&', PHP_QUERY_RFC3986);
-    }
-
-    /**
      * Get one or a specified number of random values from an array.
      *
      * @param  array  $array
@@ -603,7 +546,7 @@ class Arr
      * If no key is given to the method, the entire array will be replaced.
      *
      * @param  array  $array
-     * @param  string|int|null  $key
+     * @param  string|null  $key
      * @param  mixed  $value
      * @return array
      */
@@ -699,26 +642,14 @@ class Arr
     }
 
     /**
-     * Conditionally compile classes from an array into a CSS class list.
+     * Convert the array into a query string.
      *
      * @param  array  $array
      * @return string
      */
-    public static function toCssClasses($array)
+    public static function query($array)
     {
-        $classList = static::wrap($array);
-
-        $classes = [];
-
-        foreach ($classList as $class => $constraint) {
-            if (is_numeric($class)) {
-                $classes[] = $constraint;
-            } elseif ($constraint) {
-                $classes[] = $class;
-            }
-        }
-
-        return implode(' ', $classes);
+        return http_build_query($array, '', '&', PHP_QUERY_RFC3986);
     }
 
     /**
@@ -731,19 +662,6 @@ class Arr
     public static function where($array, callable $callback)
     {
         return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
-    }
-
-    /**
-     * Filter items where the value is not null.
-     *
-     * @param  array  $array
-     * @return array
-     */
-    public static function whereNotNull($array)
-    {
-        return static::where($array, function ($value) {
-            return ! is_null($value);
-        });
     }
 
     /**

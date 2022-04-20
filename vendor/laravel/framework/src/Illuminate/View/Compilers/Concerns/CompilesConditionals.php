@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 trait CompilesConditionals
 {
     /**
-     * Identifier for the first case in the switch statement.
+     * Identifier for the first case in switch statement.
      *
      * @var bool
      */
@@ -283,9 +283,8 @@ trait CompilesConditionals
     }
 
     /**
-     * Compile a once block into valid PHP.
+     * Compile an once block into valid PHP.
      *
-     * @param  string|null  $id
      * @return string
      */
     protected function compileOnce($id = null)
@@ -303,38 +302,5 @@ trait CompilesConditionals
     public function compileEndOnce()
     {
         return '<?php endif; ?>';
-    }
-
-    /**
-     * Compile a selected block into valid PHP.
-     *
-     * @param  string  $condition
-     * @return string
-     */
-    protected function compileSelected($condition)
-    {
-        return "<?php if{$condition}: echo 'selected'; endif; ?>";
-    }
-
-    /**
-     * Compile a checked block into valid PHP.
-     *
-     * @param  string  $condition
-     * @return string
-     */
-    protected function compileChecked($condition)
-    {
-        return "<?php if{$condition}: echo 'checked'; endif; ?>";
-    }
-
-    /**
-     * Compile a disabled block into valid PHP.
-     *
-     * @param  string  $condition
-     * @return string
-     */
-    protected function compileDisabled($condition)
-    {
-        return "<?php if{$condition}: echo 'disabled'; endif; ?>";
     }
 }

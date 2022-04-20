@@ -21,10 +21,10 @@ use Symfony\Component\VarDumper\Cloner\DumperInterface;
  */
 abstract class AbstractDumper implements DataDumperInterface, DumperInterface
 {
-    public const DUMP_LIGHT_ARRAY = 1;
-    public const DUMP_STRING_LENGTH = 2;
-    public const DUMP_COMMA_SEPARATOR = 4;
-    public const DUMP_TRAILING_COMMA = 8;
+    const DUMP_LIGHT_ARRAY = 1;
+    const DUMP_STRING_LENGTH = 2;
+    const DUMP_COMMA_SEPARATOR = 4;
+    const DUMP_TRAILING_COMMA = 8;
 
     public static $defaultOutput = 'php://output';
 
@@ -35,7 +35,7 @@ abstract class AbstractDumper implements DataDumperInterface, DumperInterface
     protected $indentPad = '  ';
     protected $flags;
 
-    private string $charset = '';
+    private $charset = '';
 
     /**
      * @param callable|resource|string|null $output  A line dumper callable, an opened stream or an output path, defaults to static::$defaultOutput
@@ -63,14 +63,14 @@ abstract class AbstractDumper implements DataDumperInterface, DumperInterface
      */
     public function setOutput($output)
     {
-        $prev = $this->outputStream ?? $this->lineDumper;
+        $prev = null !== $this->outputStream ? $this->outputStream : $this->lineDumper;
 
         if (\is_callable($output)) {
             $this->outputStream = null;
             $this->lineDumper = $output;
         } else {
             if (\is_string($output)) {
-                $output = fopen($output, 'w');
+                $output = fopen($output, 'wb');
             }
             $this->outputStream = $output;
             $this->lineDumper = [$this, 'echoLine'];
@@ -84,7 +84,7 @@ abstract class AbstractDumper implements DataDumperInterface, DumperInterface
      *
      * @return string The previous charset
      */
-    public function setCharset(string $charset): string
+    public function setCharset(string $charset)
     {
         $prev = $this->charset;
 
@@ -103,7 +103,7 @@ abstract class AbstractDumper implements DataDumperInterface, DumperInterface
      *
      * @return string The previous indent pad
      */
-    public function setIndentPad(string $pad): string
+    public function setIndentPad(string $pad)
     {
         $prev = $this->indentPad;
         $this->indentPad = $pad;
@@ -118,7 +118,7 @@ abstract class AbstractDumper implements DataDumperInterface, DumperInterface
      *
      * @return string|null The dump as string when $output is true
      */
-    public function dump(Data $data, $output = null): ?string
+    public function dump(Data $data, $output = null)
     {
         $this->decimalPoint = localeconv();
         $this->decimalPoint = $this->decimalPoint['decimal_point'];
@@ -128,7 +128,7 @@ abstract class AbstractDumper implements DataDumperInterface, DumperInterface
         }
 
         if ($returnDump = true === $output) {
-            $output = fopen('php://memory', 'r+');
+            $output = fopen('php://memory', 'r+b');
         }
         if ($output) {
             $prevOutput = $this->setOutput($output);
@@ -179,8 +179,10 @@ abstract class AbstractDumper implements DataDumperInterface, DumperInterface
 
     /**
      * Converts a non-UTF-8 string to UTF-8.
+     *
+     * @return string|null The string converted to UTF-8
      */
-    protected function utf8Encode(?string $s): ?string
+    protected function utf8Encode(?string $s)
     {
         if (null === $s || preg_match('//u', $s)) {
             return $s;

@@ -50,7 +50,7 @@ class PhpRedisConnector implements Connector
     }
 
     /**
-     * Build a single cluster seed string from an array.
+     * Build a single cluster seed string from array.
      *
      * @param  array  $server
      * @return string
@@ -84,11 +84,7 @@ class PhpRedisConnector implements Connector
             $this->establishConnection($client, $config);
 
             if (! empty($config['password'])) {
-                if (isset($config['username']) && is_string($config['password'])) {
-                    $client->auth([$config['username'], $config['password']]);
-                } else {
-                    $client->auth($config['password']);
-                }
+                $client->auth($config['password']);
             }
 
             if (isset($config['database'])) {
@@ -109,18 +105,6 @@ class PhpRedisConnector implements Connector
 
             if (! empty($config['name'])) {
                 $client->client('SETNAME', $config['name']);
-            }
-
-            if (array_key_exists('serializer', $config)) {
-                $client->setOption(Redis::OPT_SERIALIZER, $config['serializer']);
-            }
-
-            if (array_key_exists('compression', $config)) {
-                $client->setOption(Redis::OPT_COMPRESSION, $config['compression']);
-            }
-
-            if (array_key_exists('compression_level', $config)) {
-                $client->setOption(Redis::OPT_COMPRESSION_LEVEL, $config['compression_level']);
             }
         });
     }
@@ -148,8 +132,10 @@ class PhpRedisConnector implements Connector
             $parameters[] = Arr::get($config, 'read_timeout', 0.0);
         }
 
-        if (version_compare(phpversion('redis'), '5.3.0', '>=') && ! is_null($context = Arr::get($config, 'context'))) {
-            $parameters[] = $context;
+        if (version_compare(phpversion('redis'), '5.3.0', '>=')) {
+            if (! is_null($context = Arr::get($config, 'context'))) {
+                $parameters[] = $context;
+            }
         }
 
         $client->{($persistent ? 'pconnect' : 'connect')}(...$parameters);
@@ -176,8 +162,10 @@ class PhpRedisConnector implements Connector
             $parameters[] = $options['password'] ?? null;
         }
 
-        if (version_compare(phpversion('redis'), '5.3.2', '>=') && ! is_null($context = Arr::get($options, 'context'))) {
-            $parameters[] = $context;
+        if (version_compare(phpversion('redis'), '5.3.2', '>=')) {
+            if (! is_null($context = Arr::get($options, 'context'))) {
+                $parameters[] = $context;
+            }
         }
 
         return tap(new RedisCluster(...$parameters), function ($client) use ($options) {
@@ -195,18 +183,6 @@ class PhpRedisConnector implements Connector
 
             if (! empty($options['name'])) {
                 $client->client('SETNAME', $options['name']);
-            }
-
-            if (array_key_exists('serializer', $options)) {
-                $client->setOption(RedisCluster::OPT_SERIALIZER, $options['serializer']);
-            }
-
-            if (array_key_exists('compression', $options)) {
-                $client->setOption(RedisCluster::OPT_COMPRESSION, $options['compression']);
-            }
-
-            if (array_key_exists('compression_level', $options)) {
-                $client->setOption(RedisCluster::OPT_COMPRESSION_LEVEL, $options['compression_level']);
             }
         });
     }

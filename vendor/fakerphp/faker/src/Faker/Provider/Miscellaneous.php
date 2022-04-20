@@ -5,30 +5,30 @@ namespace Faker\Provider;
 class Miscellaneous extends Base
 {
     /**
-     * @see https://en.wikipedia.org/wiki/Emoji#Unicode_blocks
+     * @link https://en.wikipedia.org/wiki/Emoji#Unicode_blocks
      * On date of 2017-03-26
      *
-     * U+1F600 - U+1F637 in Unicode Codepoint Escape Syntax
+     * U+1F600 - U+1F637 as their UTF-8 Pairings
      */
     protected static $emoji = [
-        "\u{1F600}", "\u{1F601}", "\u{1F602}", "\u{1F603}",
-        "\u{1F604}", "\u{1F605}", "\u{1F606}", "\u{1F607}",
-        "\u{1F608}", "\u{1F609}", "\u{1F60A}", "\u{1F60B}",
-        "\u{1F60C}", "\u{1F60D}", "\u{1F60E}", "\u{1F60F}",
-        "\u{1F610}", "\u{1F611}", "\u{1F612}", "\u{1F613}",
-        "\u{1F614}", "\u{1F615}", "\u{1F616}", "\u{1F617}",
-        "\u{1F618}", "\u{1F619}", "\u{1F61A}", "\u{1F61B}",
-        "\u{1F61C}", "\u{1F61D}", "\u{1F61E}", "\u{1F61F}",
-        "\u{1F620}", "\u{1F621}", "\u{1F622}", "\u{1F623}",
-        "\u{1F624}", "\u{1F625}", "\u{1F626}", "\u{1F627}",
-        "\u{1F628}", "\u{1F629}", "\u{1F62A}", "\u{1F62B}",
-        "\u{1F62C}", "\u{1F62D}", "\u{1F62E}", "\u{1F62F}",
-        "\u{1F630}", "\u{1F631}", "\u{1F632}", "\u{1F633}",
-        "\u{1F634}", "\u{1F635}", "\u{1F636}", "\u{1F637}",
+        '\uD83D\uDE00', '\uD83D\uDE01', '\uD83D\uDE02', '\uD83D\uDE03',
+        '\uD83D\uDE04', '\uD83D\uDE05', '\uD83D\uDE06', '\uD83D\uDE07',
+        '\uD83D\uDE08', '\uD83D\uDE09', '\uD83D\uDE0A', '\uD83D\uDE0B',
+        '\uD83D\uDE0C', '\uD83D\uDE0D', '\uD83D\uDE0E', '\uD83D\uDE0F',
+        '\uD83D\uDE10', '\uD83D\uDE11', '\uD83D\uDE12', '\uD83D\uDE13',
+        '\uD83D\uDE14', '\uD83D\uDE15', '\uD83D\uDE16', '\uD83D\uDE17',
+        '\uD83D\uDE18', '\uD83D\uDE19', '\uD83D\uDE1A', '\uD83D\uDE1B',
+        '\uD83D\uDE1C', '\uD83D\uDE1D', '\uD83D\uDE1E', '\uD83D\uDE1F',
+        '\uD83D\uDE20', '\uD83D\uDE21', '\uD83D\uDE22', '\uD83D\uDE23',
+        '\uD83D\uDE24', '\uD83D\uDE25', '\uD83D\uDE26', '\uD83D\uDE27',
+        '\uD83D\uDE28', '\uD83D\uDE29', '\uD83D\uDE2A', '\uD83D\uDE2B',
+        '\uD83D\uDE2C', '\uD83D\uDE2D', '\uD83D\uDE2E', '\uD83D\uDE2F',
+        '\uD83D\uDE30', '\uD83D\uDE31', '\uD83D\uDE32', '\uD83D\uDE33',
+        '\uD83D\uDE34', '\uD83D\uDE35', '\uD83D\uDE36', '\uD83D\uDE37',
     ];
 
     /**
-     * @see https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+     * @link https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
      * On date of 2016-04-22
      */
     protected static $languageCode = [
@@ -54,7 +54,7 @@ class Miscellaneous extends Base
     ];
 
     /**
-     * @see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+     * @link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
      * On date of 2014-10-19
      */
     protected static $countryCode = [
@@ -86,7 +86,7 @@ class Miscellaneous extends Base
     ];
 
     /**
-     * @see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
+     * @link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
      * On date of 2014-10-19
      */
     protected static $countryISOAlpha3 = [
@@ -201,7 +201,7 @@ class Miscellaneous extends Base
     ];
 
     /**
-     * @see https://en.wikipedia.org/wiki/ISO_4217
+     * @link https://en.wikipedia.org/wiki/ISO_4217
      * On date of 2019-09-27
      *
      * With the following exceptions:
@@ -238,43 +238,35 @@ class Miscellaneous extends Base
      */
     public static function boolean($chanceOfGettingTrue = 50)
     {
-        return self::numberBetween(1, 100) <= $chanceOfGettingTrue;
+        return mt_rand(1, 100) <= $chanceOfGettingTrue;
     }
 
     /**
      * @example 'cfcd208495d565ef66e7dff9f98764da'
-     *
-     * @return string
      */
     public static function md5()
     {
-        return md5(self::numberBetween());
+        return md5(mt_rand());
     }
 
     /**
      * @example 'b5d86317c2a144cd04d0d7c03b2b02666fafadf2'
-     *
-     * @return string
      */
     public static function sha1()
     {
-        return sha1(self::numberBetween());
+        return sha1(mt_rand());
     }
 
     /**
      * @example '85086017559ccc40638fcde2fecaf295e0de7ca51b7517b6aebeaaf75b4d4654'
-     *
-     * @return string
      */
     public static function sha256()
     {
-        return hash('sha256', self::numberBetween());
+        return hash('sha256', mt_rand());
     }
 
     /**
      * @example 'fr_FR'
-     *
-     * @return string
      */
     public static function locale()
     {
@@ -284,9 +276,7 @@ class Miscellaneous extends Base
     /**
      * @example 'FR'
      *
-     * @see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-     *
-     * @return string
+     * @link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
      */
     public static function countryCode()
     {
@@ -296,9 +286,7 @@ class Miscellaneous extends Base
     /**
      * @example 'FRA'
      *
-     * @see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
-     *
-     * @return string
+     * @link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
      */
     public static function countryISOAlpha3()
     {
@@ -307,8 +295,6 @@ class Miscellaneous extends Base
 
     /**
      * @example 'fr'
-     *
-     * @return string
      */
     public static function languageCode()
     {
@@ -318,9 +304,7 @@ class Miscellaneous extends Base
     /**
      * @example 'EUR'
      *
-     * @see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-     *
-     * @return string
+     * @link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
      */
     public static function currencyCode()
     {
@@ -328,14 +312,12 @@ class Miscellaneous extends Base
     }
 
     /**
-     * Returns an Emoji (Unicode character between U+1F600 and U+1F637).
+     * Returns an encoded Unicode Character between U+1F600 and U+1F637.
      *
-     * @see https://en.wikipedia.org/wiki/Emoji#Unicode_blocks
-     *
-     * @return string
+     * @link https://en.wikipedia.org/wiki/Emoji#Unicode_blocks
      */
     public static function emoji()
     {
-        return static::randomElement(static::$emoji);
+        return json_decode('"' . static::randomElement(static::$emoji) . '"');
     }
 }

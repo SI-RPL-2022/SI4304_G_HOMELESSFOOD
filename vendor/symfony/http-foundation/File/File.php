@@ -47,10 +47,12 @@ class File extends \SplFileInfo
      * This method uses the mime type as guessed by getMimeType()
      * to guess the file extension.
      *
+     * @return string|null The guessed extension or null if it cannot be guessed
+     *
      * @see MimeTypes
      * @see getMimeType()
      */
-    public function guessExtension(): ?string
+    public function guessExtension()
     {
         if (!class_exists(MimeTypes::class)) {
             throw new \LogicException('You cannot guess the extension as the Mime component is not installed. Try running "composer require symfony/mime".');
@@ -66,9 +68,11 @@ class File extends \SplFileInfo
      * which uses finfo_file() then the "file" system binary,
      * depending on which of those are available.
      *
+     * @return string|null The guessed mime type (e.g. "application/pdf")
+     *
      * @see MimeTypes
      */
-    public function getMimeType(): ?string
+    public function getMimeType()
     {
         if (!class_exists(MimeTypes::class)) {
             throw new \LogicException('You cannot guess the mime type as the Mime component is not installed. Try running "composer require symfony/mime".');
@@ -80,18 +84,17 @@ class File extends \SplFileInfo
     /**
      * Moves the file to a new location.
      *
+     * @return self A File object representing the new file
+     *
      * @throws FileException if the target file could not be created
      */
-    public function move(string $directory, string $name = null): self
+    public function move(string $directory, string $name = null)
     {
         $target = $this->getTargetFile($directory, $name);
 
         set_error_handler(function ($type, $msg) use (&$error) { $error = $msg; });
-        try {
-            $renamed = rename($this->getPathname(), $target);
-        } finally {
-            restore_error_handler();
-        }
+        $renamed = rename($this->getPathname(), $target);
+        restore_error_handler();
         if (!$renamed) {
             throw new FileException(sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(), $target, strip_tags($error)));
         }
@@ -112,7 +115,10 @@ class File extends \SplFileInfo
         return $content;
     }
 
-    protected function getTargetFile(string $directory, string $name = null): self
+    /**
+     * @return self
+     */
+    protected function getTargetFile(string $directory, string $name = null)
     {
         if (!is_dir($directory)) {
             if (false === @mkdir($directory, 0777, true) && !is_dir($directory)) {
@@ -129,8 +135,10 @@ class File extends \SplFileInfo
 
     /**
      * Returns locale independent base name of the given path.
+     *
+     * @return string
      */
-    protected function getName(string $name): string
+    protected function getName(string $name)
     {
         $originalName = str_replace('\\', '/', $name);
         $pos = strrpos($originalName, '/');

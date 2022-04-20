@@ -36,43 +36,13 @@ class PostgresGrammar extends Grammar
     protected $fluentCommands = ['Comment'];
 
     /**
-     * Compile a create database command.
-     *
-     * @param  string  $name
-     * @param  \Illuminate\Database\Connection  $connection
-     * @return string
-     */
-    public function compileCreateDatabase($name, $connection)
-    {
-        return sprintf(
-            'create database %s encoding %s',
-            $this->wrapValue($name),
-            $this->wrapValue($connection->getConfig('charset')),
-        );
-    }
-
-    /**
-     * Compile a drop database if exists command.
-     *
-     * @param  string  $name
-     * @return string
-     */
-    public function compileDropDatabaseIfExists($name)
-    {
-        return sprintf(
-            'drop database if exists %s',
-            $this->wrapValue($name)
-        );
-    }
-
-    /**
      * Compile the query to determine if a table exists.
      *
      * @return string
      */
     public function compileTableExists()
     {
-        return "select * from information_schema.tables where table_catalog = ? and table_schema = ? and table_name = ? and table_type = 'BASE TABLE'";
+        return "select * from information_schema.tables where table_schema = ? and table_name = ? and table_type = 'BASE TABLE'";
     }
 
     /**
@@ -82,7 +52,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileColumnListing()
     {
-        return 'select column_name from information_schema.columns where table_catalog = ? and table_schema = ? and table_name = ?';
+        return 'select column_name from information_schema.columns where table_schema = ? and table_name = ?';
     }
 
     /**
@@ -117,7 +87,7 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * Compile the auto-incrementing column starting values.
+     * Compile the auto incrementing column starting values.
      *
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
      * @return array
@@ -173,30 +143,6 @@ class PostgresGrammar extends Grammar
             $this->wrapTable($blueprint),
             $command->algorithm ? ' using '.$command->algorithm : '',
             $this->columnize($command->columns)
-        );
-    }
-
-    /**
-     * Compile a fulltext index key command.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
-     * @return string
-     *
-     * @throws \RuntimeException
-     */
-    public function compileFulltext(Blueprint $blueprint, Fluent $command)
-    {
-        $language = $command->language ?: 'english';
-
-        $columns = array_map(function ($column) use ($language) {
-            return "to_tsvector({$this->quoteString($language)}, {$this->wrap($column)})";
-        }, $command->columns);
-
-        return sprintf('create index %s on %s using gin ((%s))',
-            $this->wrap($command->index),
-            $this->wrapTable($blueprint),
-            implode(' || ', $columns)
         );
     }
 
@@ -272,7 +218,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileDropAllTables($tables)
     {
-        return 'drop table '.implode(',', $this->escapeNames($tables)).' cascade';
+        return 'drop table "'.implode('","', $tables).'" cascade';
     }
 
     /**
@@ -283,7 +229,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileDropAllViews($views)
     {
-        return 'drop view '.implode(',', $this->escapeNames($views)).' cascade';
+        return 'drop view "'.implode('","', $views).'" cascade';
     }
 
     /**
@@ -294,29 +240,29 @@ class PostgresGrammar extends Grammar
      */
     public function compileDropAllTypes($types)
     {
-        return 'drop type '.implode(',', $this->escapeNames($types)).' cascade';
+        return 'drop type "'.implode('","', $types).'" cascade';
     }
 
     /**
      * Compile the SQL needed to retrieve all table names.
      *
-     * @param  string|array  $searchPath
+     * @param  string|array  $schema
      * @return string
      */
-    public function compileGetAllTables($searchPath)
+    public function compileGetAllTables($schema)
     {
-        return "select tablename, concat('\"', schemaname, '\".\"', tablename, '\"') as qualifiedname from pg_catalog.pg_tables where schemaname in ('".implode("','", (array) $searchPath)."')";
+        return "select tablename from pg_catalog.pg_tables where schemaname in ('".implode("','", (array) $schema)."')";
     }
 
     /**
      * Compile the SQL needed to retrieve all view names.
      *
-     * @param  string|array  $searchPath
+     * @param  string|array  $schema
      * @return string
      */
-    public function compileGetAllViews($searchPath)
+    public function compileGetAllViews($schema)
     {
-        return "select viewname, concat('\"', schemaname, '\".\"', viewname, '\"') as qualifiedname from pg_catalog.pg_views where schemaname in ('".implode("','", (array) $searchPath)."')";
+        return "select viewname from pg_catalog.pg_views where schemaname in ('".implode("','", (array) $schema)."')";
     }
 
     /**
@@ -381,18 +327,6 @@ class PostgresGrammar extends Grammar
     public function compileDropIndex(Blueprint $blueprint, Fluent $command)
     {
         return "drop index {$this->wrap($command->index)}";
-    }
-
-    /**
-     * Compile a drop fulltext index command.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
-     * @return string
-     */
-    public function compileDropFullText(Blueprint $blueprint, Fluent $command)
-    {
-        return $this->compileDropIndex($blueprint, $command);
     }
 
     /**
@@ -487,21 +421,6 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * Quote-escape the given tables, views, or types.
-     *
-     * @param  array  $names
-     * @return array
-     */
-    public function escapeNames($names)
-    {
-        return array_map(static function ($name) {
-            return '"'.collect(explode('.', $name))
-                ->map(fn ($segment) => trim($segment, '\'"'))
-                ->implode('"."').'"';
-        }, $names);
-    }
-
-    /**
      * Create the column definition for a char type.
      *
      * @param  \Illuminate\Support\Fluent  $column
@@ -521,17 +440,6 @@ class PostgresGrammar extends Grammar
     protected function typeString(Fluent $column)
     {
         return "varchar({$column->length})";
-    }
-
-    /**
-     * Create the column definition for a tiny text type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    protected function typeTinyText(Fluent $column)
-    {
-        return 'varchar(255)';
     }
 
     /**

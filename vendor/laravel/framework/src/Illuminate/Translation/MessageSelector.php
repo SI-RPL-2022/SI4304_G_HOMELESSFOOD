@@ -2,6 +2,8 @@
 
 namespace Illuminate\Translation;
 
+use Illuminate\Support\Str;
+
 class MessageSelector
 {
     /**
@@ -59,14 +61,14 @@ class MessageSelector
         preg_match('/^[\{\[]([^\[\]\{\}]*)[\}\]](.*)/s', $part, $matches);
 
         if (count($matches) !== 3) {
-            return null;
+            return;
         }
 
         $condition = $matches[1];
 
         $value = $matches[2];
 
-        if (str_contains($condition, ',')) {
+        if (Str::contains($condition, ',')) {
             [$from, $to] = explode(',', $condition, 2);
 
             if ($to === '*' && $number >= $from) {

@@ -20,8 +20,10 @@ class FileProfilerStorage implements ProfilerStorageInterface
 {
     /**
      * Folder where profiler data are stored.
+     *
+     * @var string
      */
-    private string $folder;
+    private $folder;
 
     /**
      * Constructs the file storage using a "dsn-like" path.
@@ -32,7 +34,7 @@ class FileProfilerStorage implements ProfilerStorageInterface
      */
     public function __construct(string $dsn)
     {
-        if (!str_starts_with($dsn, 'file:')) {
+        if (0 !== strpos($dsn, 'file:')) {
             throw new \RuntimeException(sprintf('Please check your configuration. You are trying to use FileStorage with an invalid dsn "%s". The expected format is "file:/path/to/the/storage/folder".', $dsn));
         }
         $this->folder = substr($dsn, 5);
@@ -62,7 +64,7 @@ class FileProfilerStorage implements ProfilerStorageInterface
             [$csvToken, $csvIp, $csvMethod, $csvUrl, $csvTime, $csvParent, $csvStatusCode] = $values;
             $csvTime = (int) $csvTime;
 
-            if ($ip && !str_contains($csvIp, $ip) || $url && !str_contains($csvUrl, $url) || $method && !str_contains($csvMethod, $method) || $statusCode && !str_contains($csvStatusCode, $statusCode)) {
+            if ($ip && false === strpos($csvIp, $ip) || $url && false === strpos($csvUrl, $url) || $method && false === strpos($csvMethod, $method) || $statusCode && false === strpos($csvStatusCode, $statusCode)) {
                 continue;
             }
 
@@ -121,11 +123,7 @@ class FileProfilerStorage implements ProfilerStorageInterface
             $file = 'compress.zlib://'.$file;
         }
 
-        if (!$data = unserialize(file_get_contents($file))) {
-            return null;
-        }
-
-        return $this->createProfileFromData($token, $data);
+        return $this->createProfileFromData($token, unserialize(file_get_contents($file)));
     }
 
     /**
@@ -201,8 +199,10 @@ class FileProfilerStorage implements ProfilerStorageInterface
 
     /**
      * Gets filename to store data, associated to the token.
+     *
+     * @return string The profile filename
      */
-    protected function getFilename(string $token): string
+    protected function getFilename(string $token)
     {
         // Uses 4 last characters, because first are mostly the same.
         $folderA = substr($token, -2, 2);
@@ -213,8 +213,10 @@ class FileProfilerStorage implements ProfilerStorageInterface
 
     /**
      * Gets the index filename.
+     *
+     * @return string The index filename
      */
-    protected function getIndexFilename(): string
+    protected function getIndexFilename()
     {
         return $this->folder.'/index.csv';
     }
@@ -225,8 +227,10 @@ class FileProfilerStorage implements ProfilerStorageInterface
      * This function automatically skips the empty lines and do not include the line return in result value.
      *
      * @param resource $file The file resource, with the pointer placed at the end of the line to read
+     *
+     * @return mixed A string representing the line or null if beginning of file is reached
      */
-    protected function readLineFromFile($file): mixed
+    protected function readLineFromFile($file)
     {
         $line = '';
         $position = ftell($file);
@@ -291,11 +295,7 @@ class FileProfilerStorage implements ProfilerStorageInterface
                 $file = 'compress.zlib://'.$file;
             }
 
-            if (!$childData = unserialize(file_get_contents($file))) {
-                continue;
-            }
-
-            $profile->addChild($this->createProfileFromData($token, $childData, $profile));
+            $profile->addChild($this->createProfileFromData($token, unserialize(file_get_contents($file)), $profile));
         }
 
         return $profile;

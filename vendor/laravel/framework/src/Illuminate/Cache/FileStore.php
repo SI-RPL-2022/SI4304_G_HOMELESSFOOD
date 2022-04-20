@@ -78,7 +78,7 @@ class FileStore implements Store, LockProvider
         );
 
         if ($result !== false && $result > 0) {
-            $this->ensurePermissionsAreCorrect($path);
+            $this->ensureFileHasCorrectPermissions($path);
 
             return true;
         }
@@ -115,7 +115,7 @@ class FileStore implements Store, LockProvider
                 ->write($this->expiration($seconds).serialize($value))
                 ->close();
 
-            $this->ensurePermissionsAreCorrect($path);
+            $this->ensureFileHasCorrectPermissions($path);
 
             return true;
         }
@@ -133,24 +133,18 @@ class FileStore implements Store, LockProvider
      */
     protected function ensureCacheDirectoryExists($path)
     {
-        $directory = dirname($path);
-
-        if (! $this->files->exists($directory)) {
-            $this->files->makeDirectory($directory, 0777, true, true);
-
-            // We're creating two levels of directories (e.g. 7e/24), so we check them both...
-            $this->ensurePermissionsAreCorrect($directory);
-            $this->ensurePermissionsAreCorrect(dirname($directory));
+        if (! $this->files->exists(dirname($path))) {
+            $this->files->makeDirectory(dirname($path), 0777, true, true);
         }
     }
 
     /**
-     * Ensure the created node has the correct permissions.
+     * Ensure the cache file has the correct permissions.
      *
      * @param  string  $path
      * @return void
      */
-    protected function ensurePermissionsAreCorrect($path)
+    protected function ensureFileHasCorrectPermissions($path)
     {
         if (is_null($this->filePermission) ||
             intval($this->files->chmod($path), 8) == $this->filePermission) {

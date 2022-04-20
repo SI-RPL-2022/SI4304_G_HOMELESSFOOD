@@ -25,16 +25,6 @@ class ForeignKeyDefinition extends Fluent
     }
 
     /**
-     * Indicate that updates should be restricted.
-     *
-     * @return $this
-     */
-    public function restrictOnUpdate()
-    {
-        return $this->onUpdate('restrict');
-    }
-
-    /**
      * Indicate that deletes should cascade.
      *
      * @return $this

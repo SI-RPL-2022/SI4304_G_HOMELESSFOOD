@@ -8,14 +8,12 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use IteratorAggregate;
-use Traversable;
 
 class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 {
-    use Conditionable, Macroable;
+    use Macroable;
 
     /**
      * The raw array of attributes.
@@ -59,20 +57,9 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
     }
 
     /**
-     * Determine if a given attribute exists in the attribute array.
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function has($key)
-    {
-        return array_key_exists($key, $this->attributes);
-    }
-
-    /**
      * Only include the given attribute from the attribute array.
      *
-     * @param  mixed  $keys
+     * @param  mixed|array  $keys
      * @return static
      */
     public function only($keys)
@@ -121,49 +108,38 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
     /**
      * Return a bag of attributes that have keys starting with the given value / pattern.
      *
-     * @param  string|string[]  $needles
+     * @param  string  $string
      * @return static
      */
-    public function whereStartsWith($needles)
+    public function whereStartsWith($string)
     {
-        return $this->filter(function ($value, $key) use ($needles) {
-            return Str::startsWith($key, $needles);
+        return $this->filter(function ($value, $key) use ($string) {
+            return Str::startsWith($key, $string);
         });
     }
 
     /**
      * Return a bag of attributes with keys that do not start with the given value / pattern.
      *
-     * @param  string|string[]  $needles
+     * @param  string  $string
      * @return static
      */
-    public function whereDoesntStartWith($needles)
+    public function whereDoesntStartWith($string)
     {
-        return $this->filter(function ($value, $key) use ($needles) {
-            return ! Str::startsWith($key, $needles);
+        return $this->filter(function ($value, $key) use ($string) {
+            return ! Str::startsWith($key, $string);
         });
     }
 
     /**
      * Return a bag of attributes that have keys starting with the given value / pattern.
      *
-     * @param  string|string[]  $needles
+     * @param  string  $string
      * @return static
      */
-    public function thatStartWith($needles)
+    public function thatStartWith($string)
     {
-        return $this->whereStartsWith($needles);
-    }
-
-    /**
-     * Only include the given attribute from the attribute array.
-     *
-     * @param  mixed|array  $keys
-     * @return static
-     */
-    public function onlyProps($keys)
-    {
-        return $this->only($this->extractPropNames($keys));
+        return $this->whereStartsWith($string);
     }
 
     /**
@@ -174,17 +150,6 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      */
     public function exceptProps($keys)
     {
-        return $this->except($this->extractPropNames($keys));
-    }
-
-    /**
-     * Extract prop names from given keys.
-     *
-     * @param  mixed|array  $keys
-     * @return array
-     */
-    protected function extractPropNames($keys)
-    {
         $props = [];
 
         foreach ($keys as $key => $defaultValue) {
@@ -194,20 +159,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
             $props[] = Str::kebab($key);
         }
 
-        return $props;
-    }
-
-    /**
-     * Conditionally merge classes into the attribute bag.
-     *
-     * @param  mixed|array  $classList
-     * @return static
-     */
-    public function class($classList)
-    {
-        $classList = Arr::wrap($classList);
-
-        return $this->merge(['class' => Arr::toCssClasses($classList)]);
+        return $this->except($props);
     }
 
     /**
@@ -346,7 +298,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      * @param  string  $offset
      * @return bool
      */
-    public function offsetExists($offset): bool
+    public function offsetExists($offset)
     {
         return isset($this->attributes[$offset]);
     }
@@ -357,7 +309,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      * @param  string  $offset
      * @return mixed
      */
-    public function offsetGet($offset): mixed
+    public function offsetGet($offset)
     {
         return $this->get($offset);
     }
@@ -369,7 +321,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      * @param  mixed  $value
      * @return void
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet($offset, $value)
     {
         $this->attributes[$offset] = $value;
     }
@@ -380,7 +332,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      * @param  string  $offset
      * @return void
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset($offset)
     {
         unset($this->attributes[$offset]);
     }
@@ -390,7 +342,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      *
      * @return \ArrayIterator
      */
-    public function getIterator(): Traversable
+    public function getIterator()
     {
         return new ArrayIterator($this->attributes);
     }

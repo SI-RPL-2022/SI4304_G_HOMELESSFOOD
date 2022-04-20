@@ -31,7 +31,7 @@ class Parser implements ParserInterface
 
     public function __construct(Tokenizer $tokenizer = null)
     {
-        $this->tokenizer = $tokenizer ?? new Tokenizer();
+        $this->tokenizer = $tokenizer ?: new Tokenizer();
     }
 
     /**
@@ -79,12 +79,12 @@ class Parser implements ParserInterface
                 return [2, 0];
             case 'n' === $joined:
                 return [1, 0];
-            case !str_contains($joined, 'n'):
+            case false === strpos($joined, 'n'):
                 return [0, $int($joined)];
         }
 
         $split = explode('n', $joined);
-        $first = $split[0] ?? null;
+        $first = isset($split[0]) ? $split[0] : null;
 
         return [
             $first ? ('-' === $first || '+' === $first ? $int($first.'1') : $int($first)) : 1,

@@ -217,8 +217,6 @@ final class BigInteger extends BigNumber
      *
      * Using the default random bytes generator, this method is suitable for cryptographic use.
      *
-     * @psalm-param callable(int): string $randomBytesGenerator
-     *
      * @param int           $numBits              The number of bits.
      * @param callable|null $randomBytesGenerator A function that accepts a number of bytes as an integer, and returns a
      *                                            string of random bytes of the given length. Defaults to the
@@ -257,8 +255,6 @@ final class BigInteger extends BigNumber
      * Generates a pseudo-random number between `$min` and `$max`.
      *
      * Using the default random bytes generator, this method is suitable for cryptographic use.
-     *
-     * @psalm-param (callable(int): string)|null $randomBytesGenerator
      *
      * @param BigNumber|int|float|string $min                  The lower bound. Must be convertible to a BigInteger.
      * @param BigNumber|int|float|string $max                  The upper bound. Must be convertible to a BigInteger.
@@ -304,10 +300,7 @@ final class BigInteger extends BigNumber
      */
     public static function zero() : BigInteger
     {
-        /**
-         * @psalm-suppress ImpureStaticVariable
-         * @var BigInteger|null $zero
-         */
+        /** @psalm-suppress ImpureStaticVariable */
         static $zero;
 
         if ($zero === null) {
@@ -326,10 +319,7 @@ final class BigInteger extends BigNumber
      */
     public static function one() : BigInteger
     {
-        /**
-         * @psalm-suppress ImpureStaticVariable
-         * @var BigInteger|null $one
-         */
+        /** @psalm-suppress ImpureStaticVariable */
         static $one;
 
         if ($one === null) {
@@ -348,10 +338,7 @@ final class BigInteger extends BigNumber
      */
     public static function ten() : BigInteger
     {
-        /**
-         * @psalm-suppress ImpureStaticVariable
-         * @var BigInteger|null $ten
-         */
+        /** @psalm-suppress ImpureStaticVariable */
         static $ten;
 
         if ($ten === null) {
@@ -1083,10 +1070,7 @@ final class BigInteger extends BigNumber
 
         if ($signed) {
             if ($this->isNegative()) {
-                $bin = \hex2bin($hex);
-                assert($bin !== false);
-
-                $hex = \bin2hex(~$bin);
+                $hex = \bin2hex(~\hex2bin($hex));
                 $hex = self::fromBase($hex, 16)->plus(1)->toBase(16);
 
                 $hexLength = \strlen($hex);
@@ -1117,39 +1101,6 @@ final class BigInteger extends BigNumber
     }
 
     /**
-     * This method is required for serializing the object and SHOULD NOT be accessed directly.
-     *
-     * @internal
-     *
-     * @return array{value: string}
-     */
-    public function __serialize(): array
-    {
-        return ['value' => $this->value];
-    }
-
-    /**
-     * This method is only here to allow unserializing the object and cannot be accessed directly.
-     *
-     * @internal
-     * @psalm-suppress RedundantPropertyInitializationCheck
-     *
-     * @param array{value: string} $data
-     *
-     * @return void
-     *
-     * @throws \LogicException
-     */
-    public function __unserialize(array $data): void
-    {
-        if (isset($this->value)) {
-            throw new \LogicException('__unserialize() is an internal function, it must not be called directly.');
-        }
-
-        $this->value = $data['value'];
-    }
-
-    /**
      * This method is required by interface Serializable and SHOULD NOT be accessed directly.
      *
      * @internal
@@ -1165,7 +1116,6 @@ final class BigInteger extends BigNumber
      * This method is only here to implement interface Serializable and cannot be accessed directly.
      *
      * @internal
-     * @psalm-suppress RedundantPropertyInitializationCheck
      *
      * @param string $value
      *

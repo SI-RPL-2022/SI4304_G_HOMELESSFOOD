@@ -2,6 +2,9 @@
 
 namespace Faker\Provider\da_DK;
 
+/**
+ * @author Antoine Corcy <contact@sbin.dk>
+ */
 class Address extends \Faker\Provider\Address
 {
     /**
@@ -50,7 +53,7 @@ class Address extends \Faker\Provider\Address
      * @var array Danish zip code.
      */
     protected static $postcode = [
-        '%###',
+        '%###'
     ];
 
     /**
@@ -140,7 +143,7 @@ class Address extends \Faker\Provider\Address
     ];
 
     /**
-     * @see https://github.com/umpirsky/country-list/blob/master/country/cldr/da_DK/country.php
+     * @link https://github.com/umpirsky/country-list/blob/master/country/cldr/da_DK/country.php
      *
      * @var array Some countries in danish.
      */

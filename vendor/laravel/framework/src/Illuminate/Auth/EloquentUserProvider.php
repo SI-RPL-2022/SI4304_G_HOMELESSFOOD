@@ -2,11 +2,11 @@
 
 namespace Illuminate\Auth;
 
-use Closure;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 
 class EloquentUserProvider implements UserProvider
 {
@@ -80,7 +80,7 @@ class EloquentUserProvider implements UserProvider
     /**
      * Update the "remember me" token for the given user in storage.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  \Illuminate\Contracts\Auth\Authenticatable|\Illuminate\Database\Eloquent\Model  $user
      * @param  string  $token
      * @return void
      */
@@ -107,7 +107,7 @@ class EloquentUserProvider implements UserProvider
     {
         if (empty($credentials) ||
            (count($credentials) === 1 &&
-            str_contains($this->firstCredentialKey($credentials), 'password'))) {
+            Str::contains($this->firstCredentialKey($credentials), 'password'))) {
             return;
         }
 
@@ -117,14 +117,12 @@ class EloquentUserProvider implements UserProvider
         $query = $this->newModelQuery();
 
         foreach ($credentials as $key => $value) {
-            if (str_contains($key, 'password')) {
+            if (Str::contains($key, 'password')) {
                 continue;
             }
 
             if (is_array($value) || $value instanceof Arrayable) {
                 $query->whereIn($key, $value);
-            } elseif ($value instanceof Closure) {
-                $value($query);
             } else {
                 $query->where($key, $value);
             }
@@ -141,7 +139,9 @@ class EloquentUserProvider implements UserProvider
      */
     protected function firstCredentialKey(array $credentials)
     {
-        return array_key_first($credentials);
+        foreach ($credentials as $key => $value) {
+            return $key;
+        }
     }
 
     /**

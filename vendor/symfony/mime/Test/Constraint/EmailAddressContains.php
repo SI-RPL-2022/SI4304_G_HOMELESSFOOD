@@ -18,8 +18,8 @@ use Symfony\Component\Mime\RawMessage;
 
 final class EmailAddressContains extends Constraint
 {
-    private string $headerName;
-    private string $expectedValue;
+    private $headerName;
+    private $expectedValue;
 
     public function __construct(string $headerName, string $expectedValue)
     {
@@ -59,7 +59,7 @@ final class EmailAddressContains extends Constraint
             return false;
         }
 
-        throw new \LogicException('Unable to test a message address on a non-address header.');
+        throw new \LogicException(sprintf('Unable to test a message address on a non-address header.'));
     }
 
     /**

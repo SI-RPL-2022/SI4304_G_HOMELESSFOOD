@@ -12,8 +12,6 @@
 namespace Symfony\Component\Routing;
 
 use Symfony\Component\Config\Resource\ResourceInterface;
-use Symfony\Component\Routing\Exception\InvalidArgumentException;
-use Symfony\Component\Routing\Exception\RouteCircularReferenceException;
 
 /**
  * A RouteCollection represents a set of Route instances.
@@ -24,39 +22,28 @@ use Symfony\Component\Routing\Exception\RouteCircularReferenceException;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Tobias Schultze <http://tobion.de>
- *
- * @implements \IteratorAggregate<string, Route>
  */
 class RouteCollection implements \IteratorAggregate, \Countable
 {
     /**
-     * @var array<string, Route>
+     * @var Route[]
      */
-    private array $routes = [];
+    private $routes = [];
 
     /**
-     * @var array<string, Alias>
+     * @var array
      */
-    private $aliases = [];
+    private $resources = [];
 
     /**
-     * @var array<string, ResourceInterface>
+     * @var int[]
      */
-    private array $resources = [];
-
-    /**
-     * @var array<string, int>
-     */
-    private array $priorities = [];
+    private $priorities = [];
 
     public function __clone()
     {
         foreach ($this->routes as $name => $route) {
             $this->routes[$name] = clone $route;
-        }
-
-        foreach ($this->aliases as $name => $alias) {
-            $this->aliases[$name] = clone $alias;
         }
     }
 
@@ -67,28 +54,37 @@ class RouteCollection implements \IteratorAggregate, \Countable
      *
      * @see all()
      *
-     * @return \ArrayIterator<string, Route>
+     * @return \ArrayIterator|Route[] An \ArrayIterator object for iterating over routes
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator()
     {
         return new \ArrayIterator($this->all());
     }
 
     /**
      * Gets the number of Routes in this collection.
+     *
+     * @return int The number of routes
      */
-    public function count(): int
+    public function count()
     {
         return \count($this->routes);
     }
 
-    public function add(string $name, Route $route, int $priority = 0)
+    /**
+     * @param int $priority
+     */
+    public function add(string $name, Route $route/*, int $priority = 0*/)
     {
-        unset($this->routes[$name], $this->priorities[$name], $this->aliases[$name]);
+        if (\func_num_args() < 3 && __CLASS__ !== static::class && __CLASS__ !== (new \ReflectionMethod($this, __FUNCTION__))->getDeclaringClass()->getName() && !$this instanceof \PHPUnit\Framework\MockObject\MockObject && !$this instanceof \Prophecy\Prophecy\ProphecySubjectInterface && !$this instanceof \Mockery\MockInterface) {
+            trigger_deprecation('symfony/routing', '5.1', 'The "%s()" method will have a new "int $priority = 0" argument in version 6.0, not defining it is deprecated.', __METHOD__);
+        }
+
+        unset($this->routes[$name], $this->priorities[$name]);
 
         $this->routes[$name] = $route;
 
-        if ($priority) {
+        if ($priority = 3 <= \func_num_args() ? func_get_arg(2) : 0) {
             $this->priorities[$name] = $priority;
         }
     }
@@ -96,9 +92,9 @@ class RouteCollection implements \IteratorAggregate, \Countable
     /**
      * Returns all routes in this collection.
      *
-     * @return array<string, Route>
+     * @return Route[] An array of routes
      */
-    public function all(): array
+    public function all()
     {
         if ($this->priorities) {
             $priorities = $this->priorities;
@@ -113,28 +109,12 @@ class RouteCollection implements \IteratorAggregate, \Countable
 
     /**
      * Gets a route by name.
+     *
+     * @return Route|null A Route instance or null when not found
      */
-    public function get(string $name): ?Route
+    public function get(string $name)
     {
-        $visited = [];
-        while (null !== $alias = $this->aliases[$name] ?? null) {
-            if (false !== $searchKey = array_search($name, $visited)) {
-                $visited[] = $name;
-
-                throw new RouteCircularReferenceException($name, \array_slice($visited, $searchKey));
-            }
-
-            if ($alias->isDeprecated()) {
-                $deprecation = $alias->getDeprecation($name);
-
-                trigger_deprecation($deprecation['package'], $deprecation['version'], $deprecation['message']);
-            }
-
-            $visited[] = $name;
-            $name = $alias->getId();
-        }
-
-        return $this->routes[$name] ?? null;
+        return isset($this->routes[$name]) ? $this->routes[$name] : null;
     }
 
     /**
@@ -142,10 +122,10 @@ class RouteCollection implements \IteratorAggregate, \Countable
      *
      * @param string|string[] $name The route name or an array of route names
      */
-    public function remove(string|array $name)
+    public function remove($name)
     {
         foreach ((array) $name as $n) {
-            unset($this->routes[$n], $this->priorities[$n], $this->aliases[$n]);
+            unset($this->routes[$n], $this->priorities[$n]);
         }
     }
 
@@ -158,18 +138,12 @@ class RouteCollection implements \IteratorAggregate, \Countable
         // we need to remove all routes with the same names first because just replacing them
         // would not place the new route at the end of the merged array
         foreach ($collection->all() as $name => $route) {
-            unset($this->routes[$name], $this->priorities[$name], $this->aliases[$name]);
+            unset($this->routes[$name], $this->priorities[$name]);
             $this->routes[$name] = $route;
 
             if (isset($collection->priorities[$name])) {
                 $this->priorities[$name] = $collection->priorities[$name];
             }
-        }
-
-        foreach ($collection->getAliases() as $name => $alias) {
-            unset($this->routes[$name], $this->priorities[$name], $this->aliases[$name]);
-
-            $this->aliases[$name] = $alias;
         }
 
         foreach ($collection->getResources() as $resource) {
@@ -202,7 +176,6 @@ class RouteCollection implements \IteratorAggregate, \Countable
     {
         $prefixedRoutes = [];
         $prefixedPriorities = [];
-        $prefixedAliases = [];
 
         foreach ($this->routes as $name => $route) {
             $prefixedRoutes[$prefix.$name] = $route;
@@ -214,13 +187,8 @@ class RouteCollection implements \IteratorAggregate, \Countable
             }
         }
 
-        foreach ($this->aliases as $name => $alias) {
-            $prefixedAliases[$prefix.$name] = $alias->withId($prefix.$alias->getId());
-        }
-
         $this->routes = $prefixedRoutes;
         $this->priorities = $prefixedPriorities;
-        $this->aliases = $prefixedAliases;
     }
 
     /**
@@ -294,7 +262,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
      *
      * @param string|string[] $schemes The scheme or an array of schemes
      */
-    public function setSchemes(string|array $schemes)
+    public function setSchemes($schemes)
     {
         foreach ($this->routes as $route) {
             $route->setSchemes($schemes);
@@ -306,7 +274,7 @@ class RouteCollection implements \IteratorAggregate, \Countable
      *
      * @param string|string[] $methods The method or an array of methods
      */
-    public function setMethods(string|array $methods)
+    public function setMethods($methods)
     {
         foreach ($this->routes as $route) {
             $route->setMethods($methods);
@@ -316,9 +284,9 @@ class RouteCollection implements \IteratorAggregate, \Countable
     /**
      * Returns an array of resources loaded to build this collection.
      *
-     * @return ResourceInterface[]
+     * @return ResourceInterface[] An array of resources
      */
-    public function getResources(): array
+    public function getResources()
     {
         return array_values($this->resources);
     }
@@ -334,37 +302,5 @@ class RouteCollection implements \IteratorAggregate, \Countable
         if (!isset($this->resources[$key])) {
             $this->resources[$key] = $resource;
         }
-    }
-
-    /**
-     * Sets an alias for an existing route.
-     *
-     * @param string $name  The alias to create
-     * @param string $alias The route to alias
-     *
-     * @throws InvalidArgumentException if the alias is for itself
-     */
-    public function addAlias(string $name, string $alias): Alias
-    {
-        if ($name === $alias) {
-            throw new InvalidArgumentException(sprintf('Route alias "%s" can not reference itself.', $name));
-        }
-
-        unset($this->routes[$name], $this->priorities[$name]);
-
-        return $this->aliases[$name] = new Alias($alias);
-    }
-
-    /**
-     * @return array<string, Alias>
-     */
-    public function getAliases(): array
-    {
-        return $this->aliases;
-    }
-
-    public function getAlias(string $name): ?Alias
-    {
-        return $this->aliases[$name] ?? null;
     }
 }

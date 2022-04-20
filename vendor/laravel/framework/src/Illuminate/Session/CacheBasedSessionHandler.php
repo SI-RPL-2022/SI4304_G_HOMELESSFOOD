@@ -36,62 +36,50 @@ class CacheBasedSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function open($savePath, $sessionName): bool
+    public function open($savePath, $sessionName)
     {
         return true;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function close(): bool
+    public function close()
     {
         return true;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return string
      */
-    public function read($sessionId): string
+    public function read($sessionId)
     {
         return $this->cache->get($sessionId, '');
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function write($sessionId, $data): bool
+    public function write($sessionId, $data)
     {
         return $this->cache->put($sessionId, $data, $this->minutes * 60);
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function destroy($sessionId): bool
+    public function destroy($sessionId)
     {
         return $this->cache->forget($sessionId);
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
-    public function gc($lifetime): int
+    public function gc($lifetime)
     {
-        return 0;
+        return true;
     }
 
     /**

@@ -26,7 +26,7 @@ class IcuResFileLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function load(mixed $resource, string $locale, string $domain = 'messages'): MessageCatalogue
+    public function load($resource, string $locale, string $domain = 'messages')
     {
         if (!stream_is_local($resource)) {
             throw new InvalidResourceException(sprintf('This is not a local file "%s".', $resource));
@@ -52,7 +52,7 @@ class IcuResFileLoader implements LoaderInterface
         $catalogue = new MessageCatalogue($locale);
         $catalogue->add($messages, $domain);
 
-        if (class_exists(DirectoryResource::class)) {
+        if (class_exists('Symfony\Component\Config\Resource\DirectoryResource')) {
             $catalogue->addResource(new DirectoryResource($resource));
         }
 
@@ -72,8 +72,10 @@ class IcuResFileLoader implements LoaderInterface
      * @param \ResourceBundle $rb       The ResourceBundle that will be flattened
      * @param array           $messages Used internally for recursive calls
      * @param string          $path     Current path being parsed, used internally for recursive calls
+     *
+     * @return array the flattened ResourceBundle
      */
-    protected function flatten(\ResourceBundle $rb, array &$messages = [], string $path = null): array
+    protected function flatten(\ResourceBundle $rb, array &$messages = [], string $path = null)
     {
         foreach ($rb as $key => $value) {
             $nodePath = $path ? $path.'.'.$key : $key;

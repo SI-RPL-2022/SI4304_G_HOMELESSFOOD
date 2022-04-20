@@ -37,7 +37,6 @@ class NullDispatcher implements DispatcherContract
      */
     public function dispatch($event, $payload = [], $halt = false)
     {
-        //
     }
 
     /**
@@ -49,7 +48,6 @@ class NullDispatcher implements DispatcherContract
      */
     public function push($event, $payload = [])
     {
-        //
     }
 
     /**
@@ -61,14 +59,13 @@ class NullDispatcher implements DispatcherContract
      */
     public function until($event, $payload = [])
     {
-        //
     }
 
     /**
      * Register an event listener with the dispatcher.
      *
      * @param  \Closure|string|array  $events
-     * @param  \Closure|string|array|null  $listener
+     * @param  \Closure|string|null  $listener
      * @return void
      */
     public function listen($events, $listener = null)
@@ -139,6 +136,6 @@ class NullDispatcher implements DispatcherContract
      */
     public function __call($method, $parameters)
     {
-        return $this->forwardDecoratedCallTo($this->dispatcher, $method, $parameters);
+        return $this->forwardCallTo($this->dispatcher, $method, $parameters);
     }
 }

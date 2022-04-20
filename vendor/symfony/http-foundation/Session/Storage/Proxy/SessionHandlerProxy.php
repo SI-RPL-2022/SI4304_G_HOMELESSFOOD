@@ -21,53 +21,80 @@ class SessionHandlerProxy extends AbstractProxy implements \SessionHandlerInterf
     public function __construct(\SessionHandlerInterface $handler)
     {
         $this->handler = $handler;
-        $this->wrapper = $handler instanceof \SessionHandler;
+        $this->wrapper = ($handler instanceof \SessionHandler);
         $this->saveHandlerName = $this->wrapper ? ini_get('session.save_handler') : 'user';
     }
 
-    public function getHandler(): \SessionHandlerInterface
+    /**
+     * @return \SessionHandlerInterface
+     */
+    public function getHandler()
     {
         return $this->handler;
     }
 
     // \SessionHandlerInterface
 
-    public function open(string $savePath, string $sessionName): bool
+    /**
+     * @return bool
+     */
+    public function open($savePath, $sessionName)
     {
-        return $this->handler->open($savePath, $sessionName);
+        return (bool) $this->handler->open($savePath, $sessionName);
     }
 
-    public function close(): bool
+    /**
+     * @return bool
+     */
+    public function close()
     {
-        return $this->handler->close();
+        return (bool) $this->handler->close();
     }
 
-    public function read(string $sessionId): string|false
+    /**
+     * @return string
+     */
+    public function read($sessionId)
     {
-        return $this->handler->read($sessionId);
+        return (string) $this->handler->read($sessionId);
     }
 
-    public function write(string $sessionId, string $data): bool
+    /**
+     * @return bool
+     */
+    public function write($sessionId, $data)
     {
-        return $this->handler->write($sessionId, $data);
+        return (bool) $this->handler->write($sessionId, $data);
     }
 
-    public function destroy(string $sessionId): bool
+    /**
+     * @return bool
+     */
+    public function destroy($sessionId)
     {
-        return $this->handler->destroy($sessionId);
+        return (bool) $this->handler->destroy($sessionId);
     }
 
-    public function gc(int $maxlifetime): int|false
+    /**
+     * @return bool
+     */
+    public function gc($maxlifetime)
     {
-        return $this->handler->gc($maxlifetime);
+        return (bool) $this->handler->gc($maxlifetime);
     }
 
-    public function validateId(string $sessionId): bool
+    /**
+     * @return bool
+     */
+    public function validateId($sessionId)
     {
         return !$this->handler instanceof \SessionUpdateTimestampHandlerInterface || $this->handler->validateId($sessionId);
     }
 
-    public function updateTimestamp(string $sessionId, string $data): bool
+    /**
+     * @return bool
+     */
+    public function updateTimestamp($sessionId, $data)
     {
         return $this->handler instanceof \SessionUpdateTimestampHandlerInterface ? $this->handler->updateTimestamp($sessionId, $data) : $this->write($sessionId, $data);
     }

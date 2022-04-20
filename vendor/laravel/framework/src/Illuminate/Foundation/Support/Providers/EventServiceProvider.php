@@ -16,18 +16,11 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [];
 
     /**
-     * The subscribers to register.
+     * The subscriber classes to register.
      *
      * @var array
      */
     protected $subscribe = [];
-
-    /**
-     * The model observers to register.
-     *
-     * @var array
-     */
-    protected $observers = [];
 
     /**
      * Register the application's event listeners.
@@ -47,10 +40,6 @@ class EventServiceProvider extends ServiceProvider
 
             foreach ($this->subscribe as $subscriber) {
                 Event::subscribe($subscriber);
-            }
-
-            foreach ($this->observers as $model => $observers) {
-                $model::observe($observers);
             }
         });
     }
@@ -130,7 +119,7 @@ class EventServiceProvider extends ServiceProvider
                     ->reduce(function ($discovered, $directory) {
                         return array_merge_recursive(
                             $discovered,
-                            DiscoverEvents::within($directory, $this->eventDiscoveryBasePath())
+                            DiscoverEvents::within($directory, base_path())
                         );
                     }, []);
     }
@@ -145,15 +134,5 @@ class EventServiceProvider extends ServiceProvider
         return [
             $this->app->path('Listeners'),
         ];
-    }
-
-    /**
-     * Get the base path to be used during event discovery.
-     *
-     * @return string
-     */
-    protected function eventDiscoveryBasePath()
-    {
-        return base_path();
     }
 }

@@ -20,8 +20,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class UriSigner
 {
-    private string $secret;
-    private string $parameter;
+    private $secret;
+    private $parameter;
 
     /**
      * @param string $secret    A secret
@@ -38,8 +38,10 @@ class UriSigner
      *
      * The given URI is signed by adding the query string parameter
      * which value depends on the URI and the secret.
+     *
+     * @return string The signed URI
      */
-    public function sign(string $uri): string
+    public function sign(string $uri)
     {
         $url = parse_url($uri);
         if (isset($url['query'])) {
@@ -56,8 +58,10 @@ class UriSigner
 
     /**
      * Checks that a URI contains the correct hash.
+     *
+     * @return bool True if the URI is signed correctly, false otherwise
      */
-    public function check(string $uri): bool
+    public function check(string $uri)
     {
         $url = parse_url($uri);
         if (isset($url['query'])) {
@@ -95,12 +99,12 @@ class UriSigner
         $url['query'] = http_build_query($params, '', '&');
 
         $scheme = isset($url['scheme']) ? $url['scheme'].'://' : '';
-        $host = $url['host'] ?? '';
+        $host = isset($url['host']) ? $url['host'] : '';
         $port = isset($url['port']) ? ':'.$url['port'] : '';
-        $user = $url['user'] ?? '';
+        $user = isset($url['user']) ? $url['user'] : '';
         $pass = isset($url['pass']) ? ':'.$url['pass'] : '';
         $pass = ($user || $pass) ? "$pass@" : '';
-        $path = $url['path'] ?? '';
+        $path = isset($url['path']) ? $url['path'] : '';
         $query = isset($url['query']) && $url['query'] ? '?'.$url['query'] : '';
         $fragment = isset($url['fragment']) ? '#'.$url['fragment'] : '';
 

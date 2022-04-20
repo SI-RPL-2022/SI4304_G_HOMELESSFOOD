@@ -10,6 +10,7 @@ use PHPUnit\Framework\Constraint\FileExists;
 use PHPUnit\Framework\Constraint\LogicalNot;
 use PHPUnit\Framework\Constraint\RegularExpression;
 use PHPUnit\Framework\InvalidArgumentException;
+use PHPUnit\Util\InvalidArgumentHelper;
 
 /**
  * @internal This class is not meant to be used or overwritten outside the framework itself.
@@ -28,11 +29,19 @@ abstract class Assert extends PHPUnit
     public static function assertArraySubset($subset, $array, bool $checkForIdentity = false, string $msg = ''): void
     {
         if (! (is_array($subset) || $subset instanceof ArrayAccess)) {
-            throw InvalidArgumentException::create(1, 'array or ArrayAccess');
+            if (class_exists(InvalidArgumentException::class)) {
+                throw InvalidArgumentException::create(1, 'array or ArrayAccess');
+            } else {
+                throw InvalidArgumentHelper::factory(1, 'array or ArrayAccess');
+            }
         }
 
         if (! (is_array($array) || $array instanceof ArrayAccess)) {
-            throw InvalidArgumentException::create(2, 'array or ArrayAccess');
+            if (class_exists(InvalidArgumentException::class)) {
+                throw InvalidArgumentException::create(2, 'array or ArrayAccess');
+            } else {
+                throw InvalidArgumentHelper::factory(2, 'array or ArrayAccess');
+            }
         }
 
         $constraint = new ArraySubset($subset, $checkForIdentity);

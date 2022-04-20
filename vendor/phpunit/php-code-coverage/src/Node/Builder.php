@@ -22,7 +22,7 @@ use function strpos;
 use function substr;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\ProcessedCodeCoverageData;
-use SebastianBergmann\CodeCoverage\StaticAnalysis\FileAnalyser;
+use SebastianBergmann\CodeCoverage\StaticAnalysis\CoveredFileAnalyser;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
@@ -30,13 +30,13 @@ use SebastianBergmann\CodeCoverage\StaticAnalysis\FileAnalyser;
 final class Builder
 {
     /**
-     * @var FileAnalyser
+     * @var CoveredFileAnalyser
      */
-    private $analyser;
+    private $coveredFileAnalyser;
 
-    public function __construct(FileAnalyser $analyser)
+    public function __construct(CoveredFileAnalyser $coveredFileAnalyser)
     {
-        $this->analyser = $analyser;
+        $this->coveredFileAnalyser = $coveredFileAnalyser;
     }
 
     public function build(CodeCoverage $coverage): Directory
@@ -74,10 +74,10 @@ final class Builder
                             $value['lineCoverage'],
                             $value['functionCoverage'],
                             $tests,
-                            $this->analyser->classesIn($filename),
-                            $this->analyser->traitsIn($filename),
-                            $this->analyser->functionsIn($filename),
-                            $this->analyser->linesOfCodeFor($filename)
+                            $this->coveredFileAnalyser->classesIn($filename),
+                            $this->coveredFileAnalyser->traitsIn($filename),
+                            $this->coveredFileAnalyser->functionsIn($filename),
+                            $this->coveredFileAnalyser->linesOfCodeFor($filename)
                         )
                     );
                 }

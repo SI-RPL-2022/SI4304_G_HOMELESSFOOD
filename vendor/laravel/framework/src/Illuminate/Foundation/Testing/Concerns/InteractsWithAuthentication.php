@@ -10,30 +10,30 @@ trait InteractsWithAuthentication
      * Set the currently logged in user for the application.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  string|null  $guard
+     * @param  string|null  $driver
      * @return $this
      */
-    public function actingAs(UserContract $user, $guard = null)
+    public function actingAs(UserContract $user, $driver = null)
     {
-        return $this->be($user, $guard);
+        return $this->be($user, $driver);
     }
 
     /**
      * Set the currently logged in user for the application.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  string|null  $guard
+     * @param  string|null  $driver
      * @return $this
      */
-    public function be(UserContract $user, $guard = null)
+    public function be(UserContract $user, $driver = null)
     {
         if (isset($user->wasRecentlyCreated) && $user->wasRecentlyCreated) {
             $user->wasRecentlyCreated = false;
         }
 
-        $this->app['auth']->guard($guard)->setUser($user);
+        $this->app['auth']->guard($driver)->setUser($user);
 
-        $this->app['auth']->shouldUse($guard);
+        $this->app['auth']->shouldUse($driver);
 
         return $this;
     }

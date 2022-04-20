@@ -102,7 +102,7 @@ class SqlServerConnection implements ServerInfoAwareConnection
     }
 
     /**
-     * Rollback a database transaction.
+     * Roll back a database transaction.
      *
      * @return void
      */
@@ -114,8 +114,8 @@ class SqlServerConnection implements ServerInfoAwareConnection
     /**
      * Wrap quotes around the given input.
      *
-     * @param  string  $value
-     * @param  int  $type
+     * @param  string  $input
+     * @param  string  $type
      * @return string
      */
     public function quote($value, $type = ParameterType::STRING)
@@ -123,7 +123,7 @@ class SqlServerConnection implements ServerInfoAwareConnection
         $val = $this->connection->quote($value, $type);
 
         // Fix for a driver version terminating all values with null byte...
-        if (\is_string($val) && str_contains($val, "\0")) {
+        if (\is_string($val) && \strpos($val, "\0") !== false) {
             $val = \substr($val, 0, -1);
         }
 

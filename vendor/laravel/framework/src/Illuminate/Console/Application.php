@@ -15,11 +15,11 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -31,13 +31,6 @@ class Application extends SymfonyApplication implements ApplicationContract
      * @var \Illuminate\Contracts\Container\Container
      */
     protected $laravel;
-
-    /**
-     * The event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
-     */
-    protected $events;
 
     /**
      * The output from the previous command.
@@ -54,11 +47,11 @@ class Application extends SymfonyApplication implements ApplicationContract
     protected static $bootstrappers = [];
 
     /**
-     * A map of command names to classes.
+     * The Event Dispatcher.
      *
-     * @var array
+     * @var \Illuminate\Contracts\Events\Dispatcher
      */
-    protected $commandMap = [];
+    protected $events;
 
     /**
      * Create a new Artisan console application.
@@ -84,10 +77,8 @@ class Application extends SymfonyApplication implements ApplicationContract
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
-    public function run(InputInterface $input = null, OutputInterface $output = null): int
+    public function run(InputInterface $input = null, OutputInterface $output = null)
     {
         $commandName = $this->getCommandName(
             $input = $input ?: new ArgvInput
@@ -95,7 +86,7 @@ class Application extends SymfonyApplication implements ApplicationContract
 
         $this->events->dispatch(
             new CommandStarting(
-                $commandName, $input, $output = $output ?: new BufferedConsoleOutput
+                $commandName, $input, $output = $output ?: new ConsoleOutput
             )
         );
 
@@ -125,7 +116,7 @@ class Application extends SymfonyApplication implements ApplicationContract
      */
     public static function artisanBinary()
     {
-        return ProcessUtils::escapeArgument(defined('ARTISAN_BINARY') ? ARTISAN_BINARY : 'artisan');
+        return defined('ARTISAN_BINARY') ? ProcessUtils::escapeArgument(ARTISAN_BINARY) : 'artisan';
     }
 
     /**
@@ -218,7 +209,7 @@ class Application extends SymfonyApplication implements ApplicationContract
             $input = new ArrayInput($parameters);
         }
 
-        return [$command, $input];
+        return [$command, $input ?? null];
     }
 
     /**
@@ -263,16 +254,10 @@ class Application extends SymfonyApplication implements ApplicationContract
      * Add a command, resolving through the application.
      *
      * @param  string  $command
-     * @return \Symfony\Component\Console\Command\Command|null
+     * @return \Symfony\Component\Console\Command\Command
      */
     public function resolve($command)
     {
-        if (is_subclass_of($command, SymfonyCommand::class) && ($commandName = $command::getDefaultName())) {
-            $this->commandMap[$commandName] = $command;
-
-            return null;
-        }
-
         return $this->add($this->laravel->make($command));
     }
 
@@ -294,25 +279,13 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Set the container command loader for lazy resolution.
-     *
-     * @return $this
-     */
-    public function setContainerCommandLoader()
-    {
-        $this->setCommandLoader(new ContainerCommandLoader($this->laravel, $this->commandMap));
-
-        return $this;
-    }
-
-    /**
      * Get the default input definition for the application.
      *
      * This is used to add the --env option to every available command.
      *
      * @return \Symfony\Component\Console\Input\InputDefinition
      */
-    protected function getDefaultInputDefinition(): InputDefinition
+    protected function getDefaultInputDefinition()
     {
         return tap(parent::getDefaultInputDefinition(), function ($definition) {
             $definition->addOption($this->getEnvironmentOption());

@@ -27,32 +27,50 @@ class MarshallingSessionHandler implements \SessionHandlerInterface, \SessionUpd
         $this->marshaller = $marshaller;
     }
 
-    public function open(string $savePath, string $name): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function open($savePath, $name)
     {
         return $this->handler->open($savePath, $name);
     }
 
-    public function close(): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function close()
     {
         return $this->handler->close();
     }
 
-    public function destroy(string $sessionId): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function destroy($sessionId)
     {
         return $this->handler->destroy($sessionId);
     }
 
-    public function gc(int $maxlifetime): int|false
+    /**
+     * {@inheritdoc}
+     */
+    public function gc($maxlifetime)
     {
         return $this->handler->gc($maxlifetime);
     }
 
-    public function read(string $sessionId): string
+    /**
+     * {@inheritdoc}
+     */
+    public function read($sessionId)
     {
         return $this->marshaller->unmarshall($this->handler->read($sessionId));
     }
 
-    public function write(string $sessionId, string $data): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function write($sessionId, $data)
     {
         $failed = [];
         $marshalledData = $this->marshaller->marshall(['data' => $data], $failed);
@@ -64,12 +82,18 @@ class MarshallingSessionHandler implements \SessionHandlerInterface, \SessionUpd
         return $this->handler->write($sessionId, $marshalledData['data']);
     }
 
-    public function validateId(string $sessionId): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function validateId($sessionId)
     {
         return $this->handler->validateId($sessionId);
     }
 
-    public function updateTimestamp(string $sessionId, string $data): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function updateTimestamp($sessionId, $data)
     {
         return $this->handler->updateTimestamp($sessionId, $data);
     }

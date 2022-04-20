@@ -16,15 +16,15 @@ namespace Symfony\Component\Finder\Iterator;
  *
  * @author Fabien Potencier  <fabien@symfony.com>
  * @author Włodzimierz Gajda <gajdaw@gajdaw.pl>
- *
- * @extends MultiplePcreFilterIterator<string, \SplFileInfo>
  */
 class FilecontentFilterIterator extends MultiplePcreFilterIterator
 {
     /**
      * Filters the iterator values.
+     *
+     * @return bool true if the value should be kept, false otherwise
      */
-    public function accept(): bool
+    public function accept()
     {
         if (!$this->matchRegexps && !$this->noMatchRegexps) {
             return true;
@@ -48,8 +48,10 @@ class FilecontentFilterIterator extends MultiplePcreFilterIterator
      * Converts string to regexp if necessary.
      *
      * @param string $str Pattern: string or regexp
+     *
+     * @return string regexp corresponding to a given string or regexp
      */
-    protected function toRegex(string $str): string
+    protected function toRegex(string $str)
     {
         return $this->isRegex($str) ? $str : '/'.preg_quote($str, '/').'/';
     }

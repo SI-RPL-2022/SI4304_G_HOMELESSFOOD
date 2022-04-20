@@ -37,8 +37,7 @@ class DatabaseConnector implements ConnectorInterface
             $this->connections->connection($config['connection'] ?? null),
             $config['table'],
             $config['queue'],
-            $config['retry_after'] ?? 60,
-            $config['after_commit'] ?? null
+            $config['retry_after'] ?? 60
         );
     }
 }

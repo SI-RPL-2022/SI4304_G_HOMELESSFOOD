@@ -21,7 +21,6 @@ class DateTime extends \Faker\Provider\DateTime
             'Saturday' => '星期六',
         ];
         $week = static::dateTime($max)->format('l');
-
         return $map[$week] ?? $week;
     }
 
@@ -42,7 +41,6 @@ class DateTime extends \Faker\Provider\DateTime
             'December' => '十二月',
         ];
         $month = static::dateTime($max)->format('F');
-
         return $map[$month] ?? $month;
     }
 }

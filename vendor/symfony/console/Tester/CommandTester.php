@@ -25,6 +25,8 @@ class CommandTester
     use TesterTrait;
 
     private $command;
+    private $input;
+    private $statusCode;
 
     public function __construct(Command $command)
     {
@@ -46,7 +48,7 @@ class CommandTester
      *
      * @return int The command exit code
      */
-    public function execute(array $input, array $options = []): int
+    public function execute(array $input, array $options = [])
     {
         // set the command name automatically if the application requires
         // this argument and no command name was passed

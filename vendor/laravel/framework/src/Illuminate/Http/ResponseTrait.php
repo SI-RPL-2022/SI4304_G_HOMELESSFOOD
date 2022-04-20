@@ -33,16 +33,6 @@ trait ResponseTrait
     }
 
     /**
-     * Get the status text for the response.
-     *
-     * @return string
-     */
-    public function statusText()
-    {
-        return $this->statusText;
-    }
-
-    /**
      * Get the content of the response.
      *
      * @return string
@@ -130,8 +120,8 @@ trait ResponseTrait
      * Expire a cookie when sending the response.
      *
      * @param  \Symfony\Component\HttpFoundation\Cookie|mixed  $cookie
-     * @param  string|null  $path
-     * @param  string|null  $domain
+     * @param  string|null $path
+     * @param  string|null $domain
      * @return $this
      */
     public function withoutCookie($cookie, $path = null, $domain = null)

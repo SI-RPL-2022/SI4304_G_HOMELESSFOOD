@@ -13,7 +13,6 @@ use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper;
 use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
-use Traversable;
 
 abstract class AbstractRouteCollection implements Countable, IteratorAggregate, RouteCollectionInterface
 {
@@ -95,7 +94,7 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
      */
     protected function getRouteForMethods($request, array $methods)
     {
-        if ($request->isMethod('OPTIONS')) {
+        if ($request->method() === 'OPTIONS') {
             return (new Route('OPTIONS', $request->path(), function () use ($methods) {
                 return new Response('', 200, ['Allow' => implode(',', $methods)]);
             }))->bind($request);
@@ -147,7 +146,6 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
                 'bindingFields' => $route->bindingFields(),
                 'lockSeconds' => $route->locksFor(),
                 'waitSeconds' => $route->waitsFor(),
-                'withTrashed' => $route->allowsTrashedBindings(),
             ];
         }
 
@@ -196,23 +194,18 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
      * @param  \Symfony\Component\Routing\RouteCollection  $symfonyRoutes
      * @param  \Illuminate\Routing\Route  $route
      * @return \Symfony\Component\Routing\RouteCollection
-     *
-     * @throws \LogicException
      */
     protected function addToSymfonyRoutesCollection(SymfonyRouteCollection $symfonyRoutes, Route $route)
     {
         $name = $route->getName();
 
-        if (
-            ! is_null($name)
-            && str_ends_with($name, '.')
-            && ! is_null($symfonyRoutes->get($name))
-        ) {
+        if (Str::endsWith($name, '.') &&
+            ! is_null($symfonyRoutes->get($name))) {
             $name = null;
         }
 
         if (! $name) {
-            $route->name($this->generateRouteName());
+            $route->name($name = $this->generateRouteName());
 
             $this->add($route);
         } elseif (! is_null($symfonyRoutes->get($name))) {
@@ -239,7 +232,7 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
      *
      * @return \ArrayIterator
      */
-    public function getIterator(): Traversable
+    public function getIterator()
     {
         return new ArrayIterator($this->getRoutes());
     }
@@ -249,7 +242,7 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
      *
      * @return int
      */
-    public function count(): int
+    public function count()
     {
         return count($this->getRoutes());
     }
