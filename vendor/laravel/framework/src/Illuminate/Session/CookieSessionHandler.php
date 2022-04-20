@@ -47,36 +47,31 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function open($savePath, $sessionName): bool
+    public function open($savePath, $sessionName)
     {
         return true;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function close(): bool
+    public function close()
     {
         return true;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return string|false
      */
-    public function read($sessionId): string|false
+    public function read($sessionId)
     {
         $value = $this->request->cookies->get($sessionId) ?: '';
 
-        if (! is_null($decoded = json_decode($value, true)) && is_array($decoded) &&
-            isset($decoded['expires']) && $this->currentTime() <= $decoded['expires']) {
-            return $decoded['data'];
+        if (! is_null($decoded = json_decode($value, true)) && is_array($decoded)) {
+            if (isset($decoded['expires']) && $this->currentTime() <= $decoded['expires']) {
+                return $decoded['data'];
+            }
         }
 
         return '';
@@ -84,10 +79,8 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function write($sessionId, $data): bool
+    public function write($sessionId, $data)
     {
         $this->cookie->queue($sessionId, json_encode([
             'data' => $data,
@@ -99,10 +92,8 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function destroy($sessionId): bool
+    public function destroy($sessionId)
     {
         $this->cookie->queue($this->cookie->forget($sessionId));
 
@@ -111,12 +102,10 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
-    public function gc($lifetime): int
+    public function gc($lifetime)
     {
-        return 0;
+        return true;
     }
 
     /**

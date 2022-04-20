@@ -12,11 +12,10 @@
 namespace Symfony\Contracts\Service;
 
 use Psr\Container\ContainerInterface;
-use Symfony\Contracts\Service\Attribute\SubscribedService;
 
 /**
  * Implementation of ServiceSubscriberInterface that determines subscribed services from
- * method return types. Service ids are available as "ClassName::methodName".
+ * private method return types. Service ids are available as "ClassName::methodName".
  *
  * @author Kevin Bond <kevinbond@gmail.com>
  */
@@ -25,9 +24,6 @@ trait ServiceSubscriberTrait
     /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedServices(): array
     {
         static $services;
@@ -39,29 +35,13 @@ trait ServiceSubscriberTrait
         $services = \is_callable(['parent', __FUNCTION__]) ? parent::getSubscribedServices() : [];
 
         foreach ((new \ReflectionClass(self::class))->getMethods() as $method) {
-            if (self::class !== $method->getDeclaringClass()->name) {
-                continue;
-            }
-
-            if (!$attribute = $method->getAttributes(SubscribedService::class)[0] ?? null) {
-                continue;
-            }
-
             if ($method->isStatic() || $method->isAbstract() || $method->isGenerator() || $method->isInternal() || $method->getNumberOfRequiredParameters()) {
-                throw new \LogicException(sprintf('Cannot use "%s" on method "%s::%s()" (can only be used on non-static, non-abstract methods with no parameters).', SubscribedService::class, self::class, $method->name));
+                continue;
             }
 
-            if (!$returnType = $method->getReturnType()) {
-                throw new \LogicException(sprintf('Cannot use "%s" on methods without a return type in "%s::%s()".', SubscribedService::class, $method->name, self::class));
+            if (self::class === $method->getDeclaringClass()->name && ($returnType = $method->getReturnType()) && !$returnType->isBuiltin()) {
+                $services[self::class.'::'.$method->name] = '?'.($returnType instanceof \ReflectionNamedType ? $returnType->getName() : $type);
             }
-
-            $serviceId = $returnType instanceof \ReflectionNamedType ? $returnType->getName() : (string) $returnType;
-
-            if ($returnType->allowsNull()) {
-                $serviceId = '?'.$serviceId;
-            }
-
-            $services[$attribute->newInstance()->key ?? self::class.'::'.$method->name] = $serviceId;
         }
 
         return $services;
@@ -70,7 +50,7 @@ trait ServiceSubscriberTrait
     /**
      * @required
      */
-    public function setContainer(ContainerInterface $container): ?ContainerInterface
+    public function setContainer(ContainerInterface $container)
     {
         $this->container = $container;
 

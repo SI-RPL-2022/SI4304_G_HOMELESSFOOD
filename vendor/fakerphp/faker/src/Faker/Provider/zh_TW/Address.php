@@ -29,7 +29,7 @@ class Address extends \Faker\Provider\Address
     ];
 
     /**
-     * @see http://blog.davidou.org/archives/583
+     * @link http://blog.davidou.org/archives/583
      */
     protected static $street = [
         '東英二', '大公十三', '美術南一', '漁港',
@@ -158,7 +158,7 @@ class Address extends \Faker\Provider\Address
     ];
 
     /**
-     * @see http://zh.wikipedia.org/wiki/%E8%87%BA%E7%81%A3%E8%A1%8C%E6%94%BF%E5%8D%80%E5%8A%83
+     * @link http://zh.wikipedia.org/wiki/%E8%87%BA%E7%81%A3%E8%A1%8C%E6%94%BF%E5%8D%80%E5%8A%83
      */
     protected static $city = [
         '新北市' => [
@@ -293,7 +293,7 @@ class Address extends \Faker\Provider\Address
     ];
 
     /**
-     * @see http://terms.naer.edu.tw/download/287/
+     * @link http://terms.naer.edu.tw/download/287/
      */
     protected static $country = [
         '不丹', '中非', '丹麥', '伊朗', '冰島', '剛果',
@@ -362,7 +362,6 @@ class Address extends \Faker\Provider\Address
         $digits = [
             '', '一', '二', '三', '四', '五', '六', '七', '八', '九',
         ];
-
         return $digits[static::randomDigitNotNull()];
     }
 
@@ -378,19 +377,18 @@ class Address extends \Faker\Provider\Address
 
     public static function localLatitude()
     {
-        return static::randomFloat(6, 22, 25);
+        return number_format(mt_rand(22000000, 25000000) / 1000000, 6);
     }
 
     public static function localLongitude()
     {
-        return static::randomFloat(6, 120, 122);
+        return number_format(mt_rand(120000000, 122000000) / 1000000, 6);
     }
 
     public function city()
     {
         $county = static::randomElement(array_keys(static::$city));
         $city = static::randomElement(static::$city[$county]);
-
         return $county . $city;
     }
 

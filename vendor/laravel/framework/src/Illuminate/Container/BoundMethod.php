@@ -137,7 +137,7 @@ class BoundMethod
      */
     protected static function getCallReflector($callback)
     {
-        if (is_string($callback) && str_contains($callback, '::')) {
+        if (is_string($callback) && strpos($callback, '::') !== false) {
             $callback = explode('::', $callback);
         } elseif (is_object($callback) && ! $callback instanceof Closure) {
             $callback = [$callback, '__invoke'];
@@ -156,8 +156,6 @@ class BoundMethod
      * @param  array  $parameters
      * @param  array  $dependencies
      * @return void
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected static function addDependencyForCallParameter($container, $parameter,
                                                             array &$parameters, &$dependencies)
@@ -171,12 +169,6 @@ class BoundMethod
                 $dependencies[] = $parameters[$className];
 
                 unset($parameters[$className]);
-            } elseif ($parameter->isVariadic()) {
-                $variadicDependencies = $container->make($className);
-
-                $dependencies = array_merge($dependencies, is_array($variadicDependencies)
-                            ? $variadicDependencies
-                            : [$variadicDependencies]);
             } else {
                 $dependencies[] = $container->make($className);
             }
@@ -197,6 +189,6 @@ class BoundMethod
      */
     protected static function isCallableWithAtSign($callback)
     {
-        return is_string($callback) && str_contains($callback, '@');
+        return is_string($callback) && strpos($callback, '@') !== false;
     }
 }

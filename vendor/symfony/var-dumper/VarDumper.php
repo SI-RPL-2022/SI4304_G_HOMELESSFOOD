@@ -32,12 +32,9 @@ require_once __DIR__.'/Resources/functions/dump.php';
  */
 class VarDumper
 {
-    /**
-     * @var callable|null
-     */
     private static $handler;
 
-    public static function dump(mixed $var)
+    public static function dump($var)
     {
         if (null === self::$handler) {
             self::register();
@@ -46,7 +43,7 @@ class VarDumper
         return (self::$handler)($var);
     }
 
-    public static function setHandler(callable $callable = null): ?callable
+    public static function setHandler(callable $callable = null)
     {
         $prevHandler = self::$handler;
 
@@ -74,7 +71,7 @@ class VarDumper
                 $dumper = new CliDumper();
                 break;
             case 'server' === $format:
-            case $format && 'tcp' === parse_url($format, \PHP_URL_SCHEME):
+            case 'tcp' === parse_url($format, \PHP_URL_SCHEME):
                 $host = 'server' === $format ? $_SERVER['VAR_DUMPER_SERVER'] ?? '127.0.0.1:9912' : $format;
                 $dumper = \in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) ? new CliDumper() : new HtmlDumper();
                 $dumper = new ServerDumper($host, $dumper, self::getDefaultContextProviders());

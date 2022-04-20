@@ -49,10 +49,11 @@ abstract class AbstractUnicodeString extends AbstractString
     private const TRANSLIT_TO = ['AE', 'D', 'O', 'TH', 'ss', 'ae', 'd', 'o', 'th', 'D', 'd', 'H', 'h', 'i', 'q', 'L', 'l', 'L', 'l', '\'n', 'N', 'n', 'OE', 'oe', 'T', 't', 'b', 'B', 'B', 'b', 'C', 'c', 'D', 'D', 'D', 'd', 'E', 'F', 'f', 'G', 'hv', 'I', 'I', 'K', 'k', 'l', 'N', 'n', 'OI', 'oi', 'P', 'p', 't', 'T', 't', 'T', 'V', 'Y', 'y', 'Z', 'z', 'DZ', 'Dz', 'dz', 'G', 'g', 'd', 'Z', 'z', 'l', 'n', 't', 'j', 'db', 'qp', 'A', 'C', 'c', 'L', 'T', 's', 'z', 'B', 'U', 'E', 'e', 'J', 'j', 'R', 'r', 'Y', 'y', 'b', 'c', 'd', 'd', 'e', 'j', 'g', 'g', 'G', 'h', 'h', 'i', 'I', 'l', 'l', 'l', 'm', 'n', 'n', 'N', 'OE', 'r', 'r', 'r', 'R', 's', 't', 'u', 'v', 'Y', 'z', 'z', 'B', 'G', 'H', 'j', 'L', 'q', 'dz', 'dz', 'ts', 'ls', 'lz', 'A', 'AE', 'B', 'C', 'D', 'D', 'E', 'J', 'K', 'L', 'M', 'O', 'P', 'T', 'U', 'V', 'W', 'Z', 'ue', 'b', 'd', 'f', 'm', 'n', 'p', 'r', 'r', 's', 't', 'z', 'th', 'I', 'p', 'U', 'b', 'd', 'f', 'g', 'k', 'l', 'm', 'n', 'p', 'r', 's', 'v', 'x', 'z', 'a', 'd', 'e', 'e', 'i', 'u', 'a', 's', 's', 'SS', 'LL', 'll', 'V', 'v', 'Y', 'y', '(C)', '(R)', 'CE', 'Cr', 'Fr.', 'L.', 'Pts', 'TL', 'Rs', 'x', 'Rx', 'm/s', 'rad/s', 'C/kg', 'pH', 'V/m', 'A/m', ' 1/4', ' 1/2', ' 3/4', ' 1/3', ' 2/3', ' 1/5', ' 2/5', ' 3/5', ' 4/5', ' 1/6', ' 5/6', ' 1/8', ' 3/8', ' 5/8', ' 7/8', ' 1/', '0', '\'', '\'', ',', '\'', '"', '"', ',,', '"', '\'', '"', '"', '"', '<<', '>>', '<', '>', '-', '-', '-', '-', '-', '-', '-', '-', '-', '||', '/', '[', ']', '*', ',', '.', '<', '>', '<<', '>>', '[', ']', '[', ']', '[', ']', ',', '.', '[', ']', '<<', '>>', '<', '>', ',', '[', ']', '((', '))', '.', ',', '*', '/', '-', '/', '\\', '|', '||', '<<', '>>', '((', '))'];
 
     private static $transliterators = [];
-    private static $tableZero;
-    private static $tableWide;
 
-    public static function fromCodePoints(int ...$codes): static
+    /**
+     * @return static
+     */
+    public static function fromCodePoints(int ...$codes): self
     {
         $string = '';
 
@@ -156,7 +157,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function camel(): static
+    public function camel(): parent
     {
         $str = clone $this;
         $str->string = str_replace(' ', '', preg_replace_callback('/\b./u', static function ($m) use (&$i) {
@@ -186,11 +187,11 @@ abstract class AbstractUnicodeString extends AbstractString
         return $codePoints;
     }
 
-    public function folded(bool $compat = true): static
+    public function folded(bool $compat = true): parent
     {
         $str = clone $this;
 
-        if (!$compat || !\defined('Normalizer::NFKC_CF')) {
+        if (!$compat || \PHP_VERSION_ID < 70300 || !\defined('Normalizer::NFKC_CF')) {
             $str->string = normalizer_normalize($str->string, $compat ? \Normalizer::NFKC : \Normalizer::NFC);
             $str->string = mb_strtolower(str_replace(self::FOLD_FROM, self::FOLD_TO, $this->string), 'UTF-8');
         } else {
@@ -200,7 +201,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function join(array $strings, string $lastGlue = null): static
+    public function join(array $strings, string $lastGlue = null): parent
     {
         $str = clone $this;
 
@@ -214,7 +215,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function lower(): static
+    public function lower(): parent
     {
         $str = clone $this;
         $str->string = mb_strtolower(str_replace('İ', 'i̇', $str->string), 'UTF-8');
@@ -251,7 +252,10 @@ abstract class AbstractUnicodeString extends AbstractString
         return $matches;
     }
 
-    public function normalize(int $form = self::NFC): static
+    /**
+     * @return static
+     */
+    public function normalize(int $form = self::NFC): self
     {
         if (!\in_array($form, [self::NFC, self::NFD, self::NFKC, self::NFKD])) {
             throw new InvalidArgumentException('Unsupported normalization form.');
@@ -263,7 +267,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function padBoth(int $length, string $padStr = ' '): static
+    public function padBoth(int $length, string $padStr = ' '): parent
     {
         if ('' === $padStr || !preg_match('//u', $padStr)) {
             throw new InvalidArgumentException('Invalid UTF-8 string.');
@@ -275,7 +279,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $this->pad($length, $pad, \STR_PAD_BOTH);
     }
 
-    public function padEnd(int $length, string $padStr = ' '): static
+    public function padEnd(int $length, string $padStr = ' '): parent
     {
         if ('' === $padStr || !preg_match('//u', $padStr)) {
             throw new InvalidArgumentException('Invalid UTF-8 string.');
@@ -287,7 +291,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $this->pad($length, $pad, \STR_PAD_RIGHT);
     }
 
-    public function padStart(int $length, string $padStr = ' '): static
+    public function padStart(int $length, string $padStr = ' '): parent
     {
         if ('' === $padStr || !preg_match('//u', $padStr)) {
             throw new InvalidArgumentException('Invalid UTF-8 string.');
@@ -299,13 +303,17 @@ abstract class AbstractUnicodeString extends AbstractString
         return $this->pad($length, $pad, \STR_PAD_LEFT);
     }
 
-    public function replaceMatches(string $fromRegexp, string|callable $to): static
+    public function replaceMatches(string $fromRegexp, $to): parent
     {
         if ($this->ignoreCase) {
             $fromRegexp .= 'i';
         }
 
         if (\is_array($to) || $to instanceof \Closure) {
+            if (!\is_callable($to)) {
+                throw new \TypeError(sprintf('Argument 2 passed to "%s::replaceMatches()" must be callable, array given.', static::class));
+            }
+
             $replace = 'preg_replace_callback';
             $to = static function (array $m) use ($to): string {
                 $to = $to($m);
@@ -346,7 +354,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function reverse(): static
+    public function reverse(): parent
     {
         $str = clone $this;
         $str->string = implode('', array_reverse(preg_split('/(\X)/u', $str->string, -1, \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY)));
@@ -354,7 +362,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function snake(): static
+    public function snake(): parent
     {
         $str = $this->camel()->title();
         $str->string = mb_strtolower(preg_replace(['/(\p{Lu}+)(\p{Lu}\p{Ll})/u', '/([\p{Ll}0-9])(\p{Lu})/u'], '\1_\2', $str->string), 'UTF-8');
@@ -362,7 +370,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function title(bool $allWords = false): static
+    public function title(bool $allWords = false): parent
     {
         $str = clone $this;
 
@@ -375,7 +383,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function trim(string $chars = " \t\n\r\0\x0B\x0C\u{A0}\u{FEFF}"): static
+    public function trim(string $chars = " \t\n\r\0\x0B\x0C\u{A0}\u{FEFF}"): parent
     {
         if (" \t\n\r\0\x0B\x0C\u{A0}\u{FEFF}" !== $chars && !preg_match('//u', $chars)) {
             throw new InvalidArgumentException('Invalid UTF-8 chars.');
@@ -388,7 +396,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function trimEnd(string $chars = " \t\n\r\0\x0B\x0C\u{A0}\u{FEFF}"): static
+    public function trimEnd(string $chars = " \t\n\r\0\x0B\x0C\u{A0}\u{FEFF}"): parent
     {
         if (" \t\n\r\0\x0B\x0C\u{A0}\u{FEFF}" !== $chars && !preg_match('//u', $chars)) {
             throw new InvalidArgumentException('Invalid UTF-8 chars.');
@@ -401,27 +409,7 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function trimPrefix($prefix): static
-    {
-        if (!$this->ignoreCase) {
-            return parent::trimPrefix($prefix);
-        }
-
-        $str = clone $this;
-
-        if ($prefix instanceof \Traversable) {
-            $prefix = iterator_to_array($prefix, false);
-        } elseif ($prefix instanceof parent) {
-            $prefix = $prefix->string;
-        }
-
-        $prefix = implode('|', array_map('preg_quote', (array) $prefix));
-        $str->string = preg_replace("{^(?:$prefix)}iuD", '', $this->string);
-
-        return $str;
-    }
-
-    public function trimStart(string $chars = " \t\n\r\0\x0B\x0C\u{A0}\u{FEFF}"): static
+    public function trimStart(string $chars = " \t\n\r\0\x0B\x0C\u{A0}\u{FEFF}"): parent
     {
         if (" \t\n\r\0\x0B\x0C\u{A0}\u{FEFF}" !== $chars && !preg_match('//u', $chars)) {
             throw new InvalidArgumentException('Invalid UTF-8 chars.');
@@ -434,30 +422,14 @@ abstract class AbstractUnicodeString extends AbstractString
         return $str;
     }
 
-    public function trimSuffix($suffix): static
-    {
-        if (!$this->ignoreCase) {
-            return parent::trimSuffix($suffix);
-        }
-
-        $str = clone $this;
-
-        if ($suffix instanceof \Traversable) {
-            $suffix = iterator_to_array($suffix, false);
-        } elseif ($suffix instanceof parent) {
-            $suffix = $suffix->string;
-        }
-
-        $suffix = implode('|', array_map('preg_quote', (array) $suffix));
-        $str->string = preg_replace("{(?:$suffix)$}iuD", '', $this->string);
-
-        return $str;
-    }
-
-    public function upper(): static
+    public function upper(): parent
     {
         $str = clone $this;
         $str->string = mb_strtoupper($str->string, 'UTF-8');
+
+        if (\PHP_VERSION_ID < 70300) {
+            $str->string = str_replace(self::UPPER_FROM, self::UPPER_TO, $str->string);
+        }
 
         return $str;
     }
@@ -491,7 +463,10 @@ abstract class AbstractUnicodeString extends AbstractString
         return $width;
     }
 
-    private function pad(int $len, self $pad, int $type): static
+    /**
+     * @return static
+     */
+    private function pad(int $len, self $pad, int $type): parent
     {
         $sLen = $this->length();
 
@@ -505,22 +480,22 @@ abstract class AbstractUnicodeString extends AbstractString
 
         switch ($type) {
             case \STR_PAD_RIGHT:
-                return $this->append(str_repeat($pad->string, intdiv($freeLen, $padLen)).($len ? $pad->slice(0, $len) : ''));
+                return $this->append(str_repeat($pad->string, $freeLen / $padLen).($len ? $pad->slice(0, $len) : ''));
 
             case \STR_PAD_LEFT:
-                return $this->prepend(str_repeat($pad->string, intdiv($freeLen, $padLen)).($len ? $pad->slice(0, $len) : ''));
+                return $this->prepend(str_repeat($pad->string, $freeLen / $padLen).($len ? $pad->slice(0, $len) : ''));
 
             case \STR_PAD_BOTH:
                 $freeLen /= 2;
 
                 $rightLen = ceil($freeLen);
                 $len = $rightLen % $padLen;
-                $str = $this->append(str_repeat($pad->string, intdiv($rightLen, $padLen)).($len ? $pad->slice(0, $len) : ''));
+                $str = $this->append(str_repeat($pad->string, $rightLen / $padLen).($len ? $pad->slice(0, $len) : ''));
 
                 $leftLen = floor($freeLen);
                 $len = $leftLen % $padLen;
 
-                return $str->prepend(str_repeat($pad->string, intdiv($leftLen, $padLen)).($len ? $pad->slice(0, $len) : ''));
+                return $str->prepend(str_repeat($pad->string, $leftLen / $padLen).($len ? $pad->slice(0, $len) : ''));
 
             default:
                 throw new InvalidArgumentException('Invalid padding type.');
@@ -555,18 +530,19 @@ abstract class AbstractUnicodeString extends AbstractString
                 return -1;
             }
 
-            if (null === self::$tableZero) {
-                self::$tableZero = require __DIR__.'/Resources/data/wcswidth_table_zero.php';
+            static $tableZero;
+            if (null === $tableZero) {
+                $tableZero = require __DIR__.'/Resources/data/wcswidth_table_zero.php';
             }
 
-            if ($codePoint >= self::$tableZero[0][0] && $codePoint <= self::$tableZero[$ubound = \count(self::$tableZero) - 1][1]) {
+            if ($codePoint >= $tableZero[0][0] && $codePoint <= $tableZero[$ubound = \count($tableZero) - 1][1]) {
                 $lbound = 0;
                 while ($ubound >= $lbound) {
                     $mid = floor(($lbound + $ubound) / 2);
 
-                    if ($codePoint > self::$tableZero[$mid][1]) {
+                    if ($codePoint > $tableZero[$mid][1]) {
                         $lbound = $mid + 1;
-                    } elseif ($codePoint < self::$tableZero[$mid][0]) {
+                    } elseif ($codePoint < $tableZero[$mid][0]) {
                         $ubound = $mid - 1;
                     } else {
                         continue 2;
@@ -574,18 +550,19 @@ abstract class AbstractUnicodeString extends AbstractString
                 }
             }
 
-            if (null === self::$tableWide) {
-                self::$tableWide = require __DIR__.'/Resources/data/wcswidth_table_wide.php';
+            static $tableWide;
+            if (null === $tableWide) {
+                $tableWide = require __DIR__.'/Resources/data/wcswidth_table_wide.php';
             }
 
-            if ($codePoint >= self::$tableWide[0][0] && $codePoint <= self::$tableWide[$ubound = \count(self::$tableWide) - 1][1]) {
+            if ($codePoint >= $tableWide[0][0] && $codePoint <= $tableWide[$ubound = \count($tableWide) - 1][1]) {
                 $lbound = 0;
                 while ($ubound >= $lbound) {
                     $mid = floor(($lbound + $ubound) / 2);
 
-                    if ($codePoint > self::$tableWide[$mid][1]) {
+                    if ($codePoint > $tableWide[$mid][1]) {
                         $lbound = $mid + 1;
-                    } elseif ($codePoint < self::$tableWide[$mid][0]) {
+                    } elseif ($codePoint < $tableWide[$mid][0]) {
                         $ubound = $mid - 1;
                     } else {
                         $width += 2;

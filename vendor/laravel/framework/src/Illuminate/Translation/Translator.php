@@ -2,9 +2,11 @@
 
 namespace Illuminate\Translation;
 
+use Countable;
 use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Contracts\Translation\Translator as TranslatorContract;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\NamespacedItemResolver;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
@@ -123,7 +125,7 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
                 if (! is_null($line = $this->getLine(
                     $namespace, $group, $locale, $item, $replace
                 ))) {
-                    return $line;
+                    return $line ?? $key;
                 }
             }
         }
@@ -152,7 +154,7 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
         // If the given "number" is actually an array or countable we will simply count the
         // number of elements in an instance. This allows developers to pass an array of
         // items without having to count it on their end first which gives bad syntax.
-        if (is_countable($number)) {
+        if (is_array($number) || $number instanceof Countable) {
             $number = count($number);
         }
 
@@ -214,15 +216,30 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
             return $line;
         }
 
-        $shouldReplace = [];
+        $replace = $this->sortReplacements($replace);
 
         foreach ($replace as $key => $value) {
-            $shouldReplace[':'.Str::ucfirst($key)] = Str::ucfirst($value);
-            $shouldReplace[':'.Str::upper($key)] = Str::upper($value);
-            $shouldReplace[':'.$key] = $value;
+            $line = str_replace(
+                [':'.$key, ':'.Str::upper($key), ':'.Str::ucfirst($key)],
+                [$value, Str::upper($value), Str::ucfirst($value)],
+                $line
+            );
         }
 
-        return strtr($line, $shouldReplace);
+        return $line;
+    }
+
+    /**
+     * Sort the replacements array.
+     *
+     * @param  array  $replace
+     * @return array
+     */
+    protected function sortReplacements(array $replace)
+    {
+        return (new Collection($replace))->sortBy(function ($value, $key) {
+            return mb_strlen($key) * -1;
+        })->all();
     }
 
     /**
@@ -388,8 +405,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
      *
      * @param  string  $locale
      * @return void
-     *
-     * @throws \InvalidArgumentException
      */
     public function setLocale($locale)
     {

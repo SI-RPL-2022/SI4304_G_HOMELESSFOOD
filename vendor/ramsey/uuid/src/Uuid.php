@@ -23,12 +23,9 @@ use Ramsey\Uuid\Lazy\LazyUuidFromString;
 use Ramsey\Uuid\Rfc4122\FieldsInterface as Rfc4122FieldsInterface;
 use Ramsey\Uuid\Type\Hexadecimal;
 use Ramsey\Uuid\Type\Integer as IntegerObject;
-use ValueError;
 
-use function assert;
 use function bin2hex;
 use function preg_match;
-use function sprintf;
 use function str_replace;
 use function strcmp;
 use function strlen;
@@ -241,9 +238,9 @@ class Uuid implements UuidInterface
      * ```
      * use Ramsey\Uuid\Uuid;
      *
-     * $timeBasedUuid = Uuid::uuid1();
-     * $namespaceMd5Uuid = Uuid::uuid3(Uuid::NAMESPACE_URL, 'http://php.net/');
-     * $randomUuid = Uuid::uuid4();
+     * $timeBasedUuid     = Uuid::uuid1();
+     * $namespaceMd5Uuid  = Uuid::uuid3(Uuid::NAMESPACE_URL, 'http://php.net/');
+     * $randomUuid        = Uuid::uuid4();
      * $namespaceSha1Uuid = Uuid::uuid5(Uuid::NAMESPACE_URL, 'http://php.net/');
      * ```
      *
@@ -288,15 +285,7 @@ class Uuid implements UuidInterface
      */
     public function serialize(): string
     {
-        return $this->getFields()->getBytes();
-    }
-
-    /**
-     * @return array{bytes: string}
-     */
-    public function __serialize(): array
-    {
-        return ['bytes' => $this->serialize()];
+        return $this->getBytes();
     }
 
     /**
@@ -321,20 +310,6 @@ class Uuid implements UuidInterface
         $this->numberConverter = $uuid->numberConverter;
         $this->fields = $uuid->fields;
         $this->timeConverter = $uuid->timeConverter;
-    }
-
-    /**
-     * @param array{bytes: string} $data
-     */
-    public function __unserialize(array $data): void
-    {
-        // @codeCoverageIgnoreStart
-        if (!isset($data['bytes'])) {
-            throw new ValueError(sprintf('%s(): Argument #1 ($data) is invalid', __METHOD__));
-        }
-        // @codeCoverageIgnoreEnd
-
-        $this->unserialize($data['bytes']);
     }
 
     public function compareTo(UuidInterface $other): int
@@ -476,11 +451,8 @@ class Uuid implements UuidInterface
      */
     public static function fromString(string $uuid): UuidInterface
     {
-        $uuid = strtolower($uuid);
         if (! self::$factoryReplaced && preg_match(LazyUuidFromString::VALID_REGEX, $uuid) === 1) {
-            assert($uuid !== '');
-
-            return new LazyUuidFromString($uuid);
+            return new LazyUuidFromString(strtolower($uuid));
         }
 
         return self::getFactory()->fromString($uuid);

@@ -3,7 +3,6 @@
 namespace Illuminate\Console;
 
 use Illuminate\Support\Traits\Macroable;
-use ReflectionClass;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,14 +38,14 @@ class Command extends SymfonyCommand
     /**
      * The console command description.
      *
-     * @var string
+     * @var string|null
      */
     protected $description;
 
     /**
      * The console command help text.
      *
-     * @var string
+     * @var string|null
      */
     protected $help;
 
@@ -88,40 +87,6 @@ class Command extends SymfonyCommand
     }
 
     /**
-     * Return the command name.
-     *
-     * @return string|null
-     */
-    public static function getDefaultName(): ?string
-    {
-        $class = static::class;
-
-        $signature = (new ReflectionClass($class))->getDefaultProperties()['signature'] ?? null;
-
-        if (isset($signature)) {
-            return Parser::parse($signature)[0];
-        }
-
-        $name = (new ReflectionClass($class))->getDefaultProperties()['name'] ?? null;
-
-        return $name ?: parent::getDefaultName();
-    }
-
-    /**
-     * Return the command description.
-     *
-     * @return string|null
-     */
-    public static function getDefaultDescription(): ?string
-    {
-        $class = static::class;
-
-        $description = (new ReflectionClass($class))->getDefaultProperties()['description'] ?? null;
-
-        return $description ?: parent::getDefaultDescription();
-    }
-
-    /**
      * Configure the console command using a fluent definition.
      *
      * @return void
@@ -146,7 +111,7 @@ class Command extends SymfonyCommand
      * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return int
      */
-    public function run(InputInterface $input, OutputInterface $output): int
+    public function run(InputInterface $input, OutputInterface $output)
     {
         $this->output = $this->laravel->make(
             OutputStyle::class, ['input' => $input, 'output' => $output]
@@ -198,10 +163,8 @@ class Command extends SymfonyCommand
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function isHidden(): bool
+    public function isHidden()
     {
         return $this->hidden;
     }
@@ -209,7 +172,7 @@ class Command extends SymfonyCommand
     /**
      * {@inheritdoc}
      */
-    public function setHidden(bool $hidden = true): static
+    public function setHidden(bool $hidden)
     {
         parent::setHidden($this->hidden = $hidden);
 

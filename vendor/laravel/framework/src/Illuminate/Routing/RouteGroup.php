@@ -20,10 +20,6 @@ class RouteGroup
             unset($old['domain']);
         }
 
-        if (isset($new['controller'])) {
-            unset($old['controller']);
-        }
-
         $new = array_merge(static::formatAs($new, $old), [
             'namespace' => static::formatNamespace($new, $old),
             'prefix' => static::formatPrefix($new, $old, $prependExistingPrefix),
@@ -45,7 +41,7 @@ class RouteGroup
     protected static function formatNamespace($new, $old)
     {
         if (isset($new['namespace'])) {
-            return isset($old['namespace']) && ! str_starts_with($new['namespace'], '\\')
+            return isset($old['namespace']) && strpos($new['namespace'], '\\') !== 0
                     ? trim($old['namespace'], '\\').'\\'.trim($new['namespace'], '\\')
                     : trim($new['namespace'], '\\');
         }
@@ -63,7 +59,7 @@ class RouteGroup
      */
     protected static function formatPrefix($new, $old, $prependExistingPrefix = true)
     {
-        $old = $old['prefix'] ?? '';
+        $old = $old['prefix'] ?? null;
 
         if ($prependExistingPrefix) {
             return isset($new['prefix']) ? trim($old, '/').'/'.trim($new['prefix'], '/') : $old;

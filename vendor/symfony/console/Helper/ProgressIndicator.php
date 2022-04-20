@@ -20,31 +20,18 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ProgressIndicator
 {
-    private const FORMATS = [
-        'normal' => ' %indicator% %message%',
-        'normal_no_ansi' => ' %message%',
-
-        'verbose' => ' %indicator% %message% (%elapsed:6s%)',
-        'verbose_no_ansi' => ' %message% (%elapsed:6s%)',
-
-        'very_verbose' => ' %indicator% %message% (%elapsed:6s%, %memory:6s%)',
-        'very_verbose_no_ansi' => ' %message% (%elapsed:6s%, %memory:6s%)',
-    ];
-
     private $output;
-    private int $startTime;
-    private ?string $format = null;
-    private ?string $message = null;
-    private array $indicatorValues;
-    private int $indicatorCurrent;
-    private int $indicatorChangeInterval;
-    private float $indicatorUpdateTime;
-    private bool $started = false;
+    private $startTime;
+    private $format;
+    private $message;
+    private $indicatorValues;
+    private $indicatorCurrent;
+    private $indicatorChangeInterval;
+    private $indicatorUpdateTime;
+    private $started = false;
 
-    /**
-     * @var array<string, callable>
-     */
-    private static array $formatters;
+    private static $formatters;
+    private static $formats;
 
     /**
      * @param int        $indicatorChangeInterval Change interval in milliseconds
@@ -146,10 +133,16 @@ class ProgressIndicator
 
     /**
      * Gets the format for a given name.
+     *
+     * @return string|null A format string
      */
-    public static function getFormatDefinition(string $name): ?string
+    public static function getFormatDefinition(string $name)
     {
-        return self::FORMATS[$name] ?? null;
+        if (!self::$formats) {
+            self::$formats = self::initFormats();
+        }
+
+        return isset(self::$formats[$name]) ? self::$formats[$name] : null;
     }
 
     /**
@@ -159,19 +152,25 @@ class ProgressIndicator
      */
     public static function setPlaceholderFormatterDefinition(string $name, callable $callable)
     {
-        self::$formatters ??= self::initPlaceholderFormatters();
+        if (!self::$formatters) {
+            self::$formatters = self::initPlaceholderFormatters();
+        }
 
         self::$formatters[$name] = $callable;
     }
 
     /**
      * Gets the placeholder formatter for a given name (including the delimiter char like %).
+     *
+     * @return callable|null A PHP callable
      */
-    public static function getPlaceholderFormatterDefinition(string $name): ?callable
+    public static function getPlaceholderFormatterDefinition(string $name)
     {
-        self::$formatters ??= self::initPlaceholderFormatters();
+        if (!self::$formatters) {
+            self::$formatters = self::initPlaceholderFormatters();
+        }
 
-        return self::$formatters[$name] ?? null;
+        return isset(self::$formatters[$name]) ? self::$formatters[$name] : null;
     }
 
     private function display()
@@ -186,7 +185,7 @@ class ProgressIndicator
             }
 
             return $matches[0];
-        }, $this->format ?? ''));
+        }, $this->format));
     }
 
     private function determineBestFormat(): string
@@ -221,9 +220,6 @@ class ProgressIndicator
         return round(microtime(true) * 1000);
     }
 
-    /**
-     * @return array<string, \Closure>
-     */
     private static function initPlaceholderFormatters(): array
     {
         return [
@@ -239,6 +235,20 @@ class ProgressIndicator
             'memory' => function () {
                 return Helper::formatMemory(memory_get_usage(true));
             },
+        ];
+    }
+
+    private static function initFormats(): array
+    {
+        return [
+            'normal' => ' %indicator% %message%',
+            'normal_no_ansi' => ' %message%',
+
+            'verbose' => ' %indicator% %message% (%elapsed:6s%)',
+            'verbose_no_ansi' => ' %message% (%elapsed:6s%)',
+
+            'very_verbose' => ' %indicator% %message% (%elapsed:6s%, %memory:6s%)',
+            'very_verbose_no_ansi' => ' %message% (%elapsed:6s%, %memory:6s%)',
         ];
     }
 }

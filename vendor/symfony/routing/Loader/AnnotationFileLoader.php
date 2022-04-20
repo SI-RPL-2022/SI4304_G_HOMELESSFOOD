@@ -26,6 +26,9 @@ class AnnotationFileLoader extends FileLoader
 {
     protected $loader;
 
+    /**
+     * @throws \RuntimeException
+     */
     public function __construct(FileLocatorInterface $locator, AnnotationClassLoader $loader)
     {
         if (!\function_exists('token_get_all')) {
@@ -40,9 +43,14 @@ class AnnotationFileLoader extends FileLoader
     /**
      * Loads from annotations from a file.
      *
+     * @param string      $file A PHP file path
+     * @param string|null $type The resource type
+     *
+     * @return RouteCollection|null A RouteCollection instance
+     *
      * @throws \InvalidArgumentException When the file does not exist or its routes cannot be parsed
      */
-    public function load(mixed $file, string $type = null): ?RouteCollection
+    public function load($file, string $type = null)
     {
         $path = $this->locator->locate($file);
 
@@ -65,15 +73,17 @@ class AnnotationFileLoader extends FileLoader
     /**
      * {@inheritdoc}
      */
-    public function supports(mixed $resource, string $type = null): bool
+    public function supports($resource, string $type = null)
     {
         return \is_string($resource) && 'php' === pathinfo($resource, \PATHINFO_EXTENSION) && (!$type || 'annotation' === $type);
     }
 
     /**
      * Returns the full class name for the first class in the file.
+     *
+     * @return string|false Full class name if found, false otherwise
      */
-    protected function findClass(string $file): string|false
+    protected function findClass(string $file)
     {
         $class = false;
         $namespace = false;
@@ -85,10 +95,12 @@ class AnnotationFileLoader extends FileLoader
 
         $nsTokens = [\T_NS_SEPARATOR => true, \T_STRING => true];
         if (\defined('T_NAME_QUALIFIED')) {
-            $nsTokens[\T_NAME_QUALIFIED] = true;
+            $nsTokens[T_NAME_QUALIFIED] = true;
         }
+
         for ($i = 0; isset($tokens[$i]); ++$i) {
             $token = $tokens[$i];
+
             if (!isset($token[1])) {
                 continue;
             }
@@ -110,9 +122,6 @@ class AnnotationFileLoader extends FileLoader
                 $skipClassToken = false;
                 for ($j = $i - 1; $j > 0; --$j) {
                     if (!isset($tokens[$j][1])) {
-                        if ('(' === $tokens[$j] || ',' === $tokens[$j]) {
-                            $skipClassToken = true;
-                        }
                         break;
                     }
 

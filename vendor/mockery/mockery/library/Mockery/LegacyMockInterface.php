@@ -84,7 +84,7 @@ interface LegacyMockInterface
 
     /**
      * @param null|string $method
-     * @param null|array|Closure $args
+     * @param null $args
      * @return mixed
      */
     public function shouldHaveReceived($method, $args = null);
@@ -96,7 +96,7 @@ interface LegacyMockInterface
 
     /**
      * @param null|string $method
-     * @param null|array|Closure $args
+     * @param null $args
      * @return mixed
      */
     public function shouldNotHaveReceived($method, $args = null);

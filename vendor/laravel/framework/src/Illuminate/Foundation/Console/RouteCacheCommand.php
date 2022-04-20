@@ -17,17 +17,6 @@ class RouteCacheCommand extends Command
     protected $name = 'route:cache';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'route:cache';
-
-    /**
      * The console command description.
      *
      * @var string
@@ -77,7 +66,7 @@ class RouteCacheCommand extends Command
             $this->laravel->getCachedRoutesPath(), $this->buildRouteCacheFile($routes)
         );
 
-        $this->info('Routes cached successfully.');
+        $this->info('Routes cached successfully!');
     }
 
     /**

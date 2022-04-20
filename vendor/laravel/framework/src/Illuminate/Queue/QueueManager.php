@@ -148,16 +148,10 @@ class QueueManager implements FactoryContract, MonitorContract
      *
      * @param  string  $name
      * @return \Illuminate\Contracts\Queue\Queue
-     *
-     * @throws \InvalidArgumentException
      */
     protected function resolve($name)
     {
         $config = $this->getConfig($name);
-
-        if (is_null($config)) {
-            throw new InvalidArgumentException("The [{$name}] queue connection has not been configured.");
-        }
 
         return $this->getConnector($config['driver'])
                         ->connect($config)
@@ -209,7 +203,7 @@ class QueueManager implements FactoryContract, MonitorContract
      * Get the queue connection configuration.
      *
      * @param  string  $name
-     * @return array|null
+     * @return array
      */
     protected function getConfig($name)
     {
@@ -250,33 +244,6 @@ class QueueManager implements FactoryContract, MonitorContract
     public function getName($connection = null)
     {
         return $connection ?: $this->getDefaultDriver();
-    }
-
-    /**
-     * Get the application instance used by the manager.
-     *
-     * @return \Illuminate\Contracts\Foundation\Application
-     */
-    public function getApplication()
-    {
-        return $this->app;
-    }
-
-    /**
-     * Set the application instance used by the manager.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return $this
-     */
-    public function setApplication($app)
-    {
-        $this->app = $app;
-
-        foreach ($this->connections as $connection) {
-            $connection->setContainer($app);
-        }
-
-        return $this;
     }
 
     /**

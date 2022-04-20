@@ -239,8 +239,7 @@ class TestDoxPrinter extends DefaultResultPrinter
         }
 
         if ($this->testFlushIndex > 0) {
-            if ($this->enableOutputBuffer &&
-                isset($this->originalExecutionOrder[$this->testFlushIndex - 1])) {
+            if ($this->enableOutputBuffer) {
                 $prevResult = $this->getTestResultByName($this->originalExecutionOrder[$this->testFlushIndex - 1]);
             } else {
                 $prevResult = $this->testResults[$this->testFlushIndex - 1];
@@ -377,8 +376,7 @@ class TestDoxPrinter extends DefaultResultPrinter
         return implode(
             PHP_EOL,
             array_map(
-                static function (string $text) use ($prefix)
-                {
+                static function (string $text) use ($prefix) {
                     return '   ' . $prefix . ($text ? ' ' . $text : '');
                 },
                 preg_split('/\r\n|\r|\n/', $message)

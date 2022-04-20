@@ -22,25 +22,6 @@ class DatabaseChannel
     }
 
     /**
-     * Build an array payload for the DatabaseNotification Model.
-     *
-     * @param  mixed  $notifiable
-     * @param  \Illuminate\Notifications\Notification  $notification
-     * @return array
-     */
-    protected function buildPayload($notifiable, Notification $notification)
-    {
-        return [
-            'id' => $notification->id,
-            'type' => method_exists($notification, 'databaseType')
-                        ? $notification->databaseType($notifiable)
-                        : get_class($notification),
-            'data' => $this->getData($notifiable, $notification),
-            'read_at' => null,
-        ];
-    }
-
-    /**
      * Get the data for the notification.
      *
      * @param  mixed  $notifiable
@@ -61,5 +42,22 @@ class DatabaseChannel
         }
 
         throw new RuntimeException('Notification is missing toDatabase / toArray method.');
+    }
+
+    /**
+     * Build an array payload for the DatabaseNotification Model.
+     *
+     * @param  mixed  $notifiable
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return array
+     */
+    protected function buildPayload($notifiable, Notification $notification)
+    {
+        return [
+            'id' => $notification->id,
+            'type' => get_class($notification),
+            'data' => $this->getData($notifiable, $notification),
+            'read_at' => null,
+        ];
     }
 }

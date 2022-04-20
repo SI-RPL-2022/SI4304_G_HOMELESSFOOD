@@ -22,16 +22,22 @@ class FormatterHelper extends Helper
 {
     /**
      * Formats a message within a section.
+     *
+     * @return string The format section
      */
-    public function formatSection(string $section, string $message, string $style = 'info'): string
+    public function formatSection(string $section, string $message, string $style = 'info')
     {
         return sprintf('<%s>[%s]</%s> %s', $style, $section, $style, $message);
     }
 
     /**
      * Formats a message as a block of text.
+     *
+     * @param string|array $messages The message to write in the block
+     *
+     * @return string The formatter message
      */
-    public function formatBlock(string|array $messages, string $style, bool $large = false): string
+    public function formatBlock($messages, string $style, bool $large = false)
     {
         if (!\is_array($messages)) {
             $messages = [$messages];
@@ -42,12 +48,12 @@ class FormatterHelper extends Helper
         foreach ($messages as $message) {
             $message = OutputFormatter::escape($message);
             $lines[] = sprintf($large ? '  %s  ' : ' %s ', $message);
-            $len = max(self::width($message) + ($large ? 4 : 2), $len);
+            $len = max(self::strlen($message) + ($large ? 4 : 2), $len);
         }
 
         $messages = $large ? [str_repeat(' ', $len)] : [];
         for ($i = 0; isset($lines[$i]); ++$i) {
-            $messages[] = $lines[$i].str_repeat(' ', $len - self::width($lines[$i]));
+            $messages[] = $lines[$i].str_repeat(' ', $len - self::strlen($lines[$i]));
         }
         if ($large) {
             $messages[] = str_repeat(' ', $len);
@@ -62,12 +68,14 @@ class FormatterHelper extends Helper
 
     /**
      * Truncates a message to the given length.
+     *
+     * @return string
      */
-    public function truncate(string $message, int $length, string $suffix = '...'): string
+    public function truncate(string $message, int $length, string $suffix = '...')
     {
-        $computedLength = $length - self::width($suffix);
+        $computedLength = $length - self::strlen($suffix);
 
-        if ($computedLength > self::width($message)) {
+        if ($computedLength > self::strlen($message)) {
             return $message;
         }
 
@@ -77,7 +85,7 @@ class FormatterHelper extends Helper
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName()
     {
         return 'formatter';
     }

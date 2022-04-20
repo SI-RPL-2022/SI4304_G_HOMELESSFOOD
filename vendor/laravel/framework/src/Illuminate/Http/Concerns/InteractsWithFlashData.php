@@ -9,7 +9,7 @@ trait InteractsWithFlashData
      *
      * @param  string|null  $key
      * @param  string|array|null  $default
-     * @return string|array|null
+     * @return string|array
      */
     public function old($key = null, $default = null)
     {

@@ -8,9 +8,6 @@ use Illuminate\Contracts\Notifications\Dispatcher as NotificationDispatcher;
 use Illuminate\Support\Facades\Event;
 use Mockery;
 
-/**
- * @deprecated Will be removed in a future Laravel version.
- */
 trait MocksApplicationServices
 {
     /**

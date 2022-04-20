@@ -53,15 +53,15 @@ class EntityPopulator
         $schema = $table->schema();
         $pk = $schema->primaryKey();
         $guessers = $populator->getGuessers() + ['ColumnTypeGuesser' => new ColumnTypeGuesser($populator->getGenerator())];
-        $isForeignKey = static function ($column) use ($table) {
+        $isForeignKey = function ($column) use ($table) {
             foreach ($table->associations()->type('BelongsTo') as $assoc) {
                 if ($column == $assoc->foreignKey()) {
                     return true;
                 }
             }
-
             return false;
         };
+
 
         foreach ($schema->columns() as $column) {
             if ($column == $pk[0] || $isForeignKey($column)) {
@@ -71,7 +71,6 @@ class EntityPopulator
             foreach ($guessers as $guesser) {
                 if ($formatter = $guesser->guessFormat($column, $table)) {
                     $formatters[$column] = $formatter;
-
                     break;
                 }
             }
@@ -89,20 +88,18 @@ class EntityPopulator
         $table = $this->getTable($this->class);
 
         $belongsTo = $table->associations()->type('BelongsTo');
-
         foreach ($belongsTo as $assoc) {
             $modifiers['belongsTo' . $assoc->name()] = function ($data, $insertedEntities) use ($assoc) {
                 $table = $assoc->target();
                 $foreignModel = $table->alias();
 
                 $foreignKeys = [];
-
                 if (!empty($insertedEntities[$foreignModel])) {
                     $foreignKeys = $insertedEntities[$foreignModel];
                 } else {
                     $foreignKeys = $table->find('all')
                     ->select(['id'])
-                    ->map(static function ($row) {
+                    ->map(function ($row) {
                         return $row->id;
                     })
                     ->toArray();
@@ -114,7 +111,6 @@ class EntityPopulator
 
                 $foreignKey = $foreignKeys[array_rand($foreignKeys)];
                 $data[$assoc->foreignKey()] = $foreignKey;
-
                 return $data;
             };
         }
@@ -133,7 +129,7 @@ class EntityPopulator
         $entity = $table->newEntity();
 
         foreach ($this->columnFormatters as $column => $format) {
-            if (null !== $format) {
+            if (!is_null($format)) {
                 $entity->{$column} = is_callable($format) ? $format($insertedEntities, $table) : $format;
             }
         }
@@ -147,7 +143,6 @@ class EntityPopulator
         }
 
         $pk = $table->primaryKey();
-
         if (is_string($pk)) {
             return $entity->{$pk};
         }
@@ -163,11 +158,9 @@ class EntityPopulator
     protected function getTable($class)
     {
         $options = [];
-
         if (!empty($this->connectionName)) {
             $options['connection'] = $this->connectionName;
         }
-
         return TableRegistry::get($class, $options);
     }
 }

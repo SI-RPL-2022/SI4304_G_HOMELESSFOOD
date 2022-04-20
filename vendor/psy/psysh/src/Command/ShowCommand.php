@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2020 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -114,17 +114,8 @@ HELP
             // If we didn't get a target and Reflector, maybe we got a filename?
             $target = $e->getTarget();
             if (\is_string($target) && \is_file($target) && $code = @\file_get_contents($target)) {
-                $file = \realpath($target);
-                if ($file !== $this->context->get('__file')) {
-                    $this->context->setCommandScopeVariables([
-                        '__file' => $file,
-                        '__dir'  => \dirname($file),
-                    ]);
-                }
-
-                $output->page(CodeFormatter::formatCode($code));
-
-                return;
+                // @todo maybe set $__file to $target?
+                return $output->page(CodeFormatter::formatCode($code));
             } else {
                 throw $e;
             }
@@ -195,7 +186,7 @@ HELP
         ));
     }
 
-    private function replaceCwd(string $file): string
+    private function replaceCwd($file)
     {
         if ($cwd = \getcwd()) {
             $cwd = \rtrim($cwd, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR;
@@ -254,7 +245,7 @@ HELP
                 if ($namespace = $refl->getNamespaceName()) {
                     $vars['__namespace'] = $namespace;
                 }
-            } catch (\Throwable $e) {
+            } catch (\Exception $e) {
                 // oh well
             }
         } elseif (isset($context['function'])) {
@@ -265,7 +256,7 @@ HELP
                 if ($namespace = $refl->getNamespaceName()) {
                     $vars['__namespace'] = $namespace;
                 }
-            } catch (\Throwable $e) {
+            } catch (\Exception $e) {
                 // oh well
             }
         }
@@ -290,7 +281,7 @@ HELP
         $this->context->setCommandScopeVariables($vars);
     }
 
-    private function extractEvalFileAndLine(string $file)
+    private function extractEvalFileAndLine($file)
     {
         if (\preg_match('/(.*)\\((\\d+)\\) : eval\\(\\)\'d code$/', $file, $matches)) {
             return [$matches[1], $matches[2]];

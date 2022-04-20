@@ -10,7 +10,6 @@ use Illuminate\Support\Arr;
 use Mockery;
 use Mockery\Exception\NoMatchingExpectationException;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -53,14 +52,7 @@ class PendingCommand
     protected $expectedExitCode;
 
     /**
-     * The unexpected exit code.
-     *
-     * @var int
-     */
-    protected $unexpectedExitCode;
-
-    /**
-     * Determine if the command has executed.
+     * Determine if command has executed.
      *
      * @var bool
      */
@@ -155,19 +147,6 @@ class PendingCommand
     }
 
     /**
-     * Specify that the given string should be contained in the command output.
-     *
-     * @param  string  $string
-     * @return $this
-     */
-    public function expectsOutputToContain($string)
-    {
-        $this->test->expectedOutputSubstrings[] = $string;
-
-        return $this;
-    }
-
-    /**
      * Specify a table that should be printed when the command runs.
      *
      * @param  array  $headers
@@ -178,24 +157,12 @@ class PendingCommand
      */
     public function expectsTable($headers, $rows, $tableStyle = 'default', array $columnStyles = [])
     {
-        $table = (new Table($output = new BufferedOutput))
-            ->setHeaders((array) $headers)
-            ->setRows($rows instanceof Arrayable ? $rows->toArray() : $rows)
-            ->setStyle($tableStyle);
-
-        foreach ($columnStyles as $columnIndex => $columnStyle) {
-            $table->setColumnStyle($columnIndex, $columnStyle);
-        }
-
-        $table->render();
-
-        $lines = array_filter(
-            explode(PHP_EOL, $output->fetch())
-        );
-
-        foreach ($lines as $line) {
-            $this->expectsOutput($line);
-        }
+        $this->test->expectedTables[] = [
+            'headers' => (array) $headers,
+            'rows' => $rows instanceof Arrayable ? $rows->toArray() : $rows,
+            'tableStyle' => $tableStyle,
+            'columnStyles' => $columnStyles,
+        ];
 
         return $this;
     }
@@ -211,39 +178,6 @@ class PendingCommand
         $this->expectedExitCode = $exitCode;
 
         return $this;
-    }
-
-    /**
-     * Assert that the command does not have the given exit code.
-     *
-     * @param  int  $exitCode
-     * @return $this
-     */
-    public function assertNotExitCode($exitCode)
-    {
-        $this->unexpectedExitCode = $exitCode;
-
-        return $this;
-    }
-
-    /**
-     * Assert that the command has the success exit code.
-     *
-     * @return $this
-     */
-    public function assertSuccessful()
-    {
-        return $this->assertExitCode(Command::SUCCESS);
-    }
-
-    /**
-     * Assert that the command does not have the success exit code.
-     *
-     * @return $this
-     */
-    public function assertFailed()
-    {
-        return $this->assertNotExitCode(Command::SUCCESS);
     }
 
     /**
@@ -284,11 +218,6 @@ class PendingCommand
                 $this->expectedExitCode, $exitCode,
                 "Expected status code {$this->expectedExitCode} but received {$exitCode}."
             );
-        } elseif (! is_null($this->unexpectedExitCode)) {
-            $this->test->assertNotEquals(
-                $this->unexpectedExitCode, $exitCode,
-                "Unexpected status code {$this->unexpectedExitCode} was received."
-            );
         }
 
         $this->verifyExpectations();
@@ -322,10 +251,6 @@ class PendingCommand
 
         if (count($this->test->expectedOutput)) {
             $this->test->fail('Output "'.Arr::first($this->test->expectedOutput).'" was not printed.');
-        }
-
-        if (count($this->test->expectedOutputSubstrings)) {
-            $this->test->fail('Output does not contain "'.Arr::first($this->test->expectedOutputSubstrings).'".');
         }
 
         if ($output = array_search(true, $this->test->unexpectedOutput)) {
@@ -380,6 +305,8 @@ class PendingCommand
                 ->shouldAllowMockingProtectedMethods()
                 ->shouldIgnoreMissing();
 
+        $this->applyTableOutputExpectations($mock);
+
         foreach ($this->test->expectedOutput as $i => $output) {
             $mock->shouldReceive('doWrite')
                 ->once()
@@ -390,16 +317,9 @@ class PendingCommand
                 });
         }
 
-        foreach ($this->test->expectedOutputSubstrings as $i => $text) {
-            $mock->shouldReceive('doWrite')
-                ->withArgs(fn ($output) => str_contains($output, $text))
-                ->andReturnUsing(function () use ($i) {
-                    unset($this->test->expectedOutputSubstrings[$i]);
-                });
-        }
-
         foreach ($this->test->unexpectedOutput as $output => $displayed) {
             $mock->shouldReceive('doWrite')
+                ->once()
                 ->ordered()
                 ->with($output, Mockery::any())
                 ->andReturnUsing(function () use ($output) {
@@ -411,6 +331,38 @@ class PendingCommand
     }
 
     /**
+     * Apply the output table expectations to the mock.
+     *
+     * @param  \Mockery\MockInterface  $mock
+     * @return void
+     */
+    private function applyTableOutputExpectations($mock)
+    {
+        foreach ($this->test->expectedTables as $i => $consoleTable) {
+            $table = (new Table($output = new BufferedOutput))
+                ->setHeaders($consoleTable['headers'])
+                ->setRows($consoleTable['rows'])
+                ->setStyle($consoleTable['tableStyle']);
+
+            foreach ($consoleTable['columnStyles'] as $columnIndex => $columnStyle) {
+                $table->setColumnStyle($columnIndex, $columnStyle);
+            }
+
+            $table->render();
+
+            $lines = array_filter(
+                explode(PHP_EOL, $output->fetch())
+            );
+
+            foreach ($lines as $line) {
+                $this->expectsOutput($line);
+            }
+
+            unset($this->test->expectedTables[$i]);
+        }
+    }
+
+    /**
      * Flush the expectations from the test case.
      *
      * @return void
@@ -418,7 +370,6 @@ class PendingCommand
     protected function flushExpectations()
     {
         $this->test->expectedOutput = [];
-        $this->test->expectedOutputSubstrings = [];
         $this->test->unexpectedOutput = [];
         $this->test->expectedTables = [];
         $this->test->expectedQuestions = [];

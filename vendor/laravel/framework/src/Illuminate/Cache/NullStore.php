@@ -12,7 +12,7 @@ class NullStore extends TaggableStore implements LockProvider
      * Retrieve an item from the cache by key.
      *
      * @param  string  $key
-     * @return void
+     * @return mixed
      */
     public function get($key)
     {
@@ -37,7 +37,7 @@ class NullStore extends TaggableStore implements LockProvider
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return bool
+     * @return int|bool
      */
     public function increment($key, $value = 1)
     {
@@ -49,7 +49,7 @@ class NullStore extends TaggableStore implements LockProvider
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return bool
+     * @return int|bool
      */
     public function decrement($key, $value = 1)
     {

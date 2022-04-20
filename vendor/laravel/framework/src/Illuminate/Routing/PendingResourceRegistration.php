@@ -149,12 +149,6 @@ class PendingResourceRegistration
      */
     public function middleware($middleware)
     {
-        $middleware = Arr::wrap($middleware);
-
-        foreach ($middleware as $key => $value) {
-            $middleware[$key] = (string) $value;
-        }
-
         $this->options['middleware'] = $middleware;
 
         return $this;
@@ -197,19 +191,6 @@ class PendingResourceRegistration
     public function shallow($shallow = true)
     {
         $this->options['shallow'] = $shallow;
-
-        return $this;
-    }
-
-    /**
-     * Define the callable that should be invoked on a missing model exception.
-     *
-     * @param  callable  $callback
-     * @return $this
-     */
-    public function missing($callback)
-    {
-        $this->options['missing'] = $callback;
 
         return $this;
     }

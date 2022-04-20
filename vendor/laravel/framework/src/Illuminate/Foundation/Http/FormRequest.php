@@ -3,7 +3,6 @@
 namespace Illuminate\Foundation\Http;
 
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Contracts\Validation\ValidatesWhenResolved;
@@ -60,13 +59,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected $errorBag = 'default';
 
     /**
-     * Indicates whether validation should stop after the first rule failure.
-     *
-     * @var bool
-     */
-    protected $stopOnFirstFailure = false;
-
-    /**
      * The validator instance.
      *
      * @var \Illuminate\Contracts\Validation\Validator
@@ -112,7 +104,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
         return $factory->make(
             $this->validationData(), $this->container->call([$this, 'rules']),
             $this->messages(), $this->attributes()
-        )->stopOnFirstFailure($this->stopOnFirstFailure);
+        );
     }
 
     /**
@@ -164,15 +156,11 @@ class FormRequest extends Request implements ValidatesWhenResolved
      * Determine if the request passes the authorization check.
      *
      * @return bool
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     protected function passesAuthorization()
     {
         if (method_exists($this, 'authorize')) {
-            $result = $this->container->call([$this, 'authorize']);
-
-            return $result instanceof Response ? $result->authorize() : $result;
+            return $this->container->call([$this, 'authorize']);
         }
 
         return true;
@@ -191,28 +179,13 @@ class FormRequest extends Request implements ValidatesWhenResolved
     }
 
     /**
-     * Get a validated input container for the validated input.
-     *
-     * @param  array|null  $keys
-     * @return \Illuminate\Support\ValidatedInput|array
-     */
-    public function safe(array $keys = null)
-    {
-        return is_array($keys)
-                    ? $this->validator->safe()->only($keys)
-                    : $this->validator->safe();
-    }
-
-    /**
      * Get the validated data from the request.
      *
-     * @param  string|null  $key
-     * @param  mixed  $default
-     * @return mixed
+     * @return array
      */
-    public function validated($key = null, $default = null)
+    public function validated()
     {
-        return data_get($this->validator->validated(), $key, $default);
+        return $this->validator->validated();
     }
 
     /**

@@ -27,7 +27,6 @@ class PrettyPageHandler extends Handler
     const EDITOR_ATOM = "atom";
     const EDITOR_ESPRESSO = "espresso";
     const EDITOR_XDEBUG = "xdebug";
-    const EDITOR_NETBEANS = "netbeans";
 
     /**
      * Search paths to be scanned for resources.
@@ -121,7 +120,6 @@ class PrettyPageHandler extends Handler
         "vscode"   => "vscode://file/%file:%line",
         "atom"     => "atom://core/open/file?filename=%file&line=%line",
         "espresso" => "x-espresso://open?filepath=%file&lines=%line",
-        "netbeans" => "netbeans://open/?f=%file:%line",
     ];
 
     /**
@@ -136,10 +134,10 @@ class PrettyPageHandler extends Handler
      */
     public function __construct()
     {
-        if (ini_get('xdebug.file_link_format') || get_cfg_var('xdebug.file_link_format')) {
+        if (ini_get('xdebug.file_link_format') || extension_loaded('xdebug')) {
             // Register editor using xdebug's file_link_format option.
             $this->editors['xdebug'] = function ($file, $line) {
-                return str_replace(['%f', '%l'], [$file, $line], ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format'));
+                return str_replace(['%f', '%l'], [$file, $line], ini_get('xdebug.file_link_format'));
             };
 
             // If xdebug is available, use it as default editor.
@@ -177,8 +175,6 @@ class PrettyPageHandler extends Handler
 
     /**
      * @return int|null
-     *
-     * @throws \Exception
      */
     public function handle()
     {
@@ -202,8 +198,7 @@ class PrettyPageHandler extends Handler
         $templateFile = $this->getResource("views/layout.html.php");
         $cssFile      = $this->getResource("css/whoops.base.css");
         $zeptoFile    = $this->getResource("js/zepto.min.js");
-        $prismJs = $this->getResource("js/prism.js");
-        $prismCss = $this->getResource("css/prism.css");
+        $prettifyFile = $this->getResource("js/prettify.min.js");
         $clipboard    = $this->getResource("js/clipboard.min.js");
         $jsFile       = $this->getResource("js/whoops.base.js");
 
@@ -226,8 +221,7 @@ class PrettyPageHandler extends Handler
             // @todo: Asset compiler
             "stylesheet" => file_get_contents($cssFile),
             "zepto"      => file_get_contents($zeptoFile),
-            "prismJs"   => file_get_contents($prismJs),
-            "prismCss"   => file_get_contents($prismCss),
+            "prettify"   => file_get_contents($prettifyFile),
             "clipboard"  => file_get_contents($clipboard),
             "javascript" => file_get_contents($jsFile),
 
@@ -355,12 +349,11 @@ class PrettyPageHandler extends Handler
      * @param string $label
      * @param array  $data
      *
-     * @return static
+     * @return void
      */
     public function addDataTable($label, array $data)
     {
         $this->extraTables[$label] = $data;
-        return $this;
     }
 
     /**
@@ -375,7 +368,7 @@ class PrettyPageHandler extends Handler
      *
      * @throws InvalidArgumentException If $callback is not callable
      *
-     * @return static
+     * @return void
      */
     public function addDataTableCallback($label, /* callable */ $callback)
     {
@@ -394,8 +387,6 @@ class PrettyPageHandler extends Handler
                 return [];
             }
         };
-
-        return $this;
     }
 
     /**
@@ -427,7 +418,7 @@ class PrettyPageHandler extends Handler
      *
      * @param bool|null $value
      *
-     * @return bool|static
+     * @return bool|null
      */
     public function handleUnconditionally($value = null)
     {
@@ -436,7 +427,6 @@ class PrettyPageHandler extends Handler
         }
 
         $this->handleUnconditionally = (bool) $value;
-        return $this;
     }
 
     /**
@@ -457,12 +447,11 @@ class PrettyPageHandler extends Handler
      * @param string          $identifier
      * @param string|callable $resolver
      *
-     * @return static
+     * @return void
      */
     public function addEditor($identifier, $resolver)
     {
         $this->editors[$identifier] = $resolver;
-        return $this;
     }
 
     /**
@@ -480,7 +469,7 @@ class PrettyPageHandler extends Handler
      *
      * @throws InvalidArgumentException If invalid argument identifier provided
      *
-     * @return static
+     * @return void
      */
     public function setEditor($editor)
     {
@@ -492,7 +481,6 @@ class PrettyPageHandler extends Handler
         }
 
         $this->editor = $editor;
-        return $this;
     }
 
     /**
@@ -603,12 +591,11 @@ class PrettyPageHandler extends Handler
      *
      * @param string $title
      *
-     * @return static
+     * @return void
      */
     public function setPageTitle($title)
     {
         $this->pageTitle = (string) $title;
-        return $this;
     }
 
     /**
@@ -628,7 +615,7 @@ class PrettyPageHandler extends Handler
      *
      * @throws InvalidArgumentException If $path is not a valid directory
      *
-     * @return static
+     * @return void
      */
     public function addResourcePath($path)
     {
@@ -639,7 +626,6 @@ class PrettyPageHandler extends Handler
         }
 
         array_unshift($this->searchPaths, $path);
-        return $this;
     }
 
     /**
@@ -647,12 +633,11 @@ class PrettyPageHandler extends Handler
      *
      * @param string|null $name
      *
-     * @return static
+     * @return void
      */
     public function addCustomCss($name)
     {
         $this->customCss = $name;
-        return $this;
     }
 
     /**
@@ -660,12 +645,11 @@ class PrettyPageHandler extends Handler
      *
      * @param string|null $name
      *
-     * @return static
+     * @return void
      */
     public function addCustomJs($name)
     {
         $this->customJs = $name;
-        return $this;
     }
 
     /**
@@ -734,12 +718,11 @@ class PrettyPageHandler extends Handler
      *
      * @param string $resourcesPath
      *
-     * @return static
+     * @return void
      */
     public function setResourcesPath($resourcesPath)
     {
         $this->addResourcePath($resourcesPath);
-        return $this;
     }
 
     /**
@@ -784,12 +767,11 @@ class PrettyPageHandler extends Handler
      * @param string $key             The key within the superglobal
      * @see hideSuperglobalKey
      *
-     * @return static
+     * @return void
      */
     public function blacklist($superGlobalName, $key)
     {
         $this->blacklist[$superGlobalName][] = $key;
-        return $this;
     }
 
     /**
@@ -797,7 +779,7 @@ class PrettyPageHandler extends Handler
      *
      * @param string $superGlobalName The name of the superglobal array, e.g. '_GET'
      * @param string $key             The key within the superglobal
-     * @return static
+     * @return void
      */
     public function hideSuperglobalKey($superGlobalName, $key)
     {
@@ -807,25 +789,24 @@ class PrettyPageHandler extends Handler
     /**
      * Checks all values within the given superGlobal array.
      *
-     * Blacklisted values will be replaced by a equal length string containing
-     * only '*' characters for string values.
-     * Non-string values will be replaced with a fixed asterisk count.
-     * We intentionally dont rely on $GLOBALS as it depends on the 'auto_globals_jit' php.ini setting.
+     * Blacklisted values will be replaced by a equal length string cointaining
+     * only '*' characters. We intentionally dont rely on $GLOBALS as it
+     * depends on the 'auto_globals_jit' php.ini setting.
      *
-     * @param array|\ArrayAccess  $superGlobal     One of the superglobal arrays
+     * @param array  $superGlobal     One of the superglobal arrays
      * @param string $superGlobalName The name of the superglobal array, e.g. '_GET'
      *
      * @return array $values without sensitive data
      */
-    private function masked($superGlobal, $superGlobalName)
+    private function masked(array $superGlobal, $superGlobalName)
     {
         $blacklisted = $this->blacklist[$superGlobalName];
 
         $values = $superGlobal;
 
         foreach ($blacklisted as $key) {
-            if (isset($superGlobal[$key])) {
-                $values[$key] = str_repeat('*', is_string($superGlobal[$key]) ? strlen($superGlobal[$key]) : 3);
+            if (isset($superGlobal[$key]) && is_string($superGlobal[$key])) {
+                $values[$key] = str_repeat('*', strlen($superGlobal[$key]));
             }
         }
 

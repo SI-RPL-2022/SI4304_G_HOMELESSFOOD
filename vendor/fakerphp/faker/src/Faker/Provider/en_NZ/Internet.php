@@ -7,8 +7,7 @@ class Internet extends \Faker\Provider\Internet
     /**
      * An array of New Zealand TLDs.
      *
-     * @see https://en.wikipedia.org/wiki/.nz
-     *
+     * @link https://en.wikipedia.org/wiki/.nz
      * @var array
      */
     protected static $tld = [

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * This file is part of the league/commonmark package.
  *
@@ -16,31 +14,47 @@ declare(strict_types=1);
 
 namespace League\CommonMark;
 
-use League\CommonMark\Environment\Environment;
-use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
-
 /**
  * Converts CommonMark-compatible Markdown to HTML.
  */
-final class CommonMarkConverter extends MarkdownConverter
+class CommonMarkConverter extends Converter
 {
     /**
-     * Create a new Markdown converter pre-configured for CommonMark
+     * The currently-installed version.
      *
-     * @param array<string, mixed> $config
+     * This might be a typical `x.y.z` version, or `x.y-dev`.
+     *
+     * @deprecated in 1.5.0 and will be removed from 2.0.0.
+     *   Use \Composer\InstalledVersions provided by composer-runtime-api instead.
      */
-    public function __construct(array $config = [])
-    {
-        $environment = new Environment($config);
-        $environment->addExtension(new CommonMarkCoreExtension());
+    public const VERSION = '1.5.7';
 
-        parent::__construct($environment);
+    /** @var EnvironmentInterface */
+    protected $environment;
+
+    /**
+     * Create a new commonmark converter instance.
+     *
+     * @param array<string, mixed>      $config
+     * @param EnvironmentInterface|null $environment
+     */
+    public function __construct(array $config = [], EnvironmentInterface $environment = null)
+    {
+        if ($environment === null) {
+            $environment = Environment::createCommonMarkEnvironment();
+        }
+
+        if ($environment instanceof ConfigurableEnvironmentInterface) {
+            $environment->mergeConfig($config);
+        }
+
+        $this->environment = $environment;
+
+        parent::__construct(new DocParser($environment), new HtmlRenderer($environment));
     }
 
-    public function getEnvironment(): Environment
+    public function getEnvironment(): EnvironmentInterface
     {
-        \assert($this->environment instanceof Environment);
-
         return $this->environment;
     }
 }

@@ -2,11 +2,10 @@
 
 namespace Illuminate\Queue\Failed;
 
-use DateTimeInterface;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Support\Facades\Date;
 
-class DatabaseUuidFailedJobProvider implements FailedJobProviderInterface, PrunableFailedJobProvider
+class DatabaseUuidFailedJobProvider implements FailedJobProviderInterface
 {
     /**
      * The connection resolver implementation.
@@ -51,7 +50,7 @@ class DatabaseUuidFailedJobProvider implements FailedJobProviderInterface, Pruna
      * @param  string  $queue
      * @param  string  $payload
      * @param  \Throwable  $exception
-     * @return string|null
+     * @return int|null
      */
     public function log($connection, $queue, $payload, $exception)
     {
@@ -60,7 +59,7 @@ class DatabaseUuidFailedJobProvider implements FailedJobProviderInterface, Pruna
             'connection' => $connection,
             'queue' => $queue,
             'payload' => $payload,
-            'exception' => (string) mb_convert_encoding($exception, 'UTF-8'),
+            'exception' => (string) $exception,
             'failed_at' => Date::now(),
         ]);
 
@@ -112,35 +111,11 @@ class DatabaseUuidFailedJobProvider implements FailedJobProviderInterface, Pruna
     /**
      * Flush all of the failed jobs from storage.
      *
-     * @param  int|null  $hours
      * @return void
      */
-    public function flush($hours = null)
+    public function flush()
     {
-        $this->getTable()->when($hours, function ($query, $hours) {
-            $query->where('failed_at', '<=', Date::now()->subHours($hours));
-        })->delete();
-    }
-
-    /**
-     * Prune all of the entries older than the given date.
-     *
-     * @param  \DateTimeInterface  $before
-     * @return int
-     */
-    public function prune(DateTimeInterface $before)
-    {
-        $query = $this->getTable()->where('failed_at', '<', $before);
-
-        $totalDeleted = 0;
-
-        do {
-            $deleted = $query->take(1000)->delete();
-
-            $totalDeleted += $deleted;
-        } while ($deleted !== 0);
-
-        return $totalDeleted;
+        $this->getTable()->delete();
     }
 
     /**

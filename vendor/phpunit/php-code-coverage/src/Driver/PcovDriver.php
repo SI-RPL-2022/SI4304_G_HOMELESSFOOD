@@ -9,14 +9,7 @@
  */
 namespace SebastianBergmann\CodeCoverage\Driver;
 
-use const pcov\inclusive;
-use function array_intersect;
 use function extension_loaded;
-use function pcov\clear;
-use function pcov\collect;
-use function pcov\start;
-use function pcov\stop;
-use function pcov\waiting;
 use function phpversion;
 use SebastianBergmann\CodeCoverage\Filter;
 use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
@@ -45,27 +38,21 @@ final class PcovDriver extends Driver
 
     public function start(): void
     {
-        start();
+        \pcov\start();
     }
 
     public function stop(): RawCodeCoverageData
     {
-        stop();
+        \pcov\stop();
 
-        $filesToCollectCoverageFor = waiting();
-        $collected                 = [];
+        $collect = \pcov\collect(
+            \pcov\inclusive,
+            !$this->filter->isEmpty() ? $this->filter->files() : \pcov\waiting()
+        );
 
-        if ($filesToCollectCoverageFor) {
-            if (!$this->filter->isEmpty()) {
-                $filesToCollectCoverageFor = array_intersect($filesToCollectCoverageFor, $this->filter->files());
-            }
+        \pcov\clear();
 
-            $collected = collect(inclusive, $filesToCollectCoverageFor);
-
-            clear();
-        }
-
-        return RawCodeCoverageData::fromXdebugWithoutPathCoverage($collected);
+        return RawCodeCoverageData::fromXdebugWithoutPathCoverage($collect);
     }
 
     public function nameAndVersion(): string

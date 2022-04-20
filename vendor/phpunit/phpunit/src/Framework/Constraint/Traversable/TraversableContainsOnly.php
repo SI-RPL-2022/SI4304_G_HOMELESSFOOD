@@ -55,8 +55,8 @@ final class TraversableContainsOnly extends Constraint
      *
      * @param mixed|Traversable $other
      *
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws ExpectationFailedException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function evaluate($other, string $description = '', bool $returnResult = false): ?bool
     {

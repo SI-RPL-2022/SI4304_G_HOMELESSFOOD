@@ -39,18 +39,7 @@ final class CodeExporter
 
     public function globalVariables(Snapshot $snapshot): string
     {
-        $result = <<<'EOT'
-call_user_func(
-    function ()
-    {
-        foreach (array_keys($GLOBALS) as $key) {
-            unset($GLOBALS[$key]);
-        }
-    }
-);
-
-
-EOT;
+        $result = '$GLOBALS = [];' . PHP_EOL;
 
         foreach ($snapshot->globalVariables() as $name => $value) {
             $result .= sprintf(

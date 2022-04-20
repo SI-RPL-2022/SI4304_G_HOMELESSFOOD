@@ -24,7 +24,7 @@ class Person extends \Faker\Provider\Person
     ];
 
     /**
-     * @see http://www.dattenhay.vn/1001-ten-cho-be-trai.htm
+     * @link http://www.dattenhay.vn/1001-ten-cho-be-trai.htm
      */
     protected static $firstNameMale = [
         'An', 'Anh',
@@ -51,7 +51,7 @@ class Person extends \Faker\Provider\Person
     ];
 
     /**
-     * @see http://www.dattenhay.vn/1001-ten-cho-be-trai.htm
+     * @link http://www.dattenhay.vn/1001-ten-cho-be-trai.htm
      */
     protected static $middleNameMale = [
         'An', 'Anh',
@@ -73,7 +73,7 @@ class Person extends \Faker\Provider\Person
     ];
 
     /**
-     * @see http://www.dattenhay.vn/1001-ten-cho-be-gai.htm
+     * @link http://www.dattenhay.vn/1001-ten-cho-be-gai.htm
      */
     protected static $firstNameFemale = [
         'An', 'Anh',
@@ -103,7 +103,7 @@ class Person extends \Faker\Provider\Person
     ];
 
     /**
-     * @see http://www.dattenhay.vn/1001-ten-cho-be-gai.htm
+     * @link http://www.dattenhay.vn/1001-ten-cho-be-gai.htm
      */
     protected static $middleNameFemale = [
         'An', 'Anh',
@@ -131,7 +131,7 @@ class Person extends \Faker\Provider\Person
     ];
 
     /**
-     * @see http://vi.wikipedia.org/wiki/H%E1%BB%8D_ng%C6%B0%E1%BB%9Di_Vi%E1%BB%87t_Nam
+     * @link http://vi.wikipedia.org/wiki/H%E1%BB%8D_ng%C6%B0%E1%BB%9Di_Vi%E1%BB%87t_Nam
      */
     protected static $lastName = [
         'An', 'Ánh',
@@ -165,9 +165,7 @@ class Person extends \Faker\Provider\Person
     {
         if ($gender === static::GENDER_MALE) {
             return static::middleNameMale();
-        }
-
-        if ($gender === static::GENDER_FEMALE) {
+        } elseif ($gender === static::GENDER_FEMALE) {
             return static::middleNameFemale();
         }
 

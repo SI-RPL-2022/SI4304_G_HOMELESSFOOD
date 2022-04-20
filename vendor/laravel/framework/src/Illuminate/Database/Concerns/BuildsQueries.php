@@ -3,25 +3,11 @@
 namespace Illuminate\Database\Concerns;
 
 use Illuminate\Container\Container;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\MultipleRecordsFoundException;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Database\RecordsNotFoundException;
-use Illuminate\Pagination\Cursor;
-use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
-use Illuminate\Support\LazyCollection;
-use Illuminate\Support\Str;
-use Illuminate\Support\Traits\Conditionable;
-use InvalidArgumentException;
-use RuntimeException;
 
 trait BuildsQueries
 {
-    use Conditionable;
-
     /**
      * Chunk the results of the query.
      *
@@ -63,33 +49,11 @@ trait BuildsQueries
     }
 
     /**
-     * Run a map over each item while chunking.
-     *
-     * @param  callable  $callback
-     * @param  int  $count
-     * @return \Illuminate\Support\Collection
-     */
-    public function chunkMap(callable $callback, $count = 1000)
-    {
-        $collection = Collection::make();
-
-        $this->chunk($count, function ($items) use ($collection, $callback) {
-            $items->each(function ($item) use ($collection, $callback) {
-                $collection->push($callback($item));
-            });
-        });
-
-        return $collection;
-    }
-
-    /**
      * Execute a callback over each item while chunking.
      *
      * @param  callable  $callback
      * @param  int  $count
      * @return bool
-     *
-     * @throws \RuntimeException
      */
     public function each(callable $callback, $count = 1000)
     {
@@ -113,9 +77,9 @@ trait BuildsQueries
      */
     public function chunkById($count, callable $callback, $column = null, $alias = null)
     {
-        $column ??= $this->defaultKeyName();
+        $column = $column ?? $this->defaultKeyName();
 
-        $alias ??= $column;
+        $alias = $alias ?? $column;
 
         $lastId = null;
 
@@ -143,10 +107,6 @@ trait BuildsQueries
             }
 
             $lastId = $results->last()->{$alias};
-
-            if ($lastId === null) {
-                throw new RuntimeException("The chunkById operation was aborted because the [{$alias}] column is not present in the query result.");
-            }
 
             unset($results);
 
@@ -177,115 +137,6 @@ trait BuildsQueries
     }
 
     /**
-     * Query lazily, by chunks of the given size.
-     *
-     * @param  int  $chunkSize
-     * @return \Illuminate\Support\LazyCollection
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function lazy($chunkSize = 1000)
-    {
-        if ($chunkSize < 1) {
-            throw new InvalidArgumentException('The chunk size should be at least 1');
-        }
-
-        $this->enforceOrderBy();
-
-        return LazyCollection::make(function () use ($chunkSize) {
-            $page = 1;
-
-            while (true) {
-                $results = $this->forPage($page++, $chunkSize)->get();
-
-                foreach ($results as $result) {
-                    yield $result;
-                }
-
-                if ($results->count() < $chunkSize) {
-                    return;
-                }
-            }
-        });
-    }
-
-    /**
-     * Query lazily, by chunking the results of a query by comparing IDs.
-     *
-     * @param  int  $chunkSize
-     * @param  string|null  $column
-     * @param  string|null  $alias
-     * @return \Illuminate\Support\LazyCollection
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function lazyById($chunkSize = 1000, $column = null, $alias = null)
-    {
-        return $this->orderedLazyById($chunkSize, $column, $alias);
-    }
-
-    /**
-     * Query lazily, by chunking the results of a query by comparing IDs in descending order.
-     *
-     * @param  int  $chunkSize
-     * @param  string|null  $column
-     * @param  string|null  $alias
-     * @return \Illuminate\Support\LazyCollection
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function lazyByIdDesc($chunkSize = 1000, $column = null, $alias = null)
-    {
-        return $this->orderedLazyById($chunkSize, $column, $alias, true);
-    }
-
-    /**
-     * Query lazily, by chunking the results of a query by comparing IDs in a given order.
-     *
-     * @param  int  $chunkSize
-     * @param  string|null  $column
-     * @param  string|null  $alias
-     * @param  bool  $descending
-     * @return \Illuminate\Support\LazyCollection
-     *
-     * @throws \InvalidArgumentException
-     */
-    protected function orderedLazyById($chunkSize = 1000, $column = null, $alias = null, $descending = false)
-    {
-        if ($chunkSize < 1) {
-            throw new InvalidArgumentException('The chunk size should be at least 1');
-        }
-
-        $column ??= $this->defaultKeyName();
-
-        $alias ??= $column;
-
-        return LazyCollection::make(function () use ($chunkSize, $column, $alias, $descending) {
-            $lastId = null;
-
-            while (true) {
-                $clone = clone $this;
-
-                if ($descending) {
-                    $results = $clone->forPageBeforeId($chunkSize, $lastId, $column)->get();
-                } else {
-                    $results = $clone->forPageAfterId($chunkSize, $lastId, $column)->get();
-                }
-
-                foreach ($results as $result) {
-                    yield $result;
-                }
-
-                if ($results->count() < $chunkSize) {
-                    return;
-                }
-
-                $lastId = $results->last()->{$alias};
-            }
-        });
-    }
-
-    /**
      * Execute the query and get the first result.
      *
      * @param  array|string  $columns
@@ -297,119 +148,52 @@ trait BuildsQueries
     }
 
     /**
-     * Execute the query and get the first result if it's the sole matching record.
+     * Apply the callback's query changes if the given "value" is true.
      *
-     * @param  array|string  $columns
-     * @return \Illuminate\Database\Eloquent\Model|object|static|null
-     *
-     * @throws \Illuminate\Database\RecordsNotFoundException
-     * @throws \Illuminate\Database\MultipleRecordsFoundException
+     * @param  mixed  $value
+     * @param  callable  $callback
+     * @param  callable|null  $default
+     * @return mixed|$this
      */
-    public function sole($columns = ['*'])
+    public function when($value, $callback, $default = null)
     {
-        $result = $this->take(2)->get($columns);
-
-        $count = $result->count();
-
-        if ($count === 0) {
-            throw new RecordsNotFoundException;
+        if ($value) {
+            return $callback($this, $value) ?: $this;
+        } elseif ($default) {
+            return $default($this, $value) ?: $this;
         }
 
-        if ($count > 1) {
-            throw new MultipleRecordsFoundException($count);
-        }
-
-        return $result->first();
+        return $this;
     }
 
     /**
-     * Paginate the given query using a cursor paginator.
+     * Pass the query to a given callback.
      *
-     * @param  int  $perPage
-     * @param  array  $columns
-     * @param  string  $cursorName
-     * @param  \Illuminate\Pagination\Cursor|string|null  $cursor
-     * @return \Illuminate\Contracts\Pagination\CursorPaginator
+     * @param  callable  $callback
+     * @return $this
      */
-    protected function paginateUsingCursor($perPage, $columns = ['*'], $cursorName = 'cursor', $cursor = null)
+    public function tap($callback)
     {
-        if (! $cursor instanceof Cursor) {
-            $cursor = is_string($cursor)
-                ? Cursor::fromEncoded($cursor)
-                : CursorPaginator::resolveCurrentCursor($cursorName, $cursor);
-        }
-
-        $orders = $this->ensureOrderForCursorPagination(! is_null($cursor) && $cursor->pointsToPreviousItems());
-
-        if (! is_null($cursor)) {
-            $addCursorConditions = function (self $builder, $previousColumn, $i) use (&$addCursorConditions, $cursor, $orders) {
-                if (! is_null($previousColumn)) {
-                    $originalColumn = $this->getOriginalColumnNameForCursorPagination($this, $previousColumn);
-
-                    $builder->where(
-                        Str::contains($originalColumn, ['(', ')']) ? new Expression($originalColumn) : $originalColumn,
-                        '=',
-                        $cursor->parameter($previousColumn)
-                    );
-                }
-
-                $builder->where(function (self $builder) use ($addCursorConditions, $cursor, $orders, $i) {
-                    ['column' => $column, 'direction' => $direction] = $orders[$i];
-
-                    $originalColumn = $this->getOriginalColumnNameForCursorPagination($this, $column);
-
-                    $builder->where(
-                        Str::contains($originalColumn, ['(', ')']) ? new Expression($originalColumn) : $originalColumn,
-                        $direction === 'asc' ? '>' : '<',
-                        $cursor->parameter($column)
-                    );
-
-                    if ($i < $orders->count() - 1) {
-                        $builder->orWhere(function (self $builder) use ($addCursorConditions, $column, $i) {
-                            $addCursorConditions($builder, $column, $i + 1);
-                        });
-                    }
-                });
-            };
-
-            $addCursorConditions($this, null, 0);
-        }
-
-        $this->limit($perPage + 1);
-
-        return $this->cursorPaginator($this->get($columns), $perPage, $cursor, [
-            'path' => Paginator::resolveCurrentPath(),
-            'cursorName' => $cursorName,
-            'parameters' => $orders->pluck('column')->toArray(),
-        ]);
+        return $this->when(true, $callback);
     }
 
     /**
-     * Get the original column name of the given column, without any aliasing.
+     * Apply the callback's query changes if the given "value" is false.
      *
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $builder
-     * @param  string  $parameter
-     * @return string
+     * @param  mixed  $value
+     * @param  callable  $callback
+     * @param  callable|null  $default
+     * @return mixed|$this
      */
-    protected function getOriginalColumnNameForCursorPagination($builder, string $parameter)
+    public function unless($value, $callback, $default = null)
     {
-        $columns = $builder instanceof Builder ? $builder->getQuery()->columns : $builder->columns;
-
-        if (! is_null($columns)) {
-            foreach ($columns as $column) {
-                if (($position = stripos($column, ' as ')) !== false) {
-                    $as = substr($column, $position, 4);
-
-                    [$original, $alias] = explode($as, $column);
-
-                    if ($parameter === $alias || $builder->getGrammar()->wrap($parameter) === $alias) {
-                        return $original;
-                    }
-                }
-            }
+        if (! $value) {
+            return $callback($this, $value) ?: $this;
+        } elseif ($default) {
+            return $default($this, $value) ?: $this;
         }
 
-        return $parameter;
+        return $this;
     }
 
     /**
@@ -443,34 +227,5 @@ trait BuildsQueries
         return Container::getInstance()->makeWith(Paginator::class, compact(
             'items', 'perPage', 'currentPage', 'options'
         ));
-    }
-
-    /**
-     * Create a new cursor paginator instance.
-     *
-     * @param  \Illuminate\Support\Collection  $items
-     * @param  int  $perPage
-     * @param  \Illuminate\Pagination\Cursor  $cursor
-     * @param  array  $options
-     * @return \Illuminate\Pagination\CursorPaginator
-     */
-    protected function cursorPaginator($items, $perPage, $cursor, $options)
-    {
-        return Container::getInstance()->makeWith(CursorPaginator::class, compact(
-            'items', 'perPage', 'cursor', 'options'
-        ));
-    }
-
-    /**
-     * Pass the query to a given callback.
-     *
-     * @param  callable  $callback
-     * @return $this
-     */
-    public function tap($callback)
-    {
-        $callback($this);
-
-        return $this;
     }
 }

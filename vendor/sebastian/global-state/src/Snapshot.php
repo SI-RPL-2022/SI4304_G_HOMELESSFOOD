@@ -9,7 +9,6 @@
  */
 namespace SebastianBergmann\GlobalState;
 
-use const PHP_VERSION_ID;
 use function array_keys;
 use function array_merge;
 use function array_reverse;
@@ -138,9 +137,7 @@ class Snapshot
             $this->includedFiles = get_included_files();
         }
 
-        if ($includeTraits) {
-            $this->traits = get_declared_traits();
-        }
+        $this->traits = get_declared_traits();
     }
 
     public function excludeList(): ExcludeList
@@ -274,7 +271,7 @@ class Snapshot
 
         foreach (array_keys($GLOBALS) as $key) {
             if ($key !== 'GLOBALS' &&
-                !in_array($key, $superGlobalArrays, true) &&
+                !in_array($key, $superGlobalArrays) &&
                 $this->canBeSerialized($GLOBALS[$key]) &&
                 !$this->excludeList->isGlobalVariableExcluded($key)) {
                 /* @noinspection UnserializeExploitsInspection */
@@ -316,11 +313,6 @@ class Snapshot
                     }
 
                     $attribute->setAccessible(true);
-
-                    if (PHP_VERSION_ID >= 70400 && !$attribute->isInitialized()) {
-                        continue;
-                    }
-
                     $value = $attribute->getValue();
 
                     if ($this->canBeSerialized($value)) {

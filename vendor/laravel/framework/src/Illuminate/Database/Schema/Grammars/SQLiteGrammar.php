@@ -433,17 +433,6 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a tiny text type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    protected function typeTinyText(Fluent $column)
-    {
-        return 'text';
-    }
-
-    /**
      * Create the column definition for a text type.
      *
      * @param  \Illuminate\Support\Fluent  $column
@@ -638,7 +627,6 @@ class SQLiteGrammar extends Grammar
      * Create the column definition for a date-time (with time zone) type.
      *
      * Note: "SQLite does not have a storage class set aside for storing dates and/or times."
-     *
      * @link https://www.sqlite.org/datatype3.html
      *
      * @param  \Illuminate\Support\Fluent  $column
@@ -858,16 +846,8 @@ class SQLiteGrammar extends Grammar
      */
     protected function modifyVirtualAs(Blueprint $blueprint, Fluent $column)
     {
-        if (! is_null($virtualAs = $column->virtualAsJson)) {
-            if ($this->isJsonSelector($virtualAs)) {
-                $virtualAs = $this->wrapJsonSelector($virtualAs);
-            }
-
-            return " as ({$virtualAs})";
-        }
-
-        if (! is_null($virtualAs = $column->virtualAs)) {
-            return " as ({$virtualAs})";
+        if (! is_null($column->virtualAs)) {
+            return " as ({$column->virtualAs})";
         }
     }
 
@@ -880,15 +860,7 @@ class SQLiteGrammar extends Grammar
      */
     protected function modifyStoredAs(Blueprint $blueprint, Fluent $column)
     {
-        if (! is_null($storedAs = $column->storedAsJson)) {
-            if ($this->isJsonSelector($storedAs)) {
-                $storedAs = $this->wrapJsonSelector($storedAs);
-            }
-
-            return " as ({$storedAs}) stored";
-        }
-
-        if (! is_null($storedAs = $column->storedAs)) {
+        if (! is_null($column->storedAs)) {
             return " as ({$column->storedAs}) stored";
         }
     }
@@ -902,11 +874,8 @@ class SQLiteGrammar extends Grammar
      */
     protected function modifyNullable(Blueprint $blueprint, Fluent $column)
     {
-        if (is_null($column->virtualAs) &&
-            is_null($column->virtualAsJson) &&
-            is_null($column->storedAs) &&
-            is_null($column->storedAsJson)) {
-            return $column->nullable ? '' : ' not null';
+        if (is_null($column->virtualAs) && is_null($column->storedAs)) {
+            return $column->nullable ? ' null' : ' not null';
         }
 
         if ($column->nullable === false) {
@@ -923,7 +892,7 @@ class SQLiteGrammar extends Grammar
      */
     protected function modifyDefault(Blueprint $blueprint, Fluent $column)
     {
-        if (! is_null($column->default) && is_null($column->virtualAs) && is_null($column->virtualAsJson) && is_null($column->storedAs)) {
+        if (! is_null($column->default) && is_null($column->virtualAs) && is_null($column->storedAs)) {
             return ' default '.$this->getDefaultValue($column->default);
         }
     }
@@ -940,18 +909,5 @@ class SQLiteGrammar extends Grammar
         if (in_array($column->type, $this->serials) && $column->autoIncrement) {
             return ' primary key autoincrement';
         }
-    }
-
-    /**
-     * Wrap the given JSON selector.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    protected function wrapJsonSelector($value)
-    {
-        [$field, $path] = $this->wrapJsonFieldAndPath($value);
-
-        return 'json_extract('.$field.$path.')';
     }
 }
