@@ -18,29 +18,20 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
  */
 class TableCellStyle
 {
-    const DEFAULT_ALIGN = 'left';
+    public const DEFAULT_ALIGN = 'left';
 
-    private $options = [
-        'fg' => 'default',
-        'bg' => 'default',
-        'options' => null,
-        'align' => self::DEFAULT_ALIGN,
-        'cellFormat' => null,
-    ];
-
-    private $tagOptions = [
+    private const TAG_OPTIONS = [
         'fg',
         'bg',
         'options',
     ];
 
-    private $alignMap = [
+    private const ALIGN_MAP = [
         'left' => \STR_PAD_RIGHT,
         'center' => \STR_PAD_BOTH,
         'right' => \STR_PAD_LEFT,
     ];
 
-<<<<<<< HEAD
     private $options = [
         'fg' => 'default',
         'bg' => 'default',
@@ -49,16 +40,14 @@ class TableCellStyle
         'cellFormat' => null,
     ];
 
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function __construct(array $options = [])
     {
         if ($diff = array_diff(array_keys($options), array_keys($this->options))) {
             throw new InvalidArgumentException(sprintf('The TableCellStyle does not support the following options: \'%s\'.', implode('\', \'', $diff)));
         }
 
-        if (isset($options['align']) && !\array_key_exists($options['align'], $this->alignMap)) {
-            throw new InvalidArgumentException(sprintf('Wrong align value. Value must be following: \'%s\'.', implode('\', \'', array_keys($this->alignMap))));
+        if (isset($options['align']) && !\array_key_exists($options['align'], self::ALIGN_MAP)) {
+            throw new InvalidArgumentException(sprintf('Wrong align value. Value must be following: \'%s\'.', implode('\', \'', array_keys(self::ALIGN_MAP))));
         }
 
         $this->options = array_merge($this->options, $options);
@@ -79,21 +68,18 @@ class TableCellStyle
         return array_filter(
             $this->getOptions(),
             function ($key) {
-                return \in_array($key, $this->tagOptions) && isset($this->options[$key]);
+                return \in_array($key, self::TAG_OPTIONS) && isset($this->options[$key]);
             },
             \ARRAY_FILTER_USE_KEY
         );
     }
 
-<<<<<<< HEAD
     /**
      * @return int
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function getPadByAlign()
     {
-        return $this->alignMap[$this->getOptions()['align']];
+        return self::ALIGN_MAP[$this->getOptions()['align']];
     }
 
     public function getCellFormat(): ?string

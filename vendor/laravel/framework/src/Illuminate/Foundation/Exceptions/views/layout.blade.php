@@ -7,13 +7,8 @@
         <title>@yield('title')</title>
 
         <!-- Fonts -->
-<<<<<<< HEAD
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
-=======
-        <link rel="dns-prefetch" href="//fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
         <!-- Styles -->
         <style>

@@ -2,13 +2,13 @@
 
 namespace Illuminate\Queue\Console;
 
+use DateTimeInterface;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Queue\Events\JobRetryRequested;
 use Illuminate\Support\Arr;
-<<<<<<< HEAD
 use Illuminate\Support\Str;
 use RuntimeException;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
 class RetryCommand extends Command
 {
@@ -19,6 +19,7 @@ class RetryCommand extends Command
      */
     protected $signature = 'queue:retry
                             {id?* : The ID of the failed job or "all" to retry all jobs}
+                            {--queue= : Retry all of the failed jobs for the specified queue}
                             {--range=* : Range of job IDs (numeric) to be retried}';
 
     /**
@@ -41,6 +42,8 @@ class RetryCommand extends Command
             if (is_null($job)) {
                 $this->error("Unable to find failed job with ID [{$id}].");
             } else {
+                $this->laravel['events']->dispatch(new JobRetryRequested($job));
+
                 $this->retryJob($job);
 
                 $this->info("The failed job [{$id}] has been pushed back onto the queue!");
@@ -63,11 +66,35 @@ class RetryCommand extends Command
             return Arr::pluck($this->laravel['queue.failer']->all(), 'id');
         }
 
+        if ($queue = $this->option('queue')) {
+            return $this->getJobIdsByQueue($queue);
+        }
+
         if ($ranges = (array) $this->option('range')) {
             $ids = array_merge($ids, $this->getJobIdsByRanges($ranges));
         }
 
         return array_values(array_filter(array_unique($ids)));
+    }
+
+    /**
+     * Get the job IDs by queue, if applicable.
+     *
+     * @param  string  $queue
+     * @return array
+     */
+    protected function getJobIdsByQueue($queue)
+    {
+        $ids = collect($this->laravel['queue.failer']->all())
+                        ->where('queue', $queue)
+                        ->pluck('id')
+                        ->toArray();
+
+        if (count($ids) === 0) {
+            $this->error("Unable to find failed jobs for queue [{$queue}].");
+        }
+
+        return $ids;
     }
 
     /**
@@ -98,14 +125,14 @@ class RetryCommand extends Command
     protected function retryJob($job)
     {
         $this->laravel['queue']->connection($job->connection)->pushRaw(
-            $this->resetAttempts($job->payload), $job->queue
+            $this->refreshRetryUntil($this->resetAttempts($job->payload)), $job->queue
         );
     }
 
     /**
      * Reset the payload attempts.
      *
-     * Applicable to Redis jobs which store attempts in their payload.
+     * Applicable to Redis and other jobs which store attempts in their payload.
      *
      * @param  string  $payload
      * @return string
@@ -120,7 +147,6 @@ class RetryCommand extends Command
 
         return json_encode($payload);
     }
-<<<<<<< HEAD
 
     /**
      * Refresh the "retry until" timestamp for the job.
@@ -158,6 +184,4 @@ class RetryCommand extends Command
 
         return json_encode($payload);
     }
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 }

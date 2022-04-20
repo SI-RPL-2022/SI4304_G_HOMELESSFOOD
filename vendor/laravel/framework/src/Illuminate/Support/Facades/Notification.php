@@ -11,15 +11,11 @@ use Illuminate\Support\Testing\Fakes\NotificationFake;
  * @method static \Illuminate\Support\Collection sent(mixed $notifiable, string $notification, callable $callback = null)
  * @method static bool hasSent(mixed $notifiable, string $notification)
  * @method static mixed channel(string|null $name = null)
- * @method static void assertNotSentTo(mixed $notifiable, string $notification, callable $callback = null)
+ * @method static void assertNotSentTo(mixed $notifiable, string|\Closure $notification, callable $callback = null)
  * @method static void assertNothingSent()
-<<<<<<< HEAD
  * @method static void assertSentOnDemand(string|\Closure $notification, callable $callback = null)
  * @method static void assertSentTo(mixed $notifiable, string|\Closure $notification, callable $callback = null)
  * @method static void assertSentOnDemandTimes(string $notification, int $times = 1)
-=======
- * @method static void assertSentTo(mixed $notifiable, string $notification, callable $callback = null)
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
  * @method static void assertSentToTimes(mixed $notifiable, string $notification, int $times = 1)
  * @method static void assertTimesSent(int $expectedCount, string $notification)
  * @method static void send(\Illuminate\Support\Collection|array|mixed $notifiables, $notification)

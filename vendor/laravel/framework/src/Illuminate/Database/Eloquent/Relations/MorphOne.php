@@ -2,14 +2,18 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
+use Illuminate\Contracts\Database\Eloquent\SupportsPartialRelations;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Concerns\CanBeOneOfMany;
 use Illuminate\Database\Eloquent\Relations\Concerns\ComparesRelatedModels;
 use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
+use Illuminate\Database\Query\JoinClause;
 
-class MorphOne extends MorphOneOrMany
+class MorphOne extends MorphOneOrMany implements SupportsPartialRelations
 {
-    use ComparesRelatedModels, SupportsDefaultModels;
+    use CanBeOneOfMany, ComparesRelatedModels, SupportsDefaultModels;
 
     /**
      * Get the results of the relationship.
@@ -55,7 +59,6 @@ class MorphOne extends MorphOneOrMany
     }
 
     /**
-<<<<<<< HEAD
      * Get the relationship query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
@@ -109,8 +112,6 @@ class MorphOne extends MorphOneOrMany
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Make a new related instance for the given model.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $parent

@@ -36,8 +36,8 @@ abstract class Constraint implements Countable, SelfDescribing
      * a boolean value instead: true in case of success, false in case of a
      * failure.
      *
-     * @throws ExpectationFailedException
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws ExpectationFailedException
      */
     public function evaluate($other, string $description = '', bool $returnResult = false): ?bool
     {
@@ -96,8 +96,8 @@ abstract class Constraint implements Countable, SelfDescribing
      * @param string            $description       Additional information about the test
      * @param ComparisonFailure $comparisonFailure
      *
-     * @throws ExpectationFailedException
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws ExpectationFailedException
      *
      * @psalm-return never-return
      */
@@ -179,7 +179,7 @@ abstract class Constraint implements Countable, SelfDescribing
      * Returns the description of the failure when this constraint appears in
      * context of an $operator expression.
      *
-     * The purpose of this method is to provide meaningful failue description
+     * The purpose of this method is to provide meaningful failure description
      * in context of operators such as LogicalNot. Native PHPUnit constraints
      * are supported out of the box by LogicalNot, but externally developed
      * ones had no way to provide correct messages in this context.

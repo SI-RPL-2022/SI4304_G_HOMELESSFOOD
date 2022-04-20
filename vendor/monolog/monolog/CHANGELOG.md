@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ### 2.5.0 (2022-04-08)
 
 * Added `callType` to IntrospectionProcessor (#1612)
@@ -65,8 +64,6 @@
   * Fixed PHP 8 issues in SyslogUdpHandler
   * Fixed internal type error when mbstring is missing
 
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 ### 2.1.1 (2020-07-23)
 
   * Fixed removing of json encoding options
@@ -154,6 +151,14 @@
   * Added a `$dateFormat` option to the PsrLogMessageProcessor which lets you format DateTime instances nicely
   * Added support for the PHP 7.x `mongodb` extension in the MongoDBHandler
   * Fixed many minor issues in various handlers, and probably added a few regressions too
+
+### 1.26.1 (2021-05-28)
+
+  * Fixed PHP 8.1 deprecation warning
+
+### 1.26.0 (2020-12-14)
+
+  * Added $dateFormat and $removeUsedContextFields arguments to PsrLogMessageProcessor (backport from 2.x)
 
 ### 1.25.5 (2020-07-23)
 

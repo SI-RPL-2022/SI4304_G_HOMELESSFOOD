@@ -3,8 +3,11 @@
 namespace Illuminate\Foundation\Providers;
 
 use Illuminate\Http\Request;
+use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\AggregateServiceProvider;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Testing\LoggedExceptionCollection;
+use Illuminate\Testing\ParallelTestingServiceProvider;
 use Illuminate\Validation\ValidationException;
 
 class FoundationServiceProvider extends AggregateServiceProvider
@@ -16,6 +19,7 @@ class FoundationServiceProvider extends AggregateServiceProvider
      */
     protected $providers = [
         FormRequestServiceProvider::class,
+        ParallelTestingServiceProvider::class,
     ];
 
     /**
@@ -43,10 +47,7 @@ class FoundationServiceProvider extends AggregateServiceProvider
 
         $this->registerRequestValidation();
         $this->registerRequestSignatureValidation();
-<<<<<<< HEAD
         $this->registerExceptionTracking();
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     }
 
     /**
@@ -88,7 +89,6 @@ class FoundationServiceProvider extends AggregateServiceProvider
             return URL::hasValidSignature($this, $absolute = false);
         });
     }
-<<<<<<< HEAD
 
     /**
      * Register an event listener to track logged exceptions.
@@ -113,6 +113,4 @@ class FoundationServiceProvider extends AggregateServiceProvider
             }
         });
     }
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 }

@@ -12,7 +12,6 @@
 namespace Symfony\Component\Console\Command;
 
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Lock\Lock;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Lock\Store\FlockStore;
@@ -25,11 +24,7 @@ use Symfony\Component\Lock\Store\SemaphoreStore;
  */
 trait LockableTrait
 {
-<<<<<<< HEAD
     /** @var LockInterface|null */
-=======
-    /** @var Lock */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     private $lock;
 
     /**

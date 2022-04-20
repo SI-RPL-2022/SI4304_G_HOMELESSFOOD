@@ -27,13 +27,10 @@ class ResettableServicePass implements CompilerPassInterface
 
     public function __construct(string $tagName = 'kernel.reset')
     {
-<<<<<<< HEAD
         if (0 < \func_num_args()) {
             trigger_deprecation('symfony/http-kernel', '5.3', 'Configuring "%s" is deprecated.', __CLASS__);
         }
 
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         $this->tagName = $tagName;
     }
 
@@ -58,6 +55,10 @@ class ResettableServicePass implements CompilerPassInterface
 
                 if (!isset($methods[$id])) {
                     $methods[$id] = [];
+                }
+
+                if ('ignore' === ($attributes['on_invalid'] ?? null)) {
+                    $attributes['method'] = '?'.$attributes['method'];
                 }
 
                 $methods[$id][] = $attributes['method'];

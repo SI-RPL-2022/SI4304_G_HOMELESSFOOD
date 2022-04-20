@@ -7,26 +7,21 @@ use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Contracts\Mail\Factory as MailFactory;
 use Illuminate\Contracts\Mail\Mailable as MailableContract;
 use Illuminate\Contracts\Queue\Factory as Queue;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Illuminate\Support\Traits\Localizable;
-<<<<<<< HEAD
 use PHPUnit\Framework\Assert as PHPUnit;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 use ReflectionClass;
 use ReflectionProperty;
 
 class Mailable implements MailableContract, Renderable
 {
-<<<<<<< HEAD
     use Conditionable, ForwardsCalls, Localizable;
-=======
-    use ForwardsCalls, Localizable;
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
     /**
      * The locale of the message.
@@ -82,7 +77,7 @@ class Mailable implements MailableContract, Renderable
      *
      * @var string
      */
-    protected $markdown;
+    public $markdown;
 
     /**
      * The HTML to use for the message.
@@ -153,6 +148,13 @@ class Mailable implements MailableContract, Renderable
      * @var string
      */
     public $mailer;
+
+    /**
+     * The rendered mailable views for testing / assertions.
+     *
+     * @var array
+     */
+    protected $assertionableRenderStrings;
 
     /**
      * The callback that should be invoked while building the view data.
@@ -232,7 +234,11 @@ class Mailable implements MailableContract, Renderable
      */
     protected function newQueuedJob()
     {
-        return new SendQueuedMailable($this);
+        return (new SendQueuedMailable($this))
+                    ->through(array_merge(
+                        method_exists($this, 'middleware') ? $this->middleware() : [],
+                        $this->middleware ?? []
+                    ));
     }
 
     /**
@@ -612,6 +618,10 @@ class Mailable implements MailableContract, Renderable
      */
     protected function setAddress($address, $name = null, $property = 'to')
     {
+        if (empty($address)) {
+            return $this;
+        }
+
         foreach ($this->addressesToArray($address, $name) as $recipient) {
             $recipient = $this->normalizeRecipient($recipient);
 
@@ -673,6 +683,10 @@ class Mailable implements MailableContract, Renderable
      */
     protected function hasRecipient($address, $name = null, $property = 'to')
     {
+        if (empty($address)) {
+            return false;
+        }
+
         $expected = $this->normalizeRecipient(
             $this->addressesToArray($address, $name)[0]
         );
@@ -853,7 +867,6 @@ class Mailable implements MailableContract, Renderable
     }
 
     /**
-<<<<<<< HEAD
      * Assert that the given text is present in the HTML email body.
      *
      * @param  string  $string
@@ -962,8 +975,6 @@ class Mailable implements MailableContract, Renderable
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Set the name of the mailer that should send the message.
      *
      * @param  string  $mailer
@@ -998,25 +1009,6 @@ class Mailable implements MailableContract, Renderable
     public static function buildViewDataUsing(callable $callback)
     {
         static::$viewDataCallback = $callback;
-    }
-
-    /**
-     * Apply the callback's message changes if the given "value" is true.
-     *
-     * @param  mixed  $value
-     * @param  callable  $callback
-     * @param  mixed  $default
-     * @return mixed|$this
-     */
-    public function when($value, $callback, $default = null)
-    {
-        if ($value) {
-            return $callback($this, $value) ?: $this;
-        } elseif ($default) {
-            return $default($this, $value) ?: $this;
-        }
-
-        return $this;
     }
 
     /**

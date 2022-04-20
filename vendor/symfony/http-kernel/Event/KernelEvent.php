@@ -28,7 +28,7 @@ class KernelEvent extends Event
 
     /**
      * @param int $requestType The request type the kernel is currently processing; one of
-     *                         HttpKernelInterface::MASTER_REQUEST or HttpKernelInterface::SUB_REQUEST
+     *                         HttpKernelInterface::MAIN_REQUEST or HttpKernelInterface::SUB_REQUEST
      */
     public function __construct(HttpKernelInterface $kernel, Request $request, ?int $requestType)
     {
@@ -60,7 +60,7 @@ class KernelEvent extends Event
     /**
      * Returns the request type the kernel is currently processing.
      *
-     * @return int One of HttpKernelInterface::MASTER_REQUEST and
+     * @return int One of HttpKernelInterface::MAIN_REQUEST and
      *             HttpKernelInterface::SUB_REQUEST
      */
     public function getRequestType()
@@ -69,13 +69,11 @@ class KernelEvent extends Event
     }
 
     /**
-     * Checks if this is a master request.
-     *
-     * @return bool True if the request is a master request
+     * Checks if this is the main request.
      */
-    public function isMasterRequest()
+    public function isMainRequest(): bool
     {
-        return HttpKernelInterface::MASTER_REQUEST === $this->requestType;
+        return HttpKernelInterface::MAIN_REQUEST === $this->requestType;
     }
 
     /**

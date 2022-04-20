@@ -65,13 +65,10 @@ trait DatabaseRule
         if (is_subclass_of($table, Model::class)) {
             $model = new $table;
 
-<<<<<<< HEAD
             if (Str::contains($model->getTable(), '.')) {
                 return $table;
             }
 
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
             return implode('.', array_map(function (string $part) {
                 return trim($part, '.');
             }, array_filter([$model->getConnectionName(), $model->getTable()])));

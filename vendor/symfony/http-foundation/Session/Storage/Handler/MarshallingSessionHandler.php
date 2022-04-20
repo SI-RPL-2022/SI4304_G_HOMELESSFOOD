@@ -28,84 +28,54 @@ class MarshallingSessionHandler implements \SessionHandlerInterface, \SessionUpd
     }
 
     /**
-<<<<<<< HEAD
      * @return bool
      */
     #[\ReturnTypeWillChange]
-=======
-     * {@inheritdoc}
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function open($savePath, $name)
     {
         return $this->handler->open($savePath, $name);
     }
 
     /**
-<<<<<<< HEAD
      * @return bool
      */
     #[\ReturnTypeWillChange]
-=======
-     * {@inheritdoc}
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function close()
     {
         return $this->handler->close();
     }
 
     /**
-<<<<<<< HEAD
      * @return bool
      */
     #[\ReturnTypeWillChange]
-=======
-     * {@inheritdoc}
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function destroy($sessionId)
     {
         return $this->handler->destroy($sessionId);
     }
 
     /**
-<<<<<<< HEAD
      * @return int|false
      */
     #[\ReturnTypeWillChange]
-=======
-     * {@inheritdoc}
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function gc($maxlifetime)
     {
         return $this->handler->gc($maxlifetime);
     }
 
     /**
-<<<<<<< HEAD
      * @return string
      */
     #[\ReturnTypeWillChange]
-=======
-     * {@inheritdoc}
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function read($sessionId)
     {
         return $this->marshaller->unmarshall($this->handler->read($sessionId));
     }
 
     /**
-<<<<<<< HEAD
      * @return bool
      */
     #[\ReturnTypeWillChange]
-=======
-     * {@inheritdoc}
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function write($sessionId, $data)
     {
         $failed = [];
@@ -119,28 +89,18 @@ class MarshallingSessionHandler implements \SessionHandlerInterface, \SessionUpd
     }
 
     /**
-<<<<<<< HEAD
      * @return bool
      */
     #[\ReturnTypeWillChange]
-=======
-     * {@inheritdoc}
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function validateId($sessionId)
     {
         return $this->handler->validateId($sessionId);
     }
 
     /**
-<<<<<<< HEAD
      * @return bool
      */
     #[\ReturnTypeWillChange]
-=======
-     * {@inheritdoc}
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function updateTimestamp($sessionId, $data)
     {
         return $this->handler->updateTimestamp($sessionId, $data);

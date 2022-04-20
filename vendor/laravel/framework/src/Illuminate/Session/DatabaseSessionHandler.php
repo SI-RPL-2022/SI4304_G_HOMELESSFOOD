@@ -69,11 +69,10 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function open($savePath, $sessionName)
     {
         return true;
@@ -81,11 +80,10 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function close()
     {
         return true;
@@ -93,11 +91,10 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * {@inheritdoc}
+     *
+     * @return string|false
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function read($sessionId)
     {
         $session = (object) $this->getQuery()->find($sessionId);
@@ -131,11 +128,10 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function write($sessionId, $data)
     {
         $payload = $this->getDefaultPayload($data);
@@ -157,7 +153,7 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
      * Perform an insert operation on the session ID.
      *
      * @param  string  $sessionId
-     * @param  string  $payload
+     * @param  array<string, mixed>  $payload
      * @return bool|null
      */
     protected function performInsert($sessionId, $payload)
@@ -173,7 +169,7 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
      * Perform an update operation on the session ID.
      *
      * @param  string  $sessionId
-     * @param  string  $payload
+     * @param  array<string, mixed>  $payload
      * @return int
      */
     protected function performUpdate($sessionId, $payload)
@@ -269,11 +265,10 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function destroy($sessionId)
     {
         $this->getQuery()->where('id', $sessionId)->delete();
@@ -283,14 +278,10 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
 
     /**
      * {@inheritdoc}
-<<<<<<< HEAD
      *
      * @return int|false
      */
     #[\ReturnTypeWillChange]
-=======
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function gc($lifetime)
     {
         $this->getQuery()->where('last_activity', '<=', $this->currentTime() - $lifetime)->delete();
@@ -304,6 +295,19 @@ class DatabaseSessionHandler implements ExistenceAwareInterface, SessionHandlerI
     protected function getQuery()
     {
         return $this->connection->table($this->table);
+    }
+
+    /**
+     * Set the application instance used by the handler.
+     *
+     * @param  \Illuminate\Contracts\Foundation\Application  $container
+     * @return $this
+     */
+    public function setContainer($container)
+    {
+        $this->container = $container;
+
+        return $this;
     }
 
     /**

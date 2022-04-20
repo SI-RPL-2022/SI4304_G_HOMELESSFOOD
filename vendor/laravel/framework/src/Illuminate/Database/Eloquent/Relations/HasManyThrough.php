@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\Concerns\InteractsWithDictionary;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class HasManyThrough extends Relation
 {
+    use InteractsWithDictionary;
+
     /**
      * The "through" parent model instance.
      *
@@ -193,7 +196,7 @@ class HasManyThrough extends Relation
         // link them up with their children using the keyed dictionary to make the
         // matching very convenient and easy work. Then we'll just return them.
         foreach ($models as $model) {
-            if (isset($dictionary[$key = $model->getAttribute($this->localKey)])) {
+            if (isset($dictionary[$key = $this->getDictionaryKey($model->getAttribute($this->localKey))])) {
                 $model->setRelation(
                     $relation, $this->related->newCollection($dictionary[$key])
                 );
@@ -429,6 +432,22 @@ class HasManyThrough extends Relation
     }
 
     /**
+     * Paginate the given query into a cursor paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array  $columns
+     * @param  string  $cursorName
+     * @param  string|null  $cursor
+     * @return \Illuminate\Contracts\Pagination\CursorPaginator
+     */
+    public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null)
+    {
+        $this->query->addSelect($this->shouldSelect($columns));
+
+        return $this->query->cursorPaginate($perPage, $columns, $cursorName, $cursor);
+    }
+
+    /**
      * Set the select clause for the relation query.
      *
      * @param  array  $columns
@@ -502,7 +521,6 @@ class HasManyThrough extends Relation
     }
 
     /**
-<<<<<<< HEAD
      * Query lazily, by chunks of the given size.
      *
      * @param  int  $chunkSize
@@ -531,8 +549,6 @@ class HasManyThrough extends Relation
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Prepare the query builder for query execution.
      *
      * @param  array  $columns

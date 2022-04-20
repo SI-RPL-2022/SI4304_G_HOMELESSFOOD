@@ -25,21 +25,12 @@ class RequestMatcher implements RequestMatcherInterface
 
     /**
      * @var string|null
-<<<<<<< HEAD
      */
     private $host;
 
     /**
      * @var int|null
      */
-=======
-     */
-    private $host;
-
-    /**
-     * @var int|null
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     private $port;
 
     /**
@@ -173,7 +164,11 @@ class RequestMatcher implements RequestMatcherInterface
         }
 
         foreach ($this->attributes as $key => $pattern) {
-            if (!preg_match('{'.$pattern.'}', $request->attributes->get($key))) {
+            $requestAttribute = $request->attributes->get($key);
+            if (!\is_string($requestAttribute)) {
+                return false;
+            }
+            if (!preg_match('{'.$pattern.'}', $requestAttribute)) {
                 return false;
             }
         }
@@ -190,7 +185,7 @@ class RequestMatcher implements RequestMatcherInterface
             return false;
         }
 
-        if (IpUtils::checkIp($request->getClientIp(), $this->ips)) {
+        if (IpUtils::checkIp($request->getClientIp() ?? '', $this->ips)) {
             return true;
         }
 

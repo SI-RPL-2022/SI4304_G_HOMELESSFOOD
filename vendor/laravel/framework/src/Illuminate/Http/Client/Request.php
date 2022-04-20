@@ -5,14 +5,13 @@ namespace Illuminate\Http\Client;
 use ArrayAccess;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-<<<<<<< HEAD
 use Illuminate\Support\Traits\Macroable;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 use LogicException;
 
 class Request implements ArrayAccess
 {
+    use Macroable;
+
     /**
      * The underlying PSR request.
      *
@@ -121,9 +120,7 @@ class Request implements ArrayAccess
      */
     public function headers()
     {
-        return collect($this->request->getHeaders())->mapWithKeys(function ($values, $header) {
-            return [$header => $values];
-        })->all();
+        return $this->request->getHeaders();
     }
 
     /**
@@ -264,10 +261,7 @@ class Request implements ArrayAccess
      * @param  string  $offset
      * @return bool
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetExists($offset)
     {
         return isset($this->data()[$offset]);
@@ -279,10 +273,7 @@ class Request implements ArrayAccess
      * @param  string  $offset
      * @return mixed
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetGet($offset)
     {
         return $this->data()[$offset];
@@ -297,10 +288,7 @@ class Request implements ArrayAccess
      *
      * @throws \LogicException
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetSet($offset, $value)
     {
         throw new LogicException('Request data may not be mutated using array access.');
@@ -314,10 +302,7 @@ class Request implements ArrayAccess
      *
      * @throws \LogicException
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetUnset($offset)
     {
         throw new LogicException('Request data may not be mutated using array access.');

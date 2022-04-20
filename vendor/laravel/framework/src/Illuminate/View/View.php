@@ -81,7 +81,7 @@ class View implements ArrayAccess, Htmlable, ViewContract
      * Get the string contents of the view.
      *
      * @param  callable|null  $callback
-     * @return array|string
+     * @return string
      *
      * @throws \Throwable
      */
@@ -306,10 +306,7 @@ class View implements ArrayAccess, Htmlable, ViewContract
      * @param  string  $key
      * @return bool
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetExists($key)
     {
         return array_key_exists($key, $this->data);
@@ -321,10 +318,7 @@ class View implements ArrayAccess, Htmlable, ViewContract
      * @param  string  $key
      * @return mixed
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetGet($key)
     {
         return $this->data[$key];
@@ -337,10 +331,7 @@ class View implements ArrayAccess, Htmlable, ViewContract
      * @param  mixed  $value
      * @return void
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetSet($key, $value)
     {
         $this->with($key, $value);
@@ -352,10 +343,7 @@ class View implements ArrayAccess, Htmlable, ViewContract
      * @param  string  $key
      * @return void
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetUnset($key)
     {
         unset($this->data[$key]);

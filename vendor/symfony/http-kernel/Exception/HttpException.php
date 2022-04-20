@@ -21,11 +21,7 @@ class HttpException extends \RuntimeException implements HttpExceptionInterface
     private $statusCode;
     private $headers;
 
-<<<<<<< HEAD
     public function __construct(int $statusCode, ?string $message = '', \Throwable $previous = null, array $headers = [], ?int $code = 0)
-=======
-    public function __construct(int $statusCode, string $message = null, \Throwable $previous = null, array $headers = [], ?int $code = 0)
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         if (null === $message) {
             trigger_deprecation('symfony/http-kernel', '5.3', 'Passing null as $message to "%s()" is deprecated, pass an empty string instead.', __METHOD__);

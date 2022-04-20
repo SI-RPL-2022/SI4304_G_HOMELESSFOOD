@@ -107,10 +107,7 @@ class File extends UploadedFile
      *
      * @return int
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function getSize()
     {
         return $this->sizeToReport ?: parent::getSize();

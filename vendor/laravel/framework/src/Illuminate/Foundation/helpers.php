@@ -28,7 +28,7 @@ if (! function_exists('abort')) {
      * @param  \Symfony\Component\HttpFoundation\Response|\Illuminate\Contracts\Support\Responsable|int  $code
      * @param  string  $message
      * @param  array  $headers
-     * @return void
+     * @return never
      *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
@@ -390,6 +390,22 @@ if (! function_exists('dispatch')) {
     }
 }
 
+if (! function_exists('dispatch_sync')) {
+    /**
+     * Dispatch a command to its appropriate handler in the current process.
+     *
+     * Queueable jobs will be dispatched to the "sync" queue.
+     *
+     * @param  mixed  $job
+     * @param  mixed  $handler
+     * @return mixed
+     */
+    function dispatch_sync($job, $handler = null)
+    {
+        return app(Dispatcher::class)->dispatchSync($job, $handler);
+    }
+}
+
 if (! function_exists('dispatch_now')) {
     /**
      * Dispatch a command to its appropriate handler in the current process.
@@ -397,6 +413,8 @@ if (! function_exists('dispatch_now')) {
      * @param  mixed  $job
      * @param  mixed  $handler
      * @return mixed
+     *
+     * @deprecated Will be removed in a future Laravel version.
      */
     function dispatch_now($job, $handler = null)
     {
@@ -465,7 +483,6 @@ if (! function_exists('logger')) {
     }
 }
 
-<<<<<<< HEAD
 if (! function_exists('lang_path')) {
     /**
      * Get the path to the language folder.
@@ -479,8 +496,6 @@ if (! function_exists('lang_path')) {
     }
 }
 
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 if (! function_exists('logs')) {
     /**
      * Get a log driver instance.
@@ -602,11 +617,15 @@ if (! function_exists('report')) {
     /**
      * Report an exception.
      *
-     * @param  \Throwable  $exception
+     * @param  \Throwable|string  $exception
      * @return void
      */
-    function report(Throwable $exception)
+    function report($exception)
     {
+        if (is_string($exception)) {
+            $exception = new Exception($exception);
+        }
+
         app(ExceptionHandler::class)->report($exception);
     }
 }
@@ -617,7 +636,7 @@ if (! function_exists('request')) {
      *
      * @param  array|string|null  $key
      * @param  mixed  $default
-     * @return \Illuminate\Http\Request|string|array
+     * @return \Illuminate\Http\Request|string|array|null
      */
     function request($key = null, $default = null)
     {
@@ -653,7 +672,7 @@ if (! function_exists('rescue')) {
                 report($e);
             }
 
-            return $rescue instanceof Closure ? $rescue($e) : $rescue;
+            return value($rescue, $e);
         }
     }
 }

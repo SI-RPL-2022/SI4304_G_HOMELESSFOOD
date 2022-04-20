@@ -283,17 +283,10 @@ class Mailer implements MailerContract, MailQueueContract
         // one final chance to stop this message and then we will send it to all of
         // its recipients. We will then fire the sent event for the sent message.
         $swiftMessage = $message->getSwiftMessage();
-<<<<<<< HEAD
 
         if ($this->shouldSendMessage($swiftMessage, $data)) {
             $this->sendSwiftMessage($swiftMessage);
 
-=======
-
-        if ($this->shouldSendMessage($swiftMessage, $data)) {
-            $this->sendSwiftMessage($swiftMessage);
-
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
             $this->dispatchSentEvent($message, $data);
         }
     }
@@ -359,11 +352,7 @@ class Mailer implements MailerContract, MailQueueContract
     protected function addContent($message, $view, $plain, $raw, $data)
     {
         if (isset($view)) {
-<<<<<<< HEAD
             $message->setBody($this->renderView($view, $data) ?: ' ', 'text/html');
-=======
-            $message->setBody($this->renderView($view, $data), 'text/html');
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
         if (isset($plain)) {
@@ -409,7 +398,7 @@ class Mailer implements MailerContract, MailQueueContract
     /**
      * Queue a new e-mail message for sending.
      *
-     * @param  \Illuminate\Contracts\Mail\Mailable  $view
+     * @param  \Illuminate\Contracts\Mail\Mailable|string|array  $view
      * @param  string|null  $queue
      * @return mixed
      *

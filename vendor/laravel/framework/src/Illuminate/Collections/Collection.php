@@ -4,15 +4,12 @@ namespace Illuminate\Support;
 
 use ArrayAccess;
 use ArrayIterator;
+use Illuminate\Contracts\Support\CanBeEscapedWhenCastToString;
 use Illuminate\Support\Traits\EnumeratesValues;
 use Illuminate\Support\Traits\Macroable;
 use stdClass;
 
-<<<<<<< HEAD
 class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerable
-=======
-class Collection implements ArrayAccess, Enumerable
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 {
     use EnumeratesValues, Macroable;
 
@@ -180,6 +177,19 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
+     * Determine if an item is not contained in the collection.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function doesntContain($key, $operator = null, $value = null)
+    {
+        return ! $this->contains(...func_get_args());
+    }
+
+    /**
      * Cross join with the given lists, returning all possible permutations.
      *
      * @param  mixed  ...$lists
@@ -264,11 +274,7 @@ class Collection implements ArrayAccess, Enumerable
     /**
      * Retrieve duplicate items from the collection.
      *
-<<<<<<< HEAD
      * @param  callable|string|null  $callback
-=======
-     * @param  callable|null  $callback
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @param  bool  $strict
      * @return static
      */
@@ -296,11 +302,7 @@ class Collection implements ArrayAccess, Enumerable
     /**
      * Retrieve duplicate items from the collection using strict comparison.
      *
-<<<<<<< HEAD
      * @param  callable|string|null  $callback
-=======
-     * @param  callable|null  $callback
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @return static
      */
     public function duplicatesStrict($callback = null)
@@ -395,11 +397,7 @@ class Collection implements ArrayAccess, Enumerable
     /**
      * Remove an item from the collection by key.
      *
-<<<<<<< HEAD
      * @param  string|int|array  $keys
-=======
-     * @param  string|array  $keys
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @return $this
      */
     public function forget($keys)
@@ -414,7 +412,6 @@ class Collection implements ArrayAccess, Enumerable
     /**
      * Get an item from the collection by key.
      *
-<<<<<<< HEAD
      * @param  mixed  $key
      * @param  mixed  $default
      * @return mixed
@@ -431,19 +428,19 @@ class Collection implements ArrayAccess, Enumerable
     /**
      * Get an item from the collection by key or add it to collection if it does not exist.
      *
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @param  mixed  $key
-     * @param  mixed  $default
+     * @param  mixed  $value
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function getOrPut($key, $value)
     {
         if (array_key_exists($key, $this->items)) {
             return $this->items[$key];
         }
 
-        return value($default);
+        $this->offsetSet($key, $value = value($value));
+
+        return $value;
     }
 
     /**
@@ -537,6 +534,29 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
+     * Determine if any of the keys exist in the collection.
+     *
+     * @param  mixed  $key
+     * @return bool
+     */
+    public function hasAny($key)
+    {
+        if ($this->isEmpty()) {
+            return false;
+        }
+
+        $keys = is_array($key) ? $key : func_get_args();
+
+        foreach ($keys as $value) {
+            if ($this->has($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Concatenate values of a given key as a string.
      *
      * @param  string  $value
@@ -548,10 +568,10 @@ class Collection implements ArrayAccess, Enumerable
         $first = $this->first();
 
         if (is_array($first) || (is_object($first) && ! $first instanceof Stringable)) {
-            return implode($glue, $this->pluck($value)->all());
+            return implode($glue ?? '', $this->pluck($value)->all());
         }
 
-        return implode($value, $this->items);
+        return implode($value ?? '', $this->items);
     }
 
     /**
@@ -586,6 +606,16 @@ class Collection implements ArrayAccess, Enumerable
     public function isEmpty()
     {
         return empty($this->items);
+    }
+
+    /**
+     * Determine if the collection contains a single item.
+     *
+     * @return bool
+     */
+    public function containsOneItem()
+    {
+        return $this->count() === 1;
     }
 
     /**
@@ -776,8 +806,8 @@ class Collection implements ArrayAccess, Enumerable
 
         $position = 0;
 
-        foreach ($this->items as $item) {
-            if ($position % $step === $offset) {
+        foreach ($this->slice($offset)->items as $item) {
+            if ($position % $step === 0) {
                 $new[] = $item;
             }
 
@@ -809,17 +839,30 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-     * Get and remove the last item from the collection.
+     * Get and remove the last N items from the collection.
      *
-<<<<<<< HEAD
      * @param  int  $count
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @return mixed
      */
-    public function pop()
+    public function pop($count = 1)
     {
-        return array_pop($this->items);
+        if ($count === 1) {
+            return array_pop($this->items);
+        }
+
+        if ($this->isEmpty()) {
+            return new static;
+        }
+
+        $results = [];
+
+        $collectionCount = $this->count();
+
+        foreach (range(1, min($count, $collectionCount)) as $item) {
+            array_push($results, array_pop($this->items));
+        }
+
+        return new static($results);
     }
 
     /**
@@ -839,11 +882,7 @@ class Collection implements ArrayAccess, Enumerable
     /**
      * Push one or more items onto the end of the collection.
      *
-<<<<<<< HEAD
      * @param  mixed  $values
-=======
-     * @param  mixed  $values [optional]
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @return $this
      */
     public function push(...$values)
@@ -916,18 +955,6 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-     * Reduce the collection to a single value.
-     *
-     * @param  callable  $callback
-     * @param  mixed  $initial
-     * @return mixed
-     */
-    public function reduce(callable $callback, $initial = null)
-    {
-        return array_reduce($this->items, $callback, $initial);
-    }
-
-    /**
      * Replace the collection items with the given items.
      *
      * @param  mixed  $items
@@ -982,17 +1009,30 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-     * Get and remove the first item from the collection.
+     * Get and remove the first N items from the collection.
      *
-<<<<<<< HEAD
      * @param  int  $count
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @return mixed
      */
-    public function shift()
+    public function shift($count = 1)
     {
-        return array_shift($this->items);
+        if ($count === 1) {
+            return array_shift($this->items);
+        }
+
+        if ($this->isEmpty()) {
+            return new static;
+        }
+
+        $results = [];
+
+        $collectionCount = $this->count();
+
+        foreach (range(1, min($count, $collectionCount)) as $item) {
+            array_push($results, array_shift($this->items));
+        }
+
+        return new static($results);
     }
 
     /**
@@ -1007,7 +1047,6 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-<<<<<<< HEAD
      * Create chunks representing a "sliding window" view of the items in the collection.
      *
      * @param  int  $size
@@ -1024,8 +1063,6 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Skip the first {$count} items.
      *
      * @param  int  $count
@@ -1119,7 +1156,6 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-<<<<<<< HEAD
      * Get the first item in the collection, but only if exactly one item exists. Otherwise, throw an exception.
      *
      * @param  mixed  $key
@@ -1177,8 +1213,6 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Chunk the collection into chunks of the given size.
      *
      * @param  int  $size
@@ -1224,7 +1258,7 @@ class Collection implements ArrayAccess, Enumerable
 
         $callback && is_callable($callback)
             ? uasort($items, $callback)
-            : asort($items, $callback);
+            : asort($items, $callback ?? SORT_REGULAR);
 
         return new static($items);
     }
@@ -1264,7 +1298,7 @@ class Collection implements ArrayAccess, Enumerable
 
         // First we will loop through the items and get the comparator from a callback
         // function which we were given. Then, we will sort the returned values and
-        // and grab the corresponding values for the sorted keys from this array.
+        // grab all the corresponding values for the sorted keys from this array.
         foreach ($this->items as $key => $value) {
             $results[$key] = $callback($value, $key);
         }
@@ -1303,14 +1337,10 @@ class Collection implements ArrayAccess, Enumerable
 
                 $result = 0;
 
-<<<<<<< HEAD
                 if (! is_string($prop) && is_callable($prop)) {
-=======
-                if (is_callable($prop)) {
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
                     $result = $prop($a, $b);
                 } else {
-                    $values = [Arr::get($a, $prop), Arr::get($b, $prop)];
+                    $values = [data_get($a, $prop), data_get($b, $prop)];
 
                     if (! $ascending) {
                         $values = array_reverse($values);
@@ -1370,7 +1400,6 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-<<<<<<< HEAD
      * Sort the collection keys using a callback.
      *
      * @param  callable  $callback
@@ -1386,8 +1415,6 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Splice a portion of the underlying collection array.
      *
      * @param  int  $offset
@@ -1401,7 +1428,7 @@ class Collection implements ArrayAccess, Enumerable
             return new static(array_splice($this->items, $offset));
         }
 
-        return new static(array_splice($this->items, $offset, $length, $replacement));
+        return new static(array_splice($this->items, $offset, $length, $this->getArrayableItems($replacement)));
     }
 
     /**
@@ -1455,7 +1482,6 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-<<<<<<< HEAD
      * Convert a flatten "dot" notation array into an expanded array.
      *
      * @return static
@@ -1492,8 +1518,6 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Reset the keys on the underlying array.
      *
      * @return static
@@ -1542,10 +1566,7 @@ class Collection implements ArrayAccess, Enumerable
      *
      * @return \ArrayIterator
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function getIterator()
     {
         return new ArrayIterator($this->items);
@@ -1556,10 +1577,7 @@ class Collection implements ArrayAccess, Enumerable
      *
      * @return int
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function count()
     {
         return count($this->items);
@@ -1605,10 +1623,7 @@ class Collection implements ArrayAccess, Enumerable
      * @param  mixed  $key
      * @return bool
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetExists($key)
     {
         return isset($this->items[$key]);
@@ -1620,10 +1635,7 @@ class Collection implements ArrayAccess, Enumerable
      * @param  mixed  $key
      * @return mixed
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetGet($key)
     {
         return $this->items[$key];
@@ -1636,10 +1648,7 @@ class Collection implements ArrayAccess, Enumerable
      * @param  mixed  $value
      * @return void
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetSet($key, $value)
     {
         if (is_null($key)) {
@@ -1652,16 +1661,10 @@ class Collection implements ArrayAccess, Enumerable
     /**
      * Unset the item at a given offset.
      *
-<<<<<<< HEAD
      * @param  mixed  $key
      * @return void
      */
     #[\ReturnTypeWillChange]
-=======
-     * @param  string  $key
-     * @return void
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function offsetUnset($key)
     {
         unset($this->items[$key]);

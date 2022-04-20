@@ -8,7 +8,6 @@ use League\Flysystem\Plugin\PluggableTrait;
 use League\Flysystem\Util\ContentListingFormatter;
 
 /**
-<<<<<<< HEAD
  * @method void        emptyDir(string $dirname)
  * @method array|false getWithMetadata(string $path, string[] $metadata)
  * @method bool        forceCopy(string $path, string $newpath)
@@ -16,14 +15,6 @@ use League\Flysystem\Util\ContentListingFormatter;
  * @method array       listFiles(string $path = '', boolean $recursive = false)
  * @method string[]    listPaths(string $path = '', boolean $recursive = false)
  * @method array       listWith(string[] $keys = [], $directory = '', $recursive = false)
-=======
- * @method array getWithMetadata(string $path, array $metadata)
- * @method bool  forceCopy(string $path, string $newpath)
- * @method bool  forceRename(string $path, string $newpath)
- * @method array listFiles(string $path = '', boolean $recursive = false)
- * @method array listPaths(string $path = '', boolean $recursive = false)
- * @method array listWith(array $keys = [], $directory = '', $recursive = false)
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
  */
 class Filesystem implements FilesystemInterface
 {

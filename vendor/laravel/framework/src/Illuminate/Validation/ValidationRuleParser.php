@@ -186,67 +186,57 @@ class ValidationRuleParser
     /**
      * Extract the rule name and parameters from a rule.
      *
-     * @param  array|string  $rules
+     * @param  array|string  $rule
      * @return array
      */
-    public static function parse($rules)
+    public static function parse($rule)
     {
-<<<<<<< HEAD
         if ($rule instanceof RuleContract) {
             return [$rule, []];
-=======
-        if ($rules instanceof RuleContract) {
-            return [$rules, []];
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
-        if (is_array($rules)) {
-            $rules = static::parseArrayRule($rules);
+        if (is_array($rule)) {
+            $rule = static::parseArrayRule($rule);
         } else {
-            $rules = static::parseStringRule($rules);
+            $rule = static::parseStringRule($rule);
         }
 
-        $rules[0] = static::normalizeRule($rules[0]);
+        $rule[0] = static::normalizeRule($rule[0]);
 
-        return $rules;
+        return $rule;
     }
 
     /**
      * Parse an array based rule.
      *
-     * @param  array  $rules
+     * @param  array  $rule
      * @return array
      */
-    protected static function parseArrayRule(array $rules)
+    protected static function parseArrayRule(array $rule)
     {
-        return [Str::studly(trim(Arr::get($rules, 0))), array_slice($rules, 1)];
+        return [Str::studly(trim(Arr::get($rule, 0, ''))), array_slice($rule, 1)];
     }
 
     /**
      * Parse a string based rule.
      *
-     * @param  string  $rules
+     * @param  string  $rule
      * @return array
      */
-    protected static function parseStringRule($rules)
+    protected static function parseStringRule($rule)
     {
         $parameters = [];
 
         // The format for specifying validation rules and parameters follows an
         // easy {rule}:{parameters} formatting convention. For instance the
         // rule "Max:3" states that the value may only be three letters.
-<<<<<<< HEAD
         if (strpos($rule, ':') !== false) {
             [$rule, $parameter] = explode(':', $rule, 2);
-=======
-        if (strpos($rules, ':') !== false) {
-            [$rules, $parameter] = explode(':', $rules, 2);
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
-            $parameters = static::parseParameters($rules, $parameter);
+            $parameters = static::parseParameters($rule, $parameter);
         }
 
-        return [Str::studly(trim($rules)), $parameters];
+        return [Str::studly(trim($rule)), $parameters];
     }
 
     /**
@@ -283,7 +273,6 @@ class ValidationRuleParser
             default:
                 return $rule;
         }
-<<<<<<< HEAD
     }
 
     /**
@@ -315,7 +304,5 @@ class ValidationRuleParser
                 return $rule->passes($data) ? $rule->rules() : $rule->defaultRules();
             })->filter()->flatten(1)->values()->all()];
         })->all();
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     }
 }

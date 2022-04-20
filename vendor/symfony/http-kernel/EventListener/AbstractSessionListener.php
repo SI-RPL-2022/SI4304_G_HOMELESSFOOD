@@ -13,17 +13,16 @@ namespace Symfony\Component\HttpKernel\EventListener;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-<<<<<<< HEAD
 use Symfony\Component\HttpFoundation\Session\SessionUtils;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Exception\UnexpectedSessionUsageException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * Sets the session onto the request on the "kernel.request" event and saves
@@ -40,44 +39,63 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @internal
  */
-abstract class AbstractSessionListener implements EventSubscriberInterface
+abstract class AbstractSessionListener implements EventSubscriberInterface, ResetInterface
 {
-    const NO_AUTO_CACHE_CONTROL_HEADER = 'Symfony-Session-NoAutoCacheControl';
+    public const NO_AUTO_CACHE_CONTROL_HEADER = 'Symfony-Session-NoAutoCacheControl';
 
     protected $container;
     private $sessionUsageStack = [];
     private $debug;
 
-    public function __construct(ContainerInterface $container = null, bool $debug = false)
+    /**
+     * @var array<string, mixed>
+     */
+    private $sessionOptions;
+
+    public function __construct(ContainerInterface $container = null, bool $debug = false, array $sessionOptions = [])
     {
         $this->container = $container;
         $this->debug = $debug;
+        $this->sessionOptions = $sessionOptions;
     }
 
     public function onKernelRequest(RequestEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
-        $session = null;
         $request = $event->getRequest();
         if (!$request->hasSession()) {
+            // This variable prevents calling `$this->getSession()` twice in case the Request (and the below factory) is cloned
             $sess = null;
-            $request->setSessionFactory(function () use (&$sess) { return $sess ?? $sess = $this->getSession(); });
+            $request->setSessionFactory(function () use (&$sess, $request) {
+                if (!$sess) {
+                    $sess = $this->getSession();
+                }
+
+                /*
+                 * For supporting sessions in php runtime with runners like roadrunner or swoole, the session
+                 * cookie needs to be read from the cookie bag and set on the session storage.
+                 *
+                 * Do not set it when a native php session is active.
+                 */
+                if ($sess && !$sess->isStarted() && \PHP_SESSION_ACTIVE !== session_status()) {
+                    $sessionId = $request->cookies->get($sess->getName(), '');
+                    $sess->setId($sessionId);
+                }
+
+                return $sess;
+            });
         }
 
-<<<<<<< HEAD
         $session = $this->container && $this->container->has('initialized_session') ? $this->container->get('initialized_session') : null;
-=======
-        $session = $session ?? ($this->container && $this->container->has('initialized_session') ? $this->container->get('initialized_session') : null);
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         $this->sessionUsageStack[] = $session instanceof Session ? $session->getUsageIndex() : 0;
     }
 
     public function onKernelResponse(ResponseEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMainRequest() || (!$this->container->has('initialized_session') && !$event->getRequest()->hasSession())) {
             return;
         }
 
@@ -117,7 +135,6 @@ abstract class AbstractSessionListener implements EventSubscriberInterface
              * it is saved will just restart it.
              */
             $session->save();
-<<<<<<< HEAD
 
             /*
              * For supporting sessions in php runtime with runners like roadrunner or swoole the session
@@ -168,8 +185,6 @@ abstract class AbstractSessionListener implements EventSubscriberInterface
                     )
                 );
             }
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
         if ($session instanceof Session ? $session->getUsageIndex() === end($this->sessionUsageStack) : !$session->isStarted()) {
@@ -199,11 +214,7 @@ abstract class AbstractSessionListener implements EventSubscriberInterface
 
     public function onFinishRequest(FinishRequestEvent $event)
     {
-<<<<<<< HEAD
         if ($event->isMainRequest()) {
-=======
-        if ($event->isMasterRequest()) {
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
             array_pop($this->sessionUsageStack);
         }
     }
@@ -253,10 +264,23 @@ abstract class AbstractSessionListener implements EventSubscriberInterface
         ];
     }
 
+    public function reset(): void
+    {
+        if (\PHP_SESSION_ACTIVE === session_status()) {
+            session_abort();
+        }
+
+        session_unset();
+        $_SESSION = [];
+
+        if (!headers_sent()) { // session id can only be reset when no headers were so we check for headers_sent first
+            session_id('');
+        }
+    }
+
     /**
      * Gets the session object.
      *
-<<<<<<< HEAD
      * @return SessionInterface|null
      */
     abstract protected function getSession();
@@ -279,9 +303,4 @@ abstract class AbstractSessionListener implements EventSubscriberInterface
 
         return $mergedSessionOptions;
     }
-=======
-     * @return SessionInterface|null A SessionInterface instance or null if no session is available
-     */
-    abstract protected function getSession();
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 }

@@ -9,6 +9,7 @@ use Illuminate\Database\Grammar as BaseGrammar;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Fluent;
+use LogicException;
 use RuntimeException;
 
 abstract class Grammar extends BaseGrammar
@@ -26,6 +27,33 @@ abstract class Grammar extends BaseGrammar
      * @var array
      */
     protected $fluentCommands = [];
+
+    /**
+     * Compile a create database command.
+     *
+     * @param  string  $name
+     * @param  \Illuminate\Database\Connection  $connection
+     * @return void
+     *
+     * @throws \LogicException
+     */
+    public function compileCreateDatabase($name, $connection)
+    {
+        throw new LogicException('This database driver does not support creating databases.');
+    }
+
+    /**
+     * Compile a drop database if exists command.
+     *
+     * @param  string  $name
+     * @return void
+     *
+     * @throws \LogicException
+     */
+    public function compileDropDatabaseIfExists($name)
+    {
+        throw new LogicException('This database driver does not support dropping databases.');
+    }
 
     /**
      * Compile a rename column command.
@@ -56,7 +84,6 @@ abstract class Grammar extends BaseGrammar
     }
 
     /**
-<<<<<<< HEAD
      * Compile a fulltext index key command.
      *
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
@@ -83,8 +110,6 @@ abstract class Grammar extends BaseGrammar
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Compile a foreign key command.
      *
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint

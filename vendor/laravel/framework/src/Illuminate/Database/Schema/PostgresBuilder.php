@@ -4,7 +4,6 @@ namespace Illuminate\Database\Schema;
 
 class PostgresBuilder extends Builder
 {
-<<<<<<< HEAD
     /**
      * Create a database in the schema.
      *
@@ -31,8 +30,6 @@ class PostgresBuilder extends Builder
         );
     }
 
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     /**
      * Determine if the given table exists.
      *

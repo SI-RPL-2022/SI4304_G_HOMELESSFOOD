@@ -17,12 +17,9 @@ use Symfony\Contracts\Service\ServiceLocatorTrait;
 
 abstract class ServiceLocatorTest extends TestCase
 {
-<<<<<<< HEAD
     /**
      * @return ContainerInterface
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     protected function getServiceLocator(array $factories)
     {
         return new class($factories) implements ContainerInterface {
@@ -73,7 +70,7 @@ abstract class ServiceLocatorTest extends TestCase
     public function testThrowsOnUndefinedInternalService()
     {
         if (!$this->getExpectedException()) {
-            $this->expectException('Psr\Container\NotFoundExceptionInterface');
+            $this->expectException(\Psr\Container\NotFoundExceptionInterface::class);
             $this->expectExceptionMessage('The service "foo" has a dependency on a non-existent service "bar". This locator only knows about the "foo" service.');
         }
         $locator = $this->getServiceLocator([
@@ -85,7 +82,7 @@ abstract class ServiceLocatorTest extends TestCase
 
     public function testThrowsOnCircularReference()
     {
-        $this->expectException('Psr\Container\ContainerExceptionInterface');
+        $this->expectException(\Psr\Container\ContainerExceptionInterface::class);
         $this->expectExceptionMessage('Circular reference detected for service "bar", path: "bar -> baz -> bar".');
         $locator = $this->getServiceLocator([
             'foo' => function () use (&$locator) { return $locator->get('bar'); },

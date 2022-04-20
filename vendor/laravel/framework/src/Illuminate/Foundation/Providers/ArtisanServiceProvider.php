@@ -6,13 +6,17 @@ use Illuminate\Auth\Console\ClearResetsCommand;
 use Illuminate\Cache\Console\CacheTableCommand;
 use Illuminate\Cache\Console\ClearCommand as CacheClearCommand;
 use Illuminate\Cache\Console\ForgetCommand as CacheForgetCommand;
+use Illuminate\Console\Scheduling\ScheduleClearCacheCommand;
 use Illuminate\Console\Scheduling\ScheduleFinishCommand;
+use Illuminate\Console\Scheduling\ScheduleListCommand;
 use Illuminate\Console\Scheduling\ScheduleRunCommand;
+use Illuminate\Console\Scheduling\ScheduleTestCommand;
 use Illuminate\Console\Scheduling\ScheduleWorkCommand;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Console\DbCommand;
 use Illuminate\Database\Console\DumpCommand;
 use Illuminate\Database\Console\Factories\FactoryMakeCommand;
+use Illuminate\Database\Console\PruneCommand;
 use Illuminate\Database\Console\Seeds\SeedCommand;
 use Illuminate\Database\Console\Seeds\SeederMakeCommand;
 use Illuminate\Database\Console\WipeCommand;
@@ -65,12 +69,9 @@ use Illuminate\Queue\Console\FlushFailedCommand as FlushFailedQueueCommand;
 use Illuminate\Queue\Console\ForgetFailedCommand as ForgetFailedQueueCommand;
 use Illuminate\Queue\Console\ListenCommand as QueueListenCommand;
 use Illuminate\Queue\Console\ListFailedCommand as ListFailedQueueCommand;
-<<<<<<< HEAD
 use Illuminate\Queue\Console\MonitorCommand as QueueMonitorCommand;
 use Illuminate\Queue\Console\PruneBatchesCommand as PruneBatchesQueueCommand;
 use Illuminate\Queue\Console\PruneFailedJobsCommand;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 use Illuminate\Queue\Console\RestartCommand as QueueRestartCommand;
 use Illuminate\Queue\Console\RetryBatchCommand as QueueRetryBatchCommand;
 use Illuminate\Queue\Console\RetryCommand as QueueRetryCommand;
@@ -96,10 +97,7 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
         'ConfigCache' => 'command.config.cache',
         'ConfigClear' => 'command.config.clear',
         'Db' => DbCommand::class,
-<<<<<<< HEAD
         'DbPrune' => 'command.db.prune',
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         'DbWipe' => 'command.db.wipe',
         'Down' => 'command.down',
         'Environment' => 'command.environment',
@@ -115,12 +113,9 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
         'QueueFlush' => 'command.queue.flush',
         'QueueForget' => 'command.queue.forget',
         'QueueListen' => 'command.queue.listen',
-<<<<<<< HEAD
         'QueueMonitor' => 'command.queue.monitor',
         'QueuePruneBatches' => 'command.queue.prune-batches',
         'QueuePruneFailedJobs' => 'command.queue.prune-failed-jobs',
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         'QueueRestart' => 'command.queue.restart',
         'QueueRetry' => 'command.queue.retry',
         'QueueRetryBatch' => 'command.queue.retry-batch',
@@ -131,7 +126,10 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
         'SchemaDump' => 'command.schema.dump',
         'Seed' => 'command.seed',
         'ScheduleFinish' => ScheduleFinishCommand::class,
+        'ScheduleList' => ScheduleListCommand::class,
         'ScheduleRun' => ScheduleRunCommand::class,
+        'ScheduleClearCache' => ScheduleClearCacheCommand::class,
+        'ScheduleTest' => ScheduleTestCommand::class,
         'ScheduleWork' => ScheduleWorkCommand::class,
         'StorageLink' => 'command.storage.link',
         'Up' => 'command.up',
@@ -365,7 +363,6 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
      *
      * @return void
      */
-<<<<<<< HEAD
     protected function registerDbPruneCommand()
     {
         $this->app->singleton('command.db.prune', function ($app) {
@@ -378,8 +375,6 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
      *
      * @return void
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     protected function registerDbWipeCommand()
     {
         $this->app->singleton('command.db.wipe', function () {
@@ -491,11 +486,7 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
     protected function registerEventListCommand()
     {
         $this->app->singleton('command.event.list', function () {
-<<<<<<< HEAD
             return new EventListCommand;
-=======
-            return new EventListCommand();
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         });
     }
 
@@ -720,7 +711,6 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
      *
      * @return void
      */
-<<<<<<< HEAD
     protected function registerQueueMonitorCommand()
     {
         $this->app->singleton('command.queue.monitor', function ($app) {
@@ -757,8 +747,6 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
      *
      * @return void
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     protected function registerQueueRestartCommand()
     {
         $this->app->singleton('command.queue.restart', function ($app) {
@@ -987,6 +975,16 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
      *
      * @return void
      */
+    protected function registerScheduleClearCacheCommand()
+    {
+        $this->app->singleton(ScheduleClearCacheCommand::class);
+    }
+
+    /**
+     * Register the command.
+     *
+     * @return void
+     */
     protected function registerScheduleFinishCommand()
     {
         $this->app->singleton(ScheduleFinishCommand::class);
@@ -997,9 +995,29 @@ class ArtisanServiceProvider extends ServiceProvider implements DeferrableProvid
      *
      * @return void
      */
+    protected function registerScheduleListCommand()
+    {
+        $this->app->singleton(ScheduleListCommand::class);
+    }
+
+    /**
+     * Register the command.
+     *
+     * @return void
+     */
     protected function registerScheduleRunCommand()
     {
         $this->app->singleton(ScheduleRunCommand::class);
+    }
+
+    /**
+     * Register the command.
+     *
+     * @return void
+     */
+    protected function registerScheduleTestCommand()
+    {
+        $this->app->singleton(ScheduleTestCommand::class);
     }
 
     /**

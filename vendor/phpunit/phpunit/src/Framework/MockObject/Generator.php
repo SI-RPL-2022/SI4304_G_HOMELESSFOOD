@@ -143,15 +143,15 @@ EOT;
      *
      * @param null|array $methods
      *
-     * @throws ClassIsFinalException
-     * @throws ClassAlreadyExistsException
-     * @throws ReflectionException
-     * @throws UnknownTypeException
-     * @throws InvalidMethodNameException
-     * @throws DuplicateMethodException
-     * @throws OriginalConstructorInvocationRequiredException
-     * @throws RuntimeException
      * @throws \PHPUnit\Framework\InvalidArgumentException
+     * @throws ClassAlreadyExistsException
+     * @throws ClassIsFinalException
+     * @throws DuplicateMethodException
+     * @throws InvalidMethodNameException
+     * @throws OriginalConstructorInvocationRequiredException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws UnknownTypeException
      */
     public function getMock(string $type, $methods = [], array $arguments = [], string $mockClassName = '', bool $callOriginalConstructor = true, bool $callOriginalClone = true, bool $callAutoload = true, bool $cloneArguments = true, bool $callOriginalMethods = false, object $proxyTarget = null, bool $allowMockingUnknownTypes = true, bool $returnValueGeneration = true): MockObject
     {
@@ -224,6 +224,67 @@ EOT;
     }
 
     /**
+     * @psalm-param list<class-string> $interfaces
+     *
+     * @throws RuntimeException
+     * @throws UnknownTypeException
+     */
+    public function getMockForInterfaces(array $interfaces, bool $callAutoload = true): MockObject
+    {
+        if (count($interfaces) < 2) {
+            throw new RuntimeException('At least two interfaces must be specified');
+        }
+
+        foreach ($interfaces as $interface) {
+            if (!interface_exists($interface, $callAutoload)) {
+                throw new UnknownTypeException($interface);
+            }
+        }
+
+        sort($interfaces);
+
+        $methods = [];
+
+        foreach ($interfaces as $interface) {
+            $methods = array_merge($methods, $this->getClassMethods($interface));
+        }
+
+        if (count(array_unique($methods)) < count($methods)) {
+            throw new RuntimeException('Interfaces must not declare the same method');
+        }
+
+        $unqualifiedNames = [];
+
+        foreach ($interfaces as $interface) {
+            $parts              = explode('\\', $interface);
+            $unqualifiedNames[] = array_pop($parts);
+        }
+
+        sort($unqualifiedNames);
+
+        do {
+            $intersectionName = sprintf(
+                'Intersection_%s_%s',
+                implode('_', $unqualifiedNames),
+                substr(md5((string) mt_rand()), 0, 8)
+            );
+        } while (interface_exists($intersectionName, false));
+
+        $template = $this->getTemplate('intersection.tpl');
+
+        $template->setVar(
+            [
+                'intersection' => $intersectionName,
+                'interfaces'   => implode(', ', $interfaces),
+            ]
+        );
+
+        eval($template->render());
+
+        return $this->getMock($intersectionName);
+    }
+
+    /**
      * Returns a mock object for the specified abstract class with all abstract
      * methods of the class mocked.
      *
@@ -233,16 +294,16 @@ EOT;
      * @psalm-param class-string<RealInstanceType> $originalClassName
      * @psalm-return MockObject&RealInstanceType
      *
-     * @throws RuntimeException
-     * @throws ReflectionException
-     * @throws ClassIsFinalException
-     * @throws ClassAlreadyExistsException
-     * @throws UnknownTypeException
-     * @throws UnknownClassException
-     * @throws InvalidMethodNameException
-     * @throws DuplicateMethodException
-     * @throws OriginalConstructorInvocationRequiredException
      * @throws \PHPUnit\Framework\InvalidArgumentException
+     * @throws ClassAlreadyExistsException
+     * @throws ClassIsFinalException
+     * @throws DuplicateMethodException
+     * @throws InvalidMethodNameException
+     * @throws OriginalConstructorInvocationRequiredException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws UnknownClassException
+     * @throws UnknownTypeException
      */
     public function getMockForAbstractClass(string $originalClassName, array $arguments = [], string $mockClassName = '', bool $callOriginalConstructor = true, bool $callOriginalClone = true, bool $callAutoload = true, array $mockedMethods = null, bool $cloneArguments = true): MockObject
     {
@@ -294,17 +355,17 @@ EOT;
      *
      * @psalm-param trait-string $traitName
      *
-     * @throws RuntimeException
-     * @throws ReflectionException
-     * @throws UnknownTraitException
-     * @throws ClassIsFinalException
-     * @throws ClassAlreadyExistsException
-     * @throws UnknownTypeException
-     * @throws UnknownClassException
-     * @throws InvalidMethodNameException
-     * @throws DuplicateMethodException
-     * @throws OriginalConstructorInvocationRequiredException
      * @throws \PHPUnit\Framework\InvalidArgumentException
+     * @throws ClassAlreadyExistsException
+     * @throws ClassIsFinalException
+     * @throws DuplicateMethodException
+     * @throws InvalidMethodNameException
+     * @throws OriginalConstructorInvocationRequiredException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws UnknownClassException
+     * @throws UnknownTraitException
+     * @throws UnknownTypeException
      */
     public function getMockForTrait(string $traitName, array $arguments = [], string $mockClassName = '', bool $callOriginalConstructor = true, bool $callOriginalClone = true, bool $callAutoload = true, array $mockedMethods = null, bool $cloneArguments = true): MockObject
     {
@@ -339,8 +400,8 @@ EOT;
      *
      * @psalm-param trait-string $traitName
      *
-     * @throws RuntimeException
      * @throws ReflectionException
+     * @throws RuntimeException
      * @throws UnknownTraitException
      */
     public function getObjectForTrait(string $traitName, string $traitClassName = '', bool $callAutoload = true, bool $callOriginalConstructor = false, array $arguments = []): object
@@ -378,9 +439,9 @@ EOT;
     }
 
     /**
-     * @throws RuntimeException
-     * @throws ReflectionException
      * @throws ClassIsFinalException
+     * @throws ReflectionException
+     * @throws RuntimeException
      */
     public function generate(string $type, array $methods = null, string $mockClassName = '', bool $callOriginalClone = true, bool $callAutoload = true, bool $cloneArguments = true, bool $callOriginalMethods = false): MockClass
     {
@@ -635,8 +696,8 @@ EOT;
     }
 
     /**
-     * @throws RuntimeException
      * @throws ReflectionException
+     * @throws RuntimeException
      */
     private function getObject(MockType $mockClass, $type = '', bool $callOriginalConstructor = false, bool $callAutoload = false, array $arguments = [], bool $callOriginalMethods = false, object $proxyTarget = null, bool $returnValueGeneration = true)
     {
@@ -700,9 +761,9 @@ EOT;
     }
 
     /**
-     * @throws RuntimeException
-     * @throws ReflectionException
      * @throws ClassIsFinalException
+     * @throws ReflectionException
+     * @throws RuntimeException
      */
     private function generateMock(string $type, ?array $explicitMethods, string $mockClassName, bool $callOriginalClone, bool $callAutoload, bool $cloneArguments, bool $callOriginalMethods): MockClass
     {

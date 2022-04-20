@@ -6,6 +6,8 @@ use ErrorException;
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Log\LogManager;
+use Monolog\Handler\NullHandler;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\ErrorHandler\Error\FatalError;
 use Throwable;
@@ -52,7 +54,7 @@ class HandleExceptions
     }
 
     /**
-     * Convert PHP errors to ErrorException instances.
+     * Report PHP deprecations, or convert PHP errors to ErrorException instances.
      *
      * @param  int  $level
      * @param  string  $message
@@ -65,13 +67,16 @@ class HandleExceptions
      */
     public function handleError($level, $message, $file = '', $line = 0, $context = [])
     {
+        if ($this->isDeprecation($level)) {
+            return $this->handleDeprecation($message, $file, $line);
+        }
+
         if (error_reporting() & $level) {
             throw new ErrorException($message, 0, $level, $file, $line);
         }
     }
 
     /**
-<<<<<<< HEAD
      * Reports a deprecation to the "deprecations" logger.
      *
      * @param  string  $message
@@ -143,8 +148,6 @@ class HandleExceptions
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Handle an uncaught exception from the application.
      *
      * Note: Most exceptions can be handled via the try / catch block in
@@ -218,7 +221,6 @@ class HandleExceptions
     }
 
     /**
-<<<<<<< HEAD
      * Determine if the error level is a deprecation.
      *
      * @param  int  $level
@@ -230,8 +232,6 @@ class HandleExceptions
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Determine if the error type is fatal.
      *
      * @param  int  $type

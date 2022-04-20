@@ -24,7 +24,6 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
  */
 class FlattenException
 {
-<<<<<<< HEAD
     /** @var string */
     private $message;
 
@@ -59,29 +58,12 @@ class FlattenException
     private $line;
 
     /** @var string|null */
-=======
-    private $message;
-    private $code;
-    private $previous;
-    private $trace;
-    private $traceAsString;
-    private $class;
-    private $statusCode;
-    private $statusText;
-    private $headers;
-    private $file;
-    private $line;
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     private $asString;
 
     /**
      * @return static
      */
-<<<<<<< HEAD
     public static function create(\Exception $exception, int $statusCode = null, array $headers = []): self
-=======
-    public static function create(\Exception $exception, $statusCode = null, array $headers = []): self
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         return static::createFromThrowable($exception, $statusCode, $headers);
     }
@@ -151,11 +133,7 @@ class FlattenException
     /**
      * @return $this
      */
-<<<<<<< HEAD
     public function setStatusCode(int $code): self
-=======
-    public function setStatusCode($code): self
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         $this->statusCode = $code;
 
@@ -185,11 +163,7 @@ class FlattenException
     /**
      * @return $this
      */
-<<<<<<< HEAD
     public function setClass(string $class): self
-=======
-    public function setClass($class): self
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         $this->class = false !== strpos($class, "@anonymous\0") ? (get_parent_class($class) ?: key(class_implements($class)) ?: 'class').'@anonymous' : $class;
 
@@ -204,11 +178,7 @@ class FlattenException
     /**
      * @return $this
      */
-<<<<<<< HEAD
     public function setFile(string $file): self
-=======
-    public function setFile($file): self
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         $this->file = $file;
 
@@ -223,11 +193,7 @@ class FlattenException
     /**
      * @return $this
      */
-<<<<<<< HEAD
     public function setLine(int $line): self
-=======
-    public function setLine($line): self
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         $this->line = $line;
 
@@ -239,12 +205,9 @@ class FlattenException
         return $this->statusText;
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function setStatusText(string $statusText): self
     {
         $this->statusText = $statusText;
@@ -260,11 +223,7 @@ class FlattenException
     /**
      * @return $this
      */
-<<<<<<< HEAD
     public function setMessage(string $message): self
-=======
-    public function setMessage($message): self
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         if (false !== strpos($message, "@anonymous\0")) {
             $message = preg_replace_callback('/[a-zA-Z_\x7f-\xff][\\\\a-zA-Z0-9_\x7f-\xff]*+@anonymous\x00.*?\.php(?:0x?|:[0-9]++\$)[0-9a-fA-F]++/', function ($m) {
@@ -305,11 +264,7 @@ class FlattenException
     /**
      * @return $this
      */
-<<<<<<< HEAD
     public function setPrevious(?self $previous): self
-=======
-    public function setPrevious(self $previous): self
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         $this->previous = $previous;
 
@@ -348,11 +303,7 @@ class FlattenException
     /**
      * @return $this
      */
-<<<<<<< HEAD
     public function setTrace(array $trace, ?string $file, ?int $line): self
-=======
-    public function setTrace($trace, $file, $line): self
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     {
         $this->trace = [];
         $this->trace[] = [
@@ -377,11 +328,11 @@ class FlattenException
             $this->trace[] = [
                 'namespace' => $namespace,
                 'short_class' => $class,
-                'class' => isset($entry['class']) ? $entry['class'] : '',
-                'type' => isset($entry['type']) ? $entry['type'] : '',
-                'function' => isset($entry['function']) ? $entry['function'] : null,
-                'file' => isset($entry['file']) ? $entry['file'] : null,
-                'line' => isset($entry['line']) ? $entry['line'] : null,
+                'class' => $entry['class'] ?? '',
+                'type' => $entry['type'] ?? '',
+                'function' => $entry['function'] ?? null,
+                'file' => $entry['file'] ?? null,
+                'line' => $entry['line'] ?? null,
                 'args' => isset($entry['args']) ? $this->flattenArgs($entry['args']) : [],
             ];
         }
@@ -397,7 +348,6 @@ class FlattenException
                 return ['array', '*SKIPPED over 10000 entries*'];
             }
             if ($value instanceof \__PHP_Incomplete_Class) {
-                // is_object() returns false on PHP<=7.1
                 $result[$key] = ['incomplete-object', $this->getClassNameFromIncomplete($value)];
             } elseif (\is_object($value)) {
                 $result[$key] = ['object', \get_class($value)];

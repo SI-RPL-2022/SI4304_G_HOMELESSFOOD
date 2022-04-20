@@ -11,10 +11,12 @@
 
 namespace Symfony\Component\Console\Tester;
 
+use PHPUnit\Framework\Assert;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\Console\Tester\Constraint\CommandIsSuccessful;
 
 /**
  * @author Amrouche Hamza <hamza.simperfit@gmail.com>
@@ -25,24 +27,17 @@ trait TesterTrait
     private $output;
     private $inputs = [];
     private $captureStreamsIndependently = false;
-<<<<<<< HEAD
     /** @var InputInterface */
     private $input;
     /** @var int */
     private $statusCode;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
     /**
      * Gets the display returned by the last execution of the command or application.
      *
      * @throws \RuntimeException If it's called before the execute method
      *
-<<<<<<< HEAD
      * @return string
-=======
-     * @return string The display
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getDisplay(bool $normalize = false)
     {
@@ -88,11 +83,7 @@ trait TesterTrait
     /**
      * Gets the input instance used by the last execution of the command or application.
      *
-<<<<<<< HEAD
      * @return InputInterface
-=======
-     * @return InputInterface The current input instance
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getInput()
     {
@@ -102,11 +93,7 @@ trait TesterTrait
     /**
      * Gets the output instance used by the last execution of the command or application.
      *
-<<<<<<< HEAD
      * @return OutputInterface
-=======
-     * @return OutputInterface The current output instance
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getOutput()
     {
@@ -118,25 +105,20 @@ trait TesterTrait
      *
      * @throws \RuntimeException If it's called before the execute method
      *
-<<<<<<< HEAD
      * @return int
-=======
-     * @return int The status code
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getStatusCode()
     {
         if (null === $this->statusCode) {
             throw new \RuntimeException('Status code not initialized, did you execute the command before requesting the status code?');
         }
-<<<<<<< HEAD
 
         return $this->statusCode;
     }
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
-        return $this->statusCode;
+    public function assertCommandIsSuccessful(string $message = ''): void
+    {
+        Assert::assertThat($this->statusCode, new CommandIsSuccessful(), $message);
     }
 
     /**
@@ -176,8 +158,8 @@ trait TesterTrait
             }
         } else {
             $this->output = new ConsoleOutput(
-                isset($options['verbosity']) ? $options['verbosity'] : ConsoleOutput::VERBOSITY_NORMAL,
-                isset($options['decorated']) ? $options['decorated'] : null
+                $options['verbosity'] ?? ConsoleOutput::VERBOSITY_NORMAL,
+                $options['decorated'] ?? null
             );
 
             $errorOutput = new StreamOutput(fopen('php://memory', 'w', false));

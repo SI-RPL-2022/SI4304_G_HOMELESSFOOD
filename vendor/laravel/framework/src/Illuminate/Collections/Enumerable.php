@@ -211,11 +211,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Retrieve duplicate items.
      *
-<<<<<<< HEAD
      * @param  callable|string|null  $callback
-=======
-     * @param  callable|null  $callback
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @param  bool  $strict
      * @return static
      */
@@ -224,11 +220,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Retrieve duplicate items using strict comparison.
      *
-<<<<<<< HEAD
      * @param  callable|string|null  $callback
-=======
-     * @param  callable|null  $callback
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @return static
      */
     public function duplicatesStrict($callback = null);
@@ -423,13 +415,9 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     public function whereNotInStrict($key, $values);
 
     /**
-     * Filter the items, removing any items that don't match the given type.
+     * Filter the items, removing any items that don't match the given type(s).
      *
-<<<<<<< HEAD
      * @param  string|string[]  $type
-=======
-     * @param  string  $type
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @return static
      */
     public function whereInstanceOf($type);

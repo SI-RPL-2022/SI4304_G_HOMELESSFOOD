@@ -10,10 +10,7 @@ use Illuminate\Database\Query\Processors\PostgresProcessor;
 use Illuminate\Database\Schema\Grammars\PostgresGrammar as SchemaGrammar;
 use Illuminate\Database\Schema\PostgresBuilder;
 use Illuminate\Database\Schema\PostgresSchemaState;
-<<<<<<< HEAD
 use Illuminate\Filesystem\Filesystem;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 use PDO;
 
 class PostgresConnection extends Connection

@@ -2,10 +2,11 @@
 
 namespace Illuminate\Queue\Failed;
 
+use DateTimeInterface;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Support\Facades\Date;
 
-class DatabaseFailedJobProvider implements FailedJobProviderInterface
+class DatabaseFailedJobProvider implements FailedJobProviderInterface, PrunableFailedJobProvider
 {
     /**
      * The connection resolver implementation.
@@ -103,7 +104,6 @@ class DatabaseFailedJobProvider implements FailedJobProviderInterface
     public function flush()
     {
         $this->getTable()->delete();
-<<<<<<< HEAD
     }
 
     /**
@@ -125,8 +125,6 @@ class DatabaseFailedJobProvider implements FailedJobProviderInterface
         } while ($deleted !== 0);
 
         return $totalDeleted;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     }
 
     /**

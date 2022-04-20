@@ -24,17 +24,15 @@ class RoutingConfigurator
     private $loader;
     private $path;
     private $file;
-<<<<<<< HEAD
     private $env;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
-    public function __construct(RouteCollection $collection, PhpFileLoader $loader, string $path, string $file)
+    public function __construct(RouteCollection $collection, PhpFileLoader $loader, string $path, string $file, string $env = null)
     {
         $this->collection = $collection;
         $this->loader = $loader;
         $this->path = $path;
         $this->file = $file;
+        $this->env = $env;
     }
 
     /**
@@ -63,9 +61,8 @@ class RoutingConfigurator
     }
 
     /**
-     * @return static
+     * Get the current environment to be able to write conditional configuration.
      */
-<<<<<<< HEAD
     final public function env(): ?string
     {
         return $this->env;
@@ -74,8 +71,6 @@ class RoutingConfigurator
     /**
      * @return static
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     final public function withPath(string $path): self
     {
         $clone = clone $this;

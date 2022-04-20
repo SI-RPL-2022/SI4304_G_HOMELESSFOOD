@@ -24,12 +24,9 @@ class SingleCommandApplication extends Command
     private $autoExit = true;
     private $running = false;
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function setVersion(string $version): self
     {
         $this->version = $version;
@@ -39,6 +36,8 @@ class SingleCommandApplication extends Command
 
     /**
      * @final
+     *
+     * @return $this
      */
     public function setAutoExit(bool $autoExit): self
     {

@@ -4,12 +4,8 @@ namespace Illuminate\Encryption;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-<<<<<<< HEAD
 use Laravel\SerializableClosure\SerializableClosure;
 use Opis\Closure\SerializableClosure as OpisSerializableClosure;
-=======
-use Opis\Closure\SerializableClosure;
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
 class EncryptionServiceProvider extends ServiceProvider
 {
@@ -22,10 +18,7 @@ class EncryptionServiceProvider extends ServiceProvider
     {
         $this->registerEncrypter();
         $this->registerOpisSecurityKey();
-<<<<<<< HEAD
         $this->registerSerializableClosureSecurityKey();
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     }
 
     /**
@@ -44,7 +37,6 @@ class EncryptionServiceProvider extends ServiceProvider
 
     /**
      * Configure Opis Closure signing for security.
-<<<<<<< HEAD
      *
      * @return void
      *
@@ -65,12 +57,10 @@ class EncryptionServiceProvider extends ServiceProvider
 
     /**
      * Configure Serializable Closure signing for security.
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @return void
      */
-    protected function registerOpisSecurityKey()
+    protected function registerSerializableClosureSecurityKey()
     {
         $config = $this->app->make('config')->get('app');
 
@@ -102,7 +92,7 @@ class EncryptionServiceProvider extends ServiceProvider
      * @param  array  $config
      * @return string
      *
-     * @throws \RuntimeException
+     * @throws \Illuminate\Encryption\MissingAppKeyException
      */
     protected function key(array $config)
     {

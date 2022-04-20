@@ -37,19 +37,11 @@ class SerializerErrorRenderer implements ErrorRendererInterface
     public function __construct(SerializerInterface $serializer, $format, ErrorRendererInterface $fallbackErrorRenderer = null, $debug = false)
     {
         if (!\is_string($format) && !\is_callable($format)) {
-<<<<<<< HEAD
             throw new \TypeError(sprintf('Argument 2 passed to "%s()" must be a string or a callable, "%s" given.', __METHOD__, \gettype($format)));
         }
 
         if (!\is_bool($debug) && !\is_callable($debug)) {
             throw new \TypeError(sprintf('Argument 4 passed to "%s()" must be a boolean or a callable, "%s" given.', __METHOD__, \gettype($debug)));
-=======
-            throw new \TypeError(sprintf('Argument 2 passed to "%s()" must be a string or a callable, "%s" given.', __METHOD__, get_debug_type($format)));
-        }
-
-        if (!\is_bool($debug) && !\is_callable($debug)) {
-            throw new \TypeError(sprintf('Argument 4 passed to "%s()" must be a boolean or a callable, "%s" given.', __METHOD__, get_debug_type($debug)));
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
 
         $this->serializer = $serializer;

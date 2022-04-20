@@ -15,6 +15,7 @@ namespace Symfony\Component\Routing\Annotation;
  * Annotation class for @Route().
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"CLASS", "METHOD"})
  *
  * @author Fabien Potencier <fabien@symfony.com>
@@ -34,22 +35,14 @@ class Route
     private $schemes = [];
     private $condition;
     private $priority;
-<<<<<<< HEAD
     private $env;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
     /**
      * @param array|string      $data         data array managed by the Doctrine Annotations library or the path
      * @param array|string|null $path
      * @param string[]          $requirements
-<<<<<<< HEAD
      * @param string[]|string   $methods
      * @param string[]|string   $schemes
-=======
-     * @param string[]          $methods
-     * @param string[]          $schemes
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \BadMethodCallException
      */
@@ -61,30 +54,20 @@ class Route
         array $options = [],
         array $defaults = [],
         string $host = null,
-<<<<<<< HEAD
         $methods = [],
         $schemes = [],
-=======
-        array $methods = [],
-        array $schemes = [],
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         string $condition = null,
         int $priority = null,
         string $locale = null,
         string $format = null,
         bool $utf8 = null,
-<<<<<<< HEAD
         bool $stateless = null,
         string $env = null
-=======
-        bool $stateless = null
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     ) {
         if (\is_string($data)) {
             $data = ['path' => $data];
         } elseif (!\is_array($data)) {
             throw new \TypeError(sprintf('"%s": Argument $data is expected to be a string or array, got "%s".', __METHOD__, get_debug_type($data)));
-<<<<<<< HEAD
         } elseif ([] !== $data) {
             $deprecation = false;
             foreach ($data as $key => $val) {
@@ -99,8 +82,6 @@ class Route
                 $localizedPaths = $data;
                 $data = ['path' => $localizedPaths];
             }
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         }
         if (null !== $path && !\is_string($path) && !\is_array($path)) {
             throw new \TypeError(sprintf('"%s": Argument $path is expected to be a string, array or null, got "%s".', __METHOD__, get_debug_type($path)));
@@ -120,10 +101,7 @@ class Route
         $data['format'] = $data['format'] ?? $format;
         $data['utf8'] = $data['utf8'] ?? $utf8;
         $data['stateless'] = $data['stateless'] ?? $stateless;
-<<<<<<< HEAD
         $data['env'] = $data['env'] ?? $env;
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
         $data = array_filter($data, static function ($value): bool {
             return null !== $value;
@@ -141,7 +119,6 @@ class Route
         if (isset($data['path']) && \is_array($data['path'])) {
             $data['localized_paths'] = $data['path'];
             unset($data['path']);
-<<<<<<< HEAD
         }
 
         if (isset($data['locale'])) {
@@ -164,30 +141,6 @@ class Route
             unset($data['stateless']);
         }
 
-=======
-        }
-
-        if (isset($data['locale'])) {
-            $data['defaults']['_locale'] = $data['locale'];
-            unset($data['locale']);
-        }
-
-        if (isset($data['format'])) {
-            $data['defaults']['_format'] = $data['format'];
-            unset($data['format']);
-        }
-
-        if (isset($data['utf8'])) {
-            $data['options']['utf8'] = filter_var($data['utf8'], \FILTER_VALIDATE_BOOLEAN) ?: false;
-            unset($data['utf8']);
-        }
-
-        if (isset($data['stateless'])) {
-            $data['defaults']['_stateless'] = filter_var($data['stateless'], \FILTER_VALIDATE_BOOLEAN) ?: false;
-            unset($data['stateless']);
-        }
-
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         foreach ($data as $key => $value) {
             $method = 'set'.str_replace('_', '', $key);
             if (!method_exists($this, $method)) {
@@ -197,7 +150,7 @@ class Route
         }
     }
 
-    public function setPath($path)
+    public function setPath(string $path)
     {
         $this->path = $path;
     }
@@ -217,7 +170,7 @@ class Route
         return $this->localizedPaths;
     }
 
-    public function setHost($pattern)
+    public function setHost(string $pattern)
     {
         $this->host = $pattern;
     }
@@ -227,7 +180,7 @@ class Route
         return $this->host;
     }
 
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -237,7 +190,7 @@ class Route
         return $this->name;
     }
 
-    public function setRequirements($requirements)
+    public function setRequirements(array $requirements)
     {
         $this->requirements = $requirements;
     }
@@ -247,7 +200,7 @@ class Route
         return $this->requirements;
     }
 
-    public function setOptions($options)
+    public function setOptions(array $options)
     {
         $this->options = $options;
     }
@@ -257,7 +210,7 @@ class Route
         return $this->options;
     }
 
-    public function setDefaults($defaults)
+    public function setDefaults(array $defaults)
     {
         $this->defaults = $defaults;
     }
@@ -287,7 +240,7 @@ class Route
         return $this->methods;
     }
 
-    public function setCondition($condition)
+    public function setCondition(?string $condition)
     {
         $this->condition = $condition;
     }
@@ -305,5 +258,15 @@ class Route
     public function getPriority(): ?int
     {
         return $this->priority;
+    }
+
+    public function setEnv(?string $env): void
+    {
+        $this->env = $env;
+    }
+
+    public function getEnv(): ?string
+    {
+        return $this->env;
     }
 }

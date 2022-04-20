@@ -28,11 +28,7 @@ use Illuminate\Support\DateFactory;
  * @method static \Illuminate\Support\Carbon now($tz = null)
  * @method static \Illuminate\Support\Carbon parse($time = null, $tz = null)
  * @method static \Illuminate\Support\Carbon setHumanDiffOptions($humanDiffOptions)
-<<<<<<< HEAD
  * @method static void setTestNow($testNow = null)
-=======
- * @method static \Illuminate\Support\Carbon setTestNow($testNow = null)
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
  * @method static \Illuminate\Support\Carbon setUtf8($utf8)
  * @method static \Illuminate\Support\Carbon today($tz = null)
  * @method static \Illuminate\Support\Carbon tomorrow($tz = null)

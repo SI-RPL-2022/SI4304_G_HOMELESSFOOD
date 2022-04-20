@@ -1,7 +1,6 @@
 CHANGELOG
 =========
 
-<<<<<<< HEAD
 5.4
 ---
 
@@ -20,8 +19,6 @@ CHANGELOG
  * Add `ResponseFormatSame` PHPUnit constraint
  * Deprecate the `RequestStack::getMasterRequest()` method and add `getMainRequest()` as replacement
 
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 5.2.0
 -----
 
@@ -34,7 +31,6 @@ CHANGELOG
  * deprecated not passing a `Closure` together with `FILTER_CALLBACK` to `ParameterBag::filter()`; wrap your filter in a closure instead.
  * Deprecated the `Request::HEADER_X_FORWARDED_ALL` constant, use either `HEADER_X_FORWARDED_FOR | HEADER_X_FORWARDED_HOST | HEADER_X_FORWARDED_PORT | HEADER_X_FORWARDED_PROTO` or `HEADER_X_FORWARDED_AWS_ELB` or `HEADER_X_FORWARDED_TRAEFIK` constants instead.
  * Deprecated `BinaryFileResponse::create()`, use `__construct()` instead
-
 
 5.1.0
 -----

@@ -28,11 +28,7 @@ class AnnotationDirectoryLoader extends AnnotationFileLoader
      * @param string      $path A directory path
      * @param string|null $type The resource type
      *
-<<<<<<< HEAD
      * @return RouteCollection
-=======
-     * @return RouteCollection A RouteCollection instance
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \InvalidArgumentException When the directory does not exist or its routes cannot be parsed
      */
@@ -58,7 +54,7 @@ class AnnotationDirectoryLoader extends AnnotationFileLoader
         });
 
         foreach ($files as $file) {
-            if (!$file->isFile() || '.php' !== substr($file->getFilename(), -4)) {
+            if (!$file->isFile() || !str_ends_with($file->getFilename(), '.php')) {
                 continue;
             }
 

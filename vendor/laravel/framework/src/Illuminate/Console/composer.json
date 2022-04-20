@@ -19,13 +19,8 @@
         "illuminate/contracts": "^8.0",
         "illuminate/macroable": "^8.0",
         "illuminate/support": "^8.0",
-<<<<<<< HEAD
         "symfony/console": "^5.4",
         "symfony/process": "^5.4"
-=======
-        "symfony/console": "^5.1",
-        "symfony/process": "^5.1"
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     },
     "autoload": {
         "psr-4": {

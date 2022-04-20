@@ -15,12 +15,17 @@ namespace Symfony\Component\HttpFoundation;
  * HeaderBag is a container for HTTP headers.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @implements \IteratorAggregate<string, list<string|null>>
  */
 class HeaderBag implements \IteratorAggregate, \Countable
 {
     protected const UPPER = '_ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     protected const LOWER = '-abcdefghijklmnopqrstuvwxyz';
 
+    /**
+     * @var array<string, list<string|null>>
+     */
     protected $headers = [];
     protected $cacheControl = [];
 
@@ -34,11 +39,7 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Returns the headers as a string.
      *
-<<<<<<< HEAD
      * @return string
-=======
-     * @return string The headers
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function __toString()
     {
@@ -64,7 +65,7 @@ class HeaderBag implements \IteratorAggregate, \Countable
      *
      * @param string|null $key The name of the headers to return or null to get them all
      *
-     * @return array An array of headers
+     * @return array<string, array<int, string|null>>|array<int, string|null>
      */
     public function all(string $key = null)
     {
@@ -78,7 +79,7 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Returns the parameter keys.
      *
-     * @return array An array of parameter keys
+     * @return string[]
      */
     public function keys()
     {
@@ -105,15 +106,9 @@ class HeaderBag implements \IteratorAggregate, \Countable
     }
 
     /**
-<<<<<<< HEAD
      * Returns the first header by name or the default one.
      *
      * @return string|null
-=======
-     * Returns a header value by name.
-     *
-     * @return string|null The first header value or default value
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function get(string $key, string $default = null)
     {
@@ -133,8 +128,8 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Sets a header by name.
      *
-     * @param string|string[] $values  The value or an array of values
-     * @param bool            $replace Whether to replace the actual value or not (true by default)
+     * @param string|string[]|null $values  The value or an array of values
+     * @param bool                 $replace Whether to replace the actual value or not (true by default)
      */
     public function set(string $key, $values, bool $replace = true)
     {
@@ -164,11 +159,7 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Returns true if the HTTP header is defined.
      *
-<<<<<<< HEAD
      * @return bool
-=======
-     * @return bool true if the parameter exists, false otherwise
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function has(string $key)
     {
@@ -178,11 +169,7 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Returns true if the given HTTP header contains the given value.
      *
-<<<<<<< HEAD
      * @return bool
-=======
-     * @return bool true if the value is contained in the header, false otherwise
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function contains(string $key, string $value)
     {
@@ -206,11 +193,7 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Returns the HTTP header value converted to a date.
      *
-<<<<<<< HEAD
      * @return \DateTimeInterface|null
-=======
-     * @return \DateTimeInterface|null The parsed DateTime or the default value if the header does not exist
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      *
      * @throws \RuntimeException When the HTTP header is not parseable
      */
@@ -230,11 +213,7 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Adds a custom Cache-Control directive.
      *
-<<<<<<< HEAD
      * @param bool|string $value The Cache-Control directive value
-=======
-     * @param mixed $value The Cache-Control directive value
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function addCacheControlDirective(string $key, $value = true)
     {
@@ -246,11 +225,7 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Returns true if the Cache-Control directive is defined.
      *
-<<<<<<< HEAD
      * @return bool
-=======
-     * @return bool true if the directive exists, false otherwise
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function hasCacheControlDirective(string $key)
     {
@@ -260,15 +235,11 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Returns a Cache-Control directive value by name.
      *
-<<<<<<< HEAD
      * @return bool|string|null
-=======
-     * @return mixed|null The directive value if defined, null otherwise
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getCacheControlDirective(string $key)
     {
-        return \array_key_exists($key, $this->cacheControl) ? $this->cacheControl[$key] : null;
+        return $this->cacheControl[$key] ?? null;
     }
 
     /**
@@ -284,12 +255,9 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Returns an iterator for headers.
      *
-     * @return \ArrayIterator An \ArrayIterator instance
+     * @return \ArrayIterator<string, list<string|null>>
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function getIterator()
     {
         return new \ArrayIterator($this->headers);
@@ -298,14 +266,9 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Returns the number of headers.
      *
-<<<<<<< HEAD
      * @return int
      */
     #[\ReturnTypeWillChange]
-=======
-     * @return int The number of headers
-     */
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function count()
     {
         return \count($this->headers);
@@ -321,11 +284,7 @@ class HeaderBag implements \IteratorAggregate, \Countable
     /**
      * Parses a Cache-Control HTTP header.
      *
-<<<<<<< HEAD
      * @return array
-=======
-     * @return array An array representing the attribute values
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     protected function parseCacheControl(string $header)
     {

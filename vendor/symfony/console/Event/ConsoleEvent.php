@@ -28,7 +28,7 @@ class ConsoleEvent extends Event
     private $input;
     private $output;
 
-    public function __construct(Command $command = null, InputInterface $input, OutputInterface $output)
+    public function __construct(?Command $command, InputInterface $input, OutputInterface $output)
     {
         $this->command = $command;
         $this->input = $input;
@@ -38,11 +38,7 @@ class ConsoleEvent extends Event
     /**
      * Gets the command that is executed.
      *
-<<<<<<< HEAD
      * @return Command|null
-=======
-     * @return Command|null A Command instance
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getCommand()
     {
@@ -52,11 +48,7 @@ class ConsoleEvent extends Event
     /**
      * Gets the input instance.
      *
-<<<<<<< HEAD
      * @return InputInterface
-=======
-     * @return InputInterface An InputInterface instance
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getInput()
     {
@@ -66,11 +58,7 @@ class ConsoleEvent extends Event
     /**
      * Gets the output instance.
      *
-<<<<<<< HEAD
      * @return OutputInterface
-=======
-     * @return OutputInterface An OutputInterface instance
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
     public function getOutput()
     {

@@ -15,11 +15,13 @@ use Illuminate\Support\HigherOrderWhenProxy;
 use JsonSerializable;
 use Symfony\Component\VarDumper\VarDumper;
 use Traversable;
+use UnexpectedValueException;
 
 /**
  * @property-read HigherOrderCollectionProxy $average
  * @property-read HigherOrderCollectionProxy $avg
  * @property-read HigherOrderCollectionProxy $contains
+ * @property-read HigherOrderCollectionProxy $doesntContain
  * @property-read HigherOrderCollectionProxy $each
  * @property-read HigherOrderCollectionProxy $every
  * @property-read HigherOrderCollectionProxy $filter
@@ -45,7 +47,6 @@ use Traversable;
  */
 trait EnumeratesValues
 {
-<<<<<<< HEAD
     /**
      * Indicates that the object's string representation should be escaped when __toString is invoked.
      *
@@ -53,8 +54,6 @@ trait EnumeratesValues
      */
     protected $escapeWhenCastingToString = false;
 
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     /**
      * The methods that can be proxied.
      *
@@ -64,6 +63,7 @@ trait EnumeratesValues
         'average',
         'avg',
         'contains',
+        'doesntContain',
         'each',
         'every',
         'filter',
@@ -679,20 +679,24 @@ trait EnumeratesValues
     }
 
     /**
-<<<<<<< HEAD
      * Filter the items, removing any items that don't match the given type(s).
      *
      * @param  string|string[]  $type
-=======
-     * Filter the items, removing any items that don't match the given type.
-     *
-     * @param  string  $type
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * @return static
      */
     public function whereInstanceOf($type)
     {
         return $this->filter(function ($value) use ($type) {
+            if (is_array($type)) {
+                foreach ($type as $classType) {
+                    if ($value instanceof $classType) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             return $value instanceof $type;
         });
     }
@@ -720,7 +724,6 @@ trait EnumeratesValues
     }
 
     /**
-<<<<<<< HEAD
      * Pass the collection through a series of callable pipes and return the result.
      *
      * @param  array<callable>  $pipes
@@ -791,18 +794,23 @@ trait EnumeratesValues
      * @return array
      *
      * @throws \UnexpectedValueException
-=======
-     * Pass the collection to the given callback and then return it.
-     *
-     * @param  callable  $callback
-     * @return $this
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      */
-    public function tap(callable $callback)
+    public function reduceSpread(callable $callback, ...$initial)
     {
-        $callback(clone $this);
+        $result = $initial;
 
-        return $this;
+        foreach ($this as $key => $value) {
+            $result = call_user_func_array($callback, array_merge($result, [$value, $key]));
+
+            if (! is_array($result)) {
+                throw new UnexpectedValueException(sprintf(
+                    "%s::reduceMany expects reducer to return an array, but got a '%s' instead.",
+                    class_basename(static::class), gettype($result)
+                ));
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -835,31 +843,6 @@ trait EnumeratesValues
     }
 
     /**
-<<<<<<< HEAD
-=======
-     * Return only unique items from the collection array.
-     *
-     * @param  string|callable|null  $key
-     * @param  bool  $strict
-     * @return static
-     */
-    public function unique($key = null, $strict = false)
-    {
-        $callback = $this->valueRetriever($key);
-
-        $exists = [];
-
-        return $this->reject(function ($item, $key) use ($callback, $strict, &$exists) {
-            if (in_array($id = $callback($item, $key), $exists, $strict)) {
-                return true;
-            }
-
-            $exists[] = $id;
-        });
-    }
-
-    /**
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Return only unique items from the collection array using strict comparison.
      *
      * @param  string|callable|null  $key
@@ -897,10 +880,7 @@ trait EnumeratesValues
      *
      * @return array
      */
-<<<<<<< HEAD
     #[\ReturnTypeWillChange]
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function jsonSerialize()
     {
         return array_map(function ($value) {
@@ -945,7 +925,22 @@ trait EnumeratesValues
      */
     public function __toString()
     {
-        return $this->toJson();
+        return $this->escapeWhenCastingToString
+                    ? e($this->toJson())
+                    : $this->toJson();
+    }
+
+    /**
+     * Indicate that the model's string representation should be escaped when __toString is invoked.
+     *
+     * @param  bool  $escape
+     * @return $this
+     */
+    public function escapeWhenCastingToString($escape = true)
+    {
+        $this->escapeWhenCastingToString = $escape;
+
+        return $this;
     }
 
     /**

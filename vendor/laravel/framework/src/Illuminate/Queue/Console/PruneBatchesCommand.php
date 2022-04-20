@@ -7,13 +7,7 @@ use Illuminate\Bus\BatchRepository;
 use Illuminate\Bus\DatabaseBatchRepository;
 use Illuminate\Bus\PrunableBatchRepository;
 use Illuminate\Console\Command;
-<<<<<<< HEAD
-=======
-use Illuminate\Support\Carbon;
-use Symfony\Component\Console\Attribute\AsCommand;
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
-#[AsCommand(name: 'queue:prune-batches')]
 class PruneBatchesCommand extends Command
 {
     /**

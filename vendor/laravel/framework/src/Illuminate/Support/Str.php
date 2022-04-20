@@ -3,6 +3,7 @@
 namespace Illuminate\Support;
 
 use Illuminate\Support\Traits\Macroable;
+use League\CommonMark\GithubFlavoredMarkdownConverter;
 use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
 use Ramsey\Uuid\Generator\CombGenerator;
 use Ramsey\Uuid\Uuid;
@@ -96,6 +97,19 @@ class Str
     public static function ascii($value, $language = 'en')
     {
         return ASCII::to_ascii((string) $value, $language);
+    }
+
+    /**
+     * Transliterate a string to its closest ASCII representation.
+     *
+     * @param  string  $string
+     * @param  string|null  $unknown
+     * @param  bool|null  $strict
+     * @return string
+     */
+    public static function transliterate($string, $unknown = '?', $strict = false)
+    {
+        return ASCII::to_transliterate($string, $unknown, $strict);
     }
 
     /**
@@ -216,14 +230,10 @@ class Str
     public static function endsWith($haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-<<<<<<< HEAD
             if (
                 $needle !== '' && $needle !== null
                 && substr($haystack, -strlen($needle)) === (string) $needle
             ) {
-=======
-            if ($needle !== '' && substr($haystack, -strlen($needle)) === (string) $needle) {
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
                 return true;
             }
         }
@@ -256,11 +266,15 @@ class Str
     {
         $patterns = Arr::wrap($pattern);
 
+        $value = (string) $value;
+
         if (empty($patterns)) {
             return false;
         }
 
         foreach ($patterns as $pattern) {
+            $pattern = (string) $pattern;
+
             // If the given value is an exact match we can of course return true right
             // from the beginning. Otherwise, we will translate asterisks and do an
             // actual pattern match against the two strings to see if they match.
@@ -384,7 +398,6 @@ class Str
     }
 
     /**
-<<<<<<< HEAD
      * Converts GitHub flavored Markdown into HTML.
      *
      * @param  string  $string
@@ -467,8 +480,6 @@ class Str
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Pad both sides of a string with another.
      *
      * @param  string  $value
@@ -523,7 +534,7 @@ class Str
      * Get the plural form of an English word.
      *
      * @param  string  $value
-     * @param  int  $count
+     * @param  int|array|\Countable  $count
      * @return string
      */
     public static function plural($value, $count = 2)
@@ -535,7 +546,7 @@ class Str
      * Pluralize the last word of an English, studly caps case string.
      *
      * @param  string  $value
-     * @param  int  $count
+     * @param  int|array|\Countable  $count
      * @return string
      */
     public static function pluralStudly($value, $count = 2)
@@ -569,6 +580,18 @@ class Str
     }
 
     /**
+     * Repeat the given string.
+     *
+     * @param  string  $string
+     * @param  int  $times
+     * @return string
+     */
+    public static function repeat(string $string, int $times)
+    {
+        return str_repeat($string, $times);
+    }
+
+    /**
      * Replace a given value in the string sequentially with an array.
      *
      * @param  string  $search
@@ -590,6 +613,19 @@ class Str
     }
 
     /**
+     * Replace the given value in the given string.
+     *
+     * @param  string|string[]  $search
+     * @param  string|string[]  $replace
+     * @param  string|string[]  $subject
+     * @return string
+     */
+    public static function replace($search, $replace, $subject)
+    {
+        return str_replace($search, $replace, $subject);
+    }
+
+    /**
      * Replace the first occurrence of a given value in the string.
      *
      * @param  string  $search
@@ -599,11 +635,7 @@ class Str
      */
     public static function replaceFirst($search, $replace, $subject)
     {
-<<<<<<< HEAD
         if ($search === '') {
-=======
-        if ($search == '') {
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
             return $subject;
         }
 
@@ -637,6 +669,34 @@ class Str
         }
 
         return $subject;
+    }
+
+    /**
+     * Remove any occurrence of the given string in the subject.
+     *
+     * @param  string|array<string>  $search
+     * @param  string  $subject
+     * @param  bool  $caseSensitive
+     * @return string
+     */
+    public static function remove($search, $subject, $caseSensitive = true)
+    {
+        $subject = $caseSensitive
+                    ? str_replace($search, '', $subject)
+                    : str_ireplace($search, '', $subject);
+
+        return $subject;
+    }
+
+    /**
+     * Reverse the given string.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public static function reverse(string $value)
+    {
+        return implode(array_reverse(mb_str_split($value)));
     }
 
     /**
@@ -676,7 +736,6 @@ class Str
     }
 
     /**
-<<<<<<< HEAD
      * Convert the given string to title case for each word.
      *
      * @param  string  $value
@@ -696,8 +755,6 @@ class Str
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Get the singular form of an English word.
      *
      * @param  string  $value
@@ -793,13 +850,17 @@ class Str
             return static::$studlyCache[$key];
         }
 
-        $value = ucwords(str_replace(['-', '_'], ' ', $value));
+        $words = explode(' ', static::replace(['-', '_'], ' ', $value));
 
-        return static::$studlyCache[$key] = str_replace(' ', '', $value);
+        $studlyWords = array_map(function ($word) {
+            return static::ucfirst($word);
+        }, $words);
+
+        return static::$studlyCache[$key] = implode($studlyWords);
     }
 
     /**
-     * Returns the portion of string specified by the start and length parameters.
+     * Returns the portion of the string specified by the start and length parameters.
      *
      * @param  string  $string
      * @param  int  $start
@@ -830,7 +891,6 @@ class Str
     }
 
     /**
-<<<<<<< HEAD
      * Replace text within a portion of a string.
      *
      * @param  string|array  $string
@@ -861,8 +921,6 @@ class Str
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Make a string's first character uppercase.
      *
      * @param  string  $string
@@ -874,7 +932,6 @@ class Str
     }
 
     /**
-<<<<<<< HEAD
      * Split a string into pieces by uppercase characters.
      *
      * @param  string  $string
@@ -897,8 +954,6 @@ class Str
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Generate a UUID (version 4).
      *
      * @return \Ramsey\Uuid\UuidInterface
@@ -921,7 +976,7 @@ class Str
             return call_user_func(static::$uuidFactory);
         }
 
-        $factory = new UuidFactory();
+        $factory = new UuidFactory;
 
         $factory->setRandomGenerator(new CombGenerator(
             $factory->getRandomGenerator(),
@@ -954,5 +1009,17 @@ class Str
     public static function createUuidsNormally()
     {
         static::$uuidFactory = null;
+    }
+
+    /**
+     * Remove all strings from the casing caches.
+     *
+     * @return void
+     */
+    public static function flushCache()
+    {
+        static::$snakeCache = [];
+        static::$camelCache = [];
+        static::$studlyCache = [];
     }
 }

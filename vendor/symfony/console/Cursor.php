@@ -21,18 +21,18 @@ final class Cursor
     private $output;
     private $input;
 
+    /**
+     * @param resource|null $input
+     */
     public function __construct(OutputInterface $output, $input = null)
     {
         $this->output = $output;
         $this->input = $input ?? (\defined('STDIN') ? \STDIN : fopen('php://input', 'r+'));
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function moveUp(int $lines = 1): self
     {
         $this->output->write(sprintf("\x1b[%dA", $lines));
@@ -40,12 +40,9 @@ final class Cursor
         return $this;
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function moveDown(int $lines = 1): self
     {
         $this->output->write(sprintf("\x1b[%dB", $lines));
@@ -53,12 +50,9 @@ final class Cursor
         return $this;
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function moveRight(int $columns = 1): self
     {
         $this->output->write(sprintf("\x1b[%dC", $columns));
@@ -66,12 +60,9 @@ final class Cursor
         return $this;
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function moveLeft(int $columns = 1): self
     {
         $this->output->write(sprintf("\x1b[%dD", $columns));
@@ -79,12 +70,9 @@ final class Cursor
         return $this;
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function moveToColumn(int $column): self
     {
         $this->output->write(sprintf("\x1b[%dG", $column));
@@ -92,12 +80,9 @@ final class Cursor
         return $this;
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function moveToPosition(int $column, int $row): self
     {
         $this->output->write(sprintf("\x1b[%d;%dH", $row + 1, $column));
@@ -105,12 +90,9 @@ final class Cursor
         return $this;
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function savePosition(): self
     {
         $this->output->write("\x1b7");
@@ -118,12 +100,9 @@ final class Cursor
         return $this;
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function restorePosition(): self
     {
         $this->output->write("\x1b8");
@@ -131,12 +110,9 @@ final class Cursor
         return $this;
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function hide(): self
     {
         $this->output->write("\x1b[?25l");
@@ -144,12 +120,9 @@ final class Cursor
         return $this;
     }
 
-<<<<<<< HEAD
     /**
      * @return $this
      */
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     public function show(): self
     {
         $this->output->write("\x1b[?25h\x1b[?0c");
@@ -159,6 +132,8 @@ final class Cursor
 
     /**
      * Clears all the output from the current line.
+     *
+     * @return $this
      */
     public function clearLine(): self
     {
@@ -179,6 +154,8 @@ final class Cursor
 
     /**
      * Clears all the output from the cursors' current position to the end of the screen.
+     *
+     * @return $this
      */
     public function clearOutput(): self
     {
@@ -189,6 +166,8 @@ final class Cursor
 
     /**
      * Clears the entire screen.
+     *
+     * @return $this
      */
     public function clearScreen(): self
     {

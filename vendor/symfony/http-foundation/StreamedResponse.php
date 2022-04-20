@@ -52,11 +52,7 @@ class StreamedResponse extends Response
      */
     public static function create($callback = null, int $status = 200, array $headers = [])
     {
-<<<<<<< HEAD
         trigger_deprecation('symfony/http-foundation', '5.1', 'The "%s()" method is deprecated, use "new %s()" instead.', __METHOD__, static::class);
-=======
-        trigger_deprecation('symfony/http-foundation', '5.1', 'The "%s()" method is deprecated, use "new %s()" instead.', __METHOD__, \get_called_class());
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 
         return new static($callback, $status, $headers);
     }

@@ -81,7 +81,6 @@ class ContextualBindingBuilder implements ContextualBindingBuilderContract
             return is_array($taggedServices) ? $taggedServices : iterator_to_array($taggedServices);
         });
     }
-<<<<<<< HEAD
 
     /**
      * Specify the configuration item to bind as a primitive.
@@ -96,6 +95,4 @@ class ContextualBindingBuilder implements ContextualBindingBuilderContract
             return $container->get('config')->get($key, $default);
         });
     }
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
 }

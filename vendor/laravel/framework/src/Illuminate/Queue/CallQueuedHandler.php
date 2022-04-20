@@ -7,6 +7,7 @@ use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use RuntimeException;
 
 class CallQueuedHandler
 {
@@ -55,7 +57,7 @@ class CallQueuedHandler
     {
         try {
             $command = $this->setJobInstanceIfNecessary(
-                $job, unserialize($data['command'])
+                $job, $this->getCommand($data)
             );
         } catch (ModelNotFoundException $e) {
             return $this->handleModelNotFound($job, $e);
@@ -82,7 +84,6 @@ class CallQueuedHandler
     }
 
     /**
-<<<<<<< HEAD
      * Get the command from the given payload.
      *
      * @param  array  $data
@@ -104,8 +105,6 @@ class CallQueuedHandler
     }
 
     /**
-=======
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
      * Dispatch the given job / command through its specified middleware.
      *
      * @param  \Illuminate\Contracts\Queue\Job  $job
@@ -251,7 +250,7 @@ class CallQueuedHandler
      */
     public function failed(array $data, $e, string $uuid)
     {
-        $command = unserialize($data['command']);
+        $command = $this->getCommand($data);
 
         if (! $command instanceof ShouldBeUniqueUntilProcessing) {
             $this->ensureUniqueJobLockIsReleased($command);

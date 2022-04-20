@@ -17,15 +17,11 @@
     ],
     "require": {
         "php": ">=7.2.5",
-<<<<<<< HEAD
         "psr/container": "^1.1",
         "symfony/deprecation-contracts": "^2.1|^3"
     },
     "conflict": {
         "ext-psr": "<1.1|>=2"
-=======
-        "psr/container": "^1.0"
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
     },
     "suggest": {
         "symfony/service-implementation": ""
@@ -36,11 +32,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-<<<<<<< HEAD
             "dev-main": "2.5-dev"
-=======
-            "dev-master": "2.2-dev"
->>>>>>> dd4d141e796b9f4c10db739ea539a502f00e161f
         },
         "thanks": {
             "name": "symfony/contracts",
