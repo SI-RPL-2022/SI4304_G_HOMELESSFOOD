@@ -2,11 +2,10 @@
 
 namespace Illuminate\Queue\Failed;
 
-use DateTimeInterface;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Support\Facades\Date;
 
-class DatabaseFailedJobProvider implements FailedJobProviderInterface, PrunableFailedJobProvider
+class DatabaseFailedJobProvider implements FailedJobProviderInterface
 {
     /**
      * The connection resolver implementation.
@@ -57,7 +56,7 @@ class DatabaseFailedJobProvider implements FailedJobProviderInterface, PrunableF
     {
         $failed_at = Date::now();
 
-        $exception = (string) mb_convert_encoding($exception, 'UTF-8');
+        $exception = (string) $exception;
 
         return $this->getTable()->insertGetId(compact(
             'connection', 'queue', 'payload', 'exception', 'failed_at'
@@ -99,35 +98,11 @@ class DatabaseFailedJobProvider implements FailedJobProviderInterface, PrunableF
     /**
      * Flush all of the failed jobs from storage.
      *
-     * @param  int|null  $hours
      * @return void
      */
-    public function flush($hours = null)
+    public function flush()
     {
-        $this->getTable()->when($hours, function ($query, $hours) {
-            $query->where('failed_at', '<=', Date::now()->subHours($hours));
-        })->delete();
-    }
-
-    /**
-     * Prune all of the entries older than the given date.
-     *
-     * @param  \DateTimeInterface  $before
-     * @return int
-     */
-    public function prune(DateTimeInterface $before)
-    {
-        $query = $this->getTable()->where('failed_at', '<', $before);
-
-        $totalDeleted = 0;
-
-        do {
-            $deleted = $query->take(1000)->delete();
-
-            $totalDeleted += $deleted;
-        } while ($deleted !== 0);
-
-        return $totalDeleted;
+        $this->getTable()->delete();
     }
 
     /**

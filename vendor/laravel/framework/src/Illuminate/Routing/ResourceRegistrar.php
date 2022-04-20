@@ -79,7 +79,7 @@ class ResourceRegistrar
         // If the resource name contains a slash, we will assume the developer wishes to
         // register these resource routes with a prefix so we will set that up out of
         // the box so they don't have to mess with it. Otherwise, we will continue.
-        if (str_contains($name, '/')) {
+        if (Str::contains($name, '/')) {
             $this->prefixedResource($name, $controller, $options);
 
             return;
@@ -184,8 +184,6 @@ class ResourceRegistrar
     {
         $uri = $this->getResourceUri($name);
 
-        unset($options['missing']);
-
         $action = $this->getResourceAction($name, $controller, 'index', $options);
 
         return $this->router->get($uri, $action);
@@ -204,8 +202,6 @@ class ResourceRegistrar
     {
         $uri = $this->getResourceUri($name).'/'.static::$verbs['create'];
 
-        unset($options['missing']);
-
         $action = $this->getResourceAction($name, $controller, 'create', $options);
 
         return $this->router->get($uri, $action);
@@ -223,8 +219,6 @@ class ResourceRegistrar
     protected function addResourceStore($name, $base, $controller, $options)
     {
         $uri = $this->getResourceUri($name);
-
-        unset($options['missing']);
 
         $action = $this->getResourceAction($name, $controller, 'store', $options);
 
@@ -351,7 +345,7 @@ class ResourceRegistrar
      */
     public function getResourceUri($resource)
     {
-        if (! str_contains($resource, '.')) {
+        if (! Str::contains($resource, '.')) {
             return $resource;
         }
 
@@ -425,10 +419,6 @@ class ResourceRegistrar
 
         if (isset($options['wheres'])) {
             $action['where'] = $options['wheres'];
-        }
-
-        if (isset($options['missing'])) {
-            $action['missing'] = $options['missing'];
         }
 
         return $action;

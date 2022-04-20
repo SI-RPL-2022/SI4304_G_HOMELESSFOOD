@@ -3,7 +3,6 @@
 namespace Illuminate\Testing;
 
 use ArrayAccess;
-use Closure;
 use Countable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
@@ -97,10 +96,7 @@ class AssertableJsonString implements ArrayAccess, Countable
 
         $expected = $this->reorderAssocKeys($data);
 
-        PHPUnit::assertEquals(
-            json_encode($expected, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
-            json_encode($actual, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-        );
+        PHPUnit::assertEquals(json_encode($expected), json_encode($actual));
 
         return $this;
     }
@@ -220,11 +216,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      */
     public function assertPath($path, $expect)
     {
-        if ($expect instanceof Closure) {
-            PHPUnit::assertTrue($expect($this->json($path)));
-        } else {
-            PHPUnit::assertSame($expect, $this->json($path));
-        }
+        PHPUnit::assertSame($expect, $this->json($path));
 
         return $this;
     }
@@ -284,7 +276,8 @@ class AssertableJsonString implements ArrayAccess, Countable
     /**
      * Reorder associative array keys to make it easy to compare arrays.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return array
      */
     protected function reorderAssocKeys(array $data)
@@ -342,7 +335,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      *
      * @return int
      */
-    public function count(): int
+    public function count()
     {
         return count($this->decoded);
     }
@@ -353,7 +346,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      * @param  mixed  $offset
      * @return bool
      */
-    public function offsetExists($offset): bool
+    public function offsetExists($offset)
     {
         return isset($this->decoded[$offset]);
     }
@@ -364,7 +357,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      * @param  string  $offset
      * @return mixed
      */
-    public function offsetGet($offset): mixed
+    public function offsetGet($offset)
     {
         return $this->decoded[$offset];
     }
@@ -376,7 +369,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      * @param  mixed  $value
      * @return void
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet($offset, $value)
     {
         $this->decoded[$offset] = $value;
     }
@@ -387,7 +380,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      * @param  string  $offset
      * @return void
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset($offset)
     {
         unset($this->decoded[$offset]);
     }

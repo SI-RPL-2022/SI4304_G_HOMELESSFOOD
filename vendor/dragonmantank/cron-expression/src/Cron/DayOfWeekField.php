@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cron;
 
+use DateTime;
 use DateTimeInterface;
 use InvalidArgumentException;
 
@@ -53,8 +54,10 @@ class DayOfWeekField extends AbstractField
 
     /**
      * @inheritDoc
+     *
+     * @param \DateTime|\DateTimeImmutable $date
      */
-    public function isSatisfiedBy(DateTimeInterface $date, $value, bool $invert): bool
+    public function isSatisfiedBy(DateTimeInterface $date, $value): bool
     {
         if ('?' === $value) {
             return true;
@@ -69,12 +72,19 @@ class DayOfWeekField extends AbstractField
 
         // Find out if this is the last specific weekday of the month
         if (strpos($value, 'L')) {
+            /** @phpstan-ignore-next-line */
             $weekday = $this->convertLiterals(substr($value, 0, strpos($value, 'L')));
             $weekday %= 7;
 
-            $daysInMonth = (int) $date->format('t');
-            $remainingDaysInMonth = $daysInMonth - (int) $date->format('d');
-            return (($weekday === (int) $date->format('w')) && ($remainingDaysInMonth < 7));
+            $tdate = clone $date;
+            $tdate = $tdate->setDate($currentYear, $currentMonth, $lastDayOfMonth);
+            while ($tdate->format('w') != $weekday) {
+                $tdateClone = new DateTime();
+                $tdate = $tdateClone->setTimezone($tdate->getTimezone())
+                    ->setDate($currentYear, $currentMonth, --$lastDayOfMonth);
+            }
+
+            return (int) $date->format('j') === $lastDayOfMonth;
         }
 
         // Handle # hash tokens
@@ -146,15 +156,15 @@ class DayOfWeekField extends AbstractField
 
     /**
      * @inheritDoc
+     *
+     * @param \DateTime|\DateTimeImmutable $date
      */
     public function increment(DateTimeInterface &$date, $invert = false, $parts = null): FieldInterface
     {
-        if (! $invert) {
-            $date = $date->add(new \DateInterval('P1D'));
-            $date = $date->setTime(0, 0);
+        if ($invert) {
+            $date = $date->modify('-1 day')->setTime(23, 59, 0);
         } else {
-            $date = $date->sub(new \DateInterval('P1D'));
-            $date = $date->setTime(23, 59);
+            $date = $date->modify('+1 day')->setTime(0, 0, 0);
         }
 
         return $this;

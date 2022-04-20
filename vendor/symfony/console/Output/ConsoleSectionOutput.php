@@ -21,9 +21,9 @@ use Symfony\Component\Console\Terminal;
  */
 class ConsoleSectionOutput extends StreamOutput
 {
-    private array $content = [];
-    private int $lines = 0;
-    private array $sections;
+    private $content = [];
+    private $lines = 0;
+    private $sections;
     private $terminal;
 
     /**
@@ -63,8 +63,10 @@ class ConsoleSectionOutput extends StreamOutput
 
     /**
      * Overwrites the previous output with a new message.
+     *
+     * @param array|string $message
      */
-    public function overwrite(string|iterable $message)
+    public function overwrite($message)
     {
         $this->clear();
         $this->writeln($message);
@@ -90,7 +92,7 @@ class ConsoleSectionOutput extends StreamOutput
     /**
      * {@inheritdoc}
      */
-    protected function doWrite(string $message, bool $newline)
+    protected function doWrite($message, $newline)
     {
         if (!$this->isDecorated()) {
             parent::doWrite($message, $newline);
@@ -134,8 +136,8 @@ class ConsoleSectionOutput extends StreamOutput
         return implode('', array_reverse($erasedContent));
     }
 
-    private function getDisplayLength(string $text): int
+    private function getDisplayLength(string $text): string
     {
-        return Helper::width(Helper::removeDecoration($this->getFormatter(), str_replace("\t", '        ', $text)));
+        return Helper::strlenWithoutDecoration($this->getFormatter(), str_replace("\t", '        ', $text));
     }
 }

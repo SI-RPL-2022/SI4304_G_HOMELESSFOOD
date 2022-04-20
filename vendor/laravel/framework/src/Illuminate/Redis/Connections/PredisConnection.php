@@ -4,6 +4,8 @@ namespace Illuminate\Redis\Connections;
 
 use Closure;
 use Illuminate\Contracts\Redis\Connection as ConnectionContract;
+use Predis\Command\ServerFlushDatabase;
+use Predis\Connection\Aggregate\ClusterInterface;
 
 /**
  * @mixin \Predis\Client
@@ -44,10 +46,26 @@ class PredisConnection extends Connection implements ConnectionContract
 
         foreach ($loop as $message) {
             if ($message->kind === 'message' || $message->kind === 'pmessage') {
-                $callback($message->payload, $message->channel);
+                call_user_func($callback, $message->payload, $message->channel);
             }
         }
 
         unset($loop);
+    }
+
+    /**
+     * Flush the selected Redis database.
+     *
+     * @return void
+     */
+    public function flushdb()
+    {
+        if (! $this->client->getConnection() instanceof ClusterInterface) {
+            return $this->command('flushdb');
+        }
+
+        foreach ($this->getConnection() as $node) {
+            $node->executeCommand(new ServerFlushDatabase);
+        }
     }
 }

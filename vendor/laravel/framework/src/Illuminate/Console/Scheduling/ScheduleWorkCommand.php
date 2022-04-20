@@ -16,17 +16,6 @@ class ScheduleWorkCommand extends Command
     protected $name = 'schedule:work';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'schedule:work';
-
-    /**
      * The console command description.
      *
      * @var string
@@ -62,7 +51,7 @@ class ScheduleWorkCommand extends Command
 
                 if (! empty($output)) {
                     if ($key !== $keyOfLastExecutionWithOutput) {
-                        $this->info(PHP_EOL.'['.date('c').'] Execution #'.($key + 1).' output:');
+                        $this->info(PHP_EOL.'Execution #'.($key + 1).' output:');
 
                         $keyOfLastExecutionWithOutput = $key;
                     }

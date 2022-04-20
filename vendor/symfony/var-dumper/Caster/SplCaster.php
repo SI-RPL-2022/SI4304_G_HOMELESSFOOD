@@ -22,7 +22,7 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 class SplCaster
 {
-    private const SPL_FILE_OBJECT_FLAGS = [
+    private static $splFileObjectFlags = [
         \SplFileObject::DROP_NEW_LINE => 'DROP_NEW_LINE',
         \SplFileObject::READ_AHEAD => 'READ_AHEAD',
         \SplFileObject::SKIP_EMPTY => 'SKIP_EMPTY',
@@ -39,7 +39,7 @@ class SplCaster
         return self::castSplArray($c, $a, $stub, $isNested);
     }
 
-    public static function castHeap(\Iterator $c, array $a, Stub $stub, bool $isNested)
+    public static function castHeap(\Iterator $c, array $a, Stub $stub, $isNested)
     {
         $a += [
             Caster::PREFIX_VIRTUAL.'heap' => iterator_to_array(clone $c),
@@ -94,24 +94,32 @@ class SplCaster
         unset($a["\0SplFileInfo\0fileName"]);
         unset($a["\0SplFileInfo\0pathName"]);
 
-        try {
-            $c->isReadable();
-        } catch (\RuntimeException $e) {
-            if ('Object not initialized' !== $e->getMessage()) {
-                throw $e;
+        if (\PHP_VERSION_ID < 80000) {
+            if (false === $c->getPathname()) {
+                $a[$prefix.'⚠'] = 'The parent constructor was not called: the object is in an invalid state';
+
+                return $a;
             }
+        } else {
+            try {
+                $c->isReadable();
+            } catch (\RuntimeException $e) {
+                if ('Object not initialized' !== $e->getMessage()) {
+                    throw $e;
+                }
 
-            $a[$prefix.'⚠'] = 'The parent constructor was not called: the object is in an invalid state';
+                $a[$prefix.'⚠'] = 'The parent constructor was not called: the object is in an invalid state';
 
-            return $a;
-        } catch (\Error $e) {
-            if ('Object not initialized' !== $e->getMessage()) {
-                throw $e;
+                return $a;
+            } catch (\Error $e) {
+                if ('Object not initialized' !== $e->getMessage()) {
+                    throw $e;
+                }
+
+                $a[$prefix.'⚠'] = 'The parent constructor was not called: the object is in an invalid state';
+
+                return $a;
             }
-
-            $a[$prefix.'⚠'] = 'The parent constructor was not called: the object is in an invalid state';
-
-            return $a;
         }
 
         foreach ($map as $key => $accessor) {
@@ -121,7 +129,7 @@ class SplCaster
             }
         }
 
-        if ($a[$prefix.'realPath'] ?? false) {
+        if (isset($a[$prefix.'realPath'])) {
             $a[$prefix.'realPath'] = new LinkStub($a[$prefix.'realPath']);
         }
 
@@ -161,7 +169,7 @@ class SplCaster
 
         if (isset($a[$prefix.'flags'])) {
             $flagsArray = [];
-            foreach (self::SPL_FILE_OBJECT_FLAGS as $value => $name) {
+            foreach (self::$splFileObjectFlags as $value => $name) {
                 if ($a[$prefix.'flags'] & $value) {
                     $flagsArray[] = $name;
                 }
@@ -211,7 +219,7 @@ class SplCaster
         return $a;
     }
 
-    private static function castSplArray(\ArrayObject|\ArrayIterator $c, array $a, Stub $stub, bool $isNested): array
+    private static function castSplArray($c, array $a, Stub $stub, bool $isNested): array
     {
         $prefix = Caster::PREFIX_VIRTUAL;
         $flags = $c->getFlags();
@@ -220,6 +228,9 @@ class SplCaster
             $c->setFlags(\ArrayObject::STD_PROP_LIST);
             $a = Caster::castObject($c, \get_class($c), method_exists($c, '__debugInfo'), $stub->class);
             $c->setFlags($flags);
+        }
+        if (\PHP_VERSION_ID < 70400) {
+            $a[$prefix.'storage'] = $c->getArrayCopy();
         }
         $a += [
             $prefix.'flag::STD_PROP_LIST' => (bool) ($flags & \ArrayObject::STD_PROP_LIST),

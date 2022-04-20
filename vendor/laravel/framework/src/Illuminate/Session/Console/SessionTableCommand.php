@@ -16,17 +16,6 @@ class SessionTableCommand extends Command
     protected $name = 'session:table';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'session:table';
-
-    /**
      * The console command description.
      *
      * @var string
@@ -71,7 +60,7 @@ class SessionTableCommand extends Command
 
         $this->files->put($fullPath, $this->files->get(__DIR__.'/stubs/database.stub'));
 
-        $this->info('Migration created successfully.');
+        $this->info('Migration created successfully!');
 
         $this->composer->dumpAutoloads();
     }

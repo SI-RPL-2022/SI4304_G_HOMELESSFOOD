@@ -80,7 +80,7 @@ abstract class Input implements InputInterface, StreamableInputInterface
     /**
      * {@inheritdoc}
      */
-    public function isInteractive(): bool
+    public function isInteractive()
     {
         return $this->interactive;
     }
@@ -96,7 +96,7 @@ abstract class Input implements InputInterface, StreamableInputInterface
     /**
      * {@inheritdoc}
      */
-    public function getArguments(): array
+    public function getArguments()
     {
         return array_merge($this->definition->getArgumentDefaults(), $this->arguments);
     }
@@ -104,19 +104,19 @@ abstract class Input implements InputInterface, StreamableInputInterface
     /**
      * {@inheritdoc}
      */
-    public function getArgument(string $name): mixed
+    public function getArgument(string $name)
     {
         if (!$this->definition->hasArgument($name)) {
             throw new InvalidArgumentException(sprintf('The "%s" argument does not exist.', $name));
         }
 
-        return $this->arguments[$name] ?? $this->definition->getArgument($name)->getDefault();
+        return isset($this->arguments[$name]) ? $this->arguments[$name] : $this->definition->getArgument($name)->getDefault();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setArgument(string $name, mixed $value)
+    public function setArgument(string $name, $value)
     {
         if (!$this->definition->hasArgument($name)) {
             throw new InvalidArgumentException(sprintf('The "%s" argument does not exist.', $name));
@@ -128,7 +128,7 @@ abstract class Input implements InputInterface, StreamableInputInterface
     /**
      * {@inheritdoc}
      */
-    public function hasArgument(string $name): bool
+    public function hasArgument($name)
     {
         return $this->definition->hasArgument($name);
     }
@@ -136,7 +136,7 @@ abstract class Input implements InputInterface, StreamableInputInterface
     /**
      * {@inheritdoc}
      */
-    public function getOptions(): array
+    public function getOptions()
     {
         return array_merge($this->definition->getOptionDefaults(), $this->options);
     }
@@ -144,16 +144,8 @@ abstract class Input implements InputInterface, StreamableInputInterface
     /**
      * {@inheritdoc}
      */
-    public function getOption(string $name): mixed
+    public function getOption(string $name)
     {
-        if ($this->definition->hasNegation($name)) {
-            if (null === $value = $this->getOption($this->definition->negationToName($name))) {
-                return $value;
-            }
-
-            return !$value;
-        }
-
         if (!$this->definition->hasOption($name)) {
             throw new InvalidArgumentException(sprintf('The "%s" option does not exist.', $name));
         }
@@ -164,13 +156,9 @@ abstract class Input implements InputInterface, StreamableInputInterface
     /**
      * {@inheritdoc}
      */
-    public function setOption(string $name, mixed $value)
+    public function setOption(string $name, $value)
     {
-        if ($this->definition->hasNegation($name)) {
-            $this->options[$this->definition->negationToName($name)] = !$value;
-
-            return;
-        } elseif (!$this->definition->hasOption($name)) {
+        if (!$this->definition->hasOption($name)) {
             throw new InvalidArgumentException(sprintf('The "%s" option does not exist.', $name));
         }
 
@@ -180,15 +168,17 @@ abstract class Input implements InputInterface, StreamableInputInterface
     /**
      * {@inheritdoc}
      */
-    public function hasOption(string $name): bool
+    public function hasOption(string $name)
     {
-        return $this->definition->hasOption($name) || $this->definition->hasNegation($name);
+        return $this->definition->hasOption($name);
     }
 
     /**
      * Escapes a token through escapeshellarg if it contains unsafe chars.
+     *
+     * @return string
      */
-    public function escapeToken(string $token): string
+    public function escapeToken(string $token)
     {
         return preg_match('{^[\w-]+$}', $token) ? $token : escapeshellarg($token);
     }

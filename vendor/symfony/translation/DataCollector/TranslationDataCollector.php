@@ -62,24 +62,36 @@ class TranslationDataCollector extends DataCollector implements LateDataCollecto
         $this->data = [];
     }
 
-    public function getMessages(): array|Data
+    /**
+     * @return array|Data
+     */
+    public function getMessages()
     {
-        return $this->data['messages'] ?? [];
+        return isset($this->data['messages']) ? $this->data['messages'] : [];
     }
 
-    public function getCountMissings(): int
+    /**
+     * @return int
+     */
+    public function getCountMissings()
     {
-        return $this->data[DataCollectorTranslator::MESSAGE_MISSING] ?? 0;
+        return isset($this->data[DataCollectorTranslator::MESSAGE_MISSING]) ? $this->data[DataCollectorTranslator::MESSAGE_MISSING] : 0;
     }
 
-    public function getCountFallbacks(): int
+    /**
+     * @return int
+     */
+    public function getCountFallbacks()
     {
-        return $this->data[DataCollectorTranslator::MESSAGE_EQUALS_FALLBACK] ?? 0;
+        return isset($this->data[DataCollectorTranslator::MESSAGE_EQUALS_FALLBACK]) ? $this->data[DataCollectorTranslator::MESSAGE_EQUALS_FALLBACK] : 0;
     }
 
-    public function getCountDefines(): int
+    /**
+     * @return int
+     */
+    public function getCountDefines()
     {
-        return $this->data[DataCollectorTranslator::MESSAGE_DEFINED] ?? 0;
+        return isset($this->data[DataCollectorTranslator::MESSAGE_DEFINED]) ? $this->data[DataCollectorTranslator::MESSAGE_DEFINED] : 0;
     }
 
     public function getLocale()
@@ -98,7 +110,7 @@ class TranslationDataCollector extends DataCollector implements LateDataCollecto
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName()
     {
         return 'translation';
     }

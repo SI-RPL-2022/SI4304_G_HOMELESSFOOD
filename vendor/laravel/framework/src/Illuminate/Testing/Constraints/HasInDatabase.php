@@ -3,7 +3,6 @@
 namespace Illuminate\Testing\Constraints;
 
 use Illuminate\Database\Connection;
-use Illuminate\Database\Query\Expression;
 use PHPUnit\Framework\Constraint\Constraint;
 
 class HasInDatabase extends Constraint
@@ -91,7 +90,7 @@ class HasInDatabase extends Constraint
             $results = $query->limit($this->show)->get();
 
             if ($results->isEmpty()) {
-                return 'The table is empty';
+                return 'The table is empty.';
             }
 
             $description = 'Found: '.json_encode($results, JSON_PRETTY_PRINT);

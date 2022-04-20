@@ -41,9 +41,7 @@ class Person extends Base
 
     /**
      * @param string|null $gender 'male', 'female' or null for any
-     *
      * @return string
-     *
      * @example 'John Doe'
      */
     public function name($gender = null)
@@ -61,35 +59,25 @@ class Person extends Base
 
     /**
      * @param string|null $gender 'male', 'female' or null for any
-     *
      * @return string
-     *
      * @example 'John'
      */
     public function firstName($gender = null)
     {
         if ($gender === static::GENDER_MALE) {
             return static::firstNameMale();
-        }
-
-        if ($gender === static::GENDER_FEMALE) {
+        } elseif ($gender === static::GENDER_FEMALE) {
             return static::firstNameFemale();
         }
 
         return $this->generator->parse(static::randomElement(static::$firstNameFormat));
     }
 
-    /**
-     * @return string
-     */
     public static function firstNameMale()
     {
         return static::randomElement(static::$firstNameMale);
     }
 
-    /**
-     * @return string
-     */
     public static function firstNameFemale()
     {
         return static::randomElement(static::$firstNameFemale);
@@ -97,7 +85,6 @@ class Person extends Base
 
     /**
      * @example 'Doe'
-     *
      * @return string
      */
     public function lastName()
@@ -107,18 +94,14 @@ class Person extends Base
 
     /**
      * @example 'Mrs.'
-     *
      * @param string|null $gender 'male', 'female' or null for any
-     *
      * @return string
      */
     public function title($gender = null)
     {
         if ($gender === static::GENDER_MALE) {
             return static::titleMale();
-        }
-
-        if ($gender === static::GENDER_FEMALE) {
+        } elseif ($gender === static::GENDER_FEMALE) {
             return static::titleFemale();
         }
 
@@ -127,8 +110,6 @@ class Person extends Base
 
     /**
      * @example 'Mr.'
-     *
-     * @return string
      */
     public static function titleMale()
     {
@@ -137,8 +118,6 @@ class Person extends Base
 
     /**
      * @example 'Mrs.'
-     *
-     * @return string
      */
     public static function titleFemale()
     {

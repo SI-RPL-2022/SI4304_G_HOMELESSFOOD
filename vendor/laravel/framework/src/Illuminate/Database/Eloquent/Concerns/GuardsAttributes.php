@@ -2,6 +2,8 @@
 
 namespace Illuminate\Database\Eloquent\Concerns;
 
+use Illuminate\Support\Str;
+
 trait GuardsAttributes
 {
     /**
@@ -128,7 +130,7 @@ trait GuardsAttributes
     }
 
     /**
-     * Determine if the current state is "unguarded".
+     * Determine if current state is "unguarded".
      *
      * @return bool
      */
@@ -185,8 +187,8 @@ trait GuardsAttributes
         }
 
         return empty($this->getFillable()) &&
-            ! str_contains($key, '.') &&
-            ! str_starts_with($key, '_');
+            strpos($key, '.') === false &&
+            ! Str::startsWith($key, '_');
     }
 
     /**
@@ -215,14 +217,9 @@ trait GuardsAttributes
     protected function isGuardableColumn($key)
     {
         if (! isset(static::$guardableColumns[get_class($this)])) {
-            $columns = $this->getConnection()
+            static::$guardableColumns[get_class($this)] = $this->getConnection()
                         ->getSchemaBuilder()
                         ->getColumnListing($this->getTable());
-
-            if (empty($columns)) {
-                return true;
-            }
-            static::$guardableColumns[get_class($this)] = $columns;
         }
 
         return in_array($key, static::$guardableColumns[get_class($this)]);

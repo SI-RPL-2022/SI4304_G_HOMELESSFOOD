@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Esi extends AbstractSurrogate
 {
-    public function getName(): string
+    public function getName()
     {
         return 'esi';
     }
@@ -37,7 +37,7 @@ class Esi extends AbstractSurrogate
      */
     public function addSurrogateControl(Response $response)
     {
-        if (str_contains($response->getContent(), '<esi:include')) {
+        if (false !== strpos($response->getContent(), '<esi:include')) {
             $response->headers->set('Surrogate-Control', 'content="ESI/1.0"');
         }
     }
@@ -45,7 +45,7 @@ class Esi extends AbstractSurrogate
     /**
      * {@inheritdoc}
      */
-    public function renderIncludeTag(string $uri, string $alt = null, bool $ignoreErrors = true, string $comment = ''): string
+    public function renderIncludeTag(string $uri, string $alt = null, bool $ignoreErrors = true, string $comment = '')
     {
         $html = sprintf('<esi:include src="%s"%s%s />',
             $uri,
@@ -63,7 +63,7 @@ class Esi extends AbstractSurrogate
     /**
      * {@inheritdoc}
      */
-    public function process(Request $request, Response $response): Response
+    public function process(Request $request, Response $response)
     {
         $type = $response->headers->get('Content-Type');
         if (empty($type)) {
@@ -97,7 +97,7 @@ class Esi extends AbstractSurrogate
 
             $chunks[$i] = sprintf('<?php echo $this->surrogate->handle($this, %s, %s, %s) ?>'."\n",
                 var_export($options['src'], true),
-                var_export($options['alt'] ?? '', true),
+                var_export(isset($options['alt']) ? $options['alt'] : '', true),
                 isset($options['onerror']) && 'continue' === $options['onerror'] ? 'true' : 'false'
             );
             ++$i;

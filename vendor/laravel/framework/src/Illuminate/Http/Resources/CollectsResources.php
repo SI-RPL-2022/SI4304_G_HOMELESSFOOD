@@ -2,14 +2,9 @@
 
 namespace Illuminate\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Pagination\AbstractCursorPaginator;
 use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use LogicException;
-use ReflectionClass;
-use Traversable;
 
 trait CollectsResources
 {
@@ -35,7 +30,7 @@ trait CollectsResources
             ? $resource->mapInto($collects)
             : $resource->toBase();
 
-        return ($resource instanceof AbstractPaginator || $resource instanceof AbstractCursorPaginator)
+        return $resource instanceof AbstractPaginator
                     ? $resource->setCollection($this->collection)
                     : $this->collection;
     }
@@ -47,39 +42,14 @@ trait CollectsResources
      */
     protected function collects()
     {
-        $collects = null;
-
         if ($this->collects) {
-            $collects = $this->collects;
-        } elseif (str_ends_with(class_basename($this), 'Collection') &&
-            (class_exists($class = Str::replaceLast('Collection', '', get_class($this))) ||
-             class_exists($class = Str::replaceLast('Collection', 'Resource', get_class($this))))) {
-            $collects = $class;
+            return $this->collects;
         }
 
-        if (! $collects || is_a($collects, JsonResource::class, true)) {
-            return $collects;
+        if (Str::endsWith(class_basename($this), 'Collection') &&
+            class_exists($class = Str::replaceLast('Collection', '', get_class($this)))) {
+            return $class;
         }
-
-        throw new LogicException('Resource collections must collect instances of '.JsonResource::class.'.');
-    }
-
-    /**
-     * Get the JSON serialization options that should be applied to the resource response.
-     *
-     * @return int
-     */
-    public function jsonOptions()
-    {
-        $collects = $this->collects();
-
-        if (! $collects) {
-            return 0;
-        }
-
-        return (new ReflectionClass($collects))
-                  ->newInstanceWithoutConstructor()
-                  ->jsonOptions();
     }
 
     /**
@@ -87,7 +57,7 @@ trait CollectsResources
      *
      * @return \ArrayIterator
      */
-    public function getIterator(): Traversable
+    public function getIterator()
     {
         return $this->collection->getIterator();
     }

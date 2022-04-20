@@ -2,11 +2,10 @@
 
 ## Supported Versions
 
-Only the last two release streams are supported.
+Only the latest release stream is supported.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.9.x   | :white_check_mark: |
 | 0.8.x   | :white_check_mark: |
 | < 0.8   | :x:                |
 

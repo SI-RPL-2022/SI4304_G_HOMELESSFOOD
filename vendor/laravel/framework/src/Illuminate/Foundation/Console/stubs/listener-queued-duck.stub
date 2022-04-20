@@ -1,11 +1,11 @@
 <?php
 
-namespace {{ namespace }};
+namespace DummyNamespace;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class {{ class }} implements ShouldQueue
+class DummyClass implements ShouldQueue
 {
     use InteractsWithQueue;
 

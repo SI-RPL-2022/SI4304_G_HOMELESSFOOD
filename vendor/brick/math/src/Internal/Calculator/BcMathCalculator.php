@@ -41,9 +41,6 @@ class BcMathCalculator extends Calculator
 
     /**
      * {@inheritdoc}
-     *
-     * @psalm-suppress InvalidNullableReturnType
-     * @psalm-suppress NullableReturnStatement
      */
     public function divQ(string $a, string $b) : string
     {
@@ -52,16 +49,9 @@ class BcMathCalculator extends Calculator
 
     /**
      * {@inheritdoc}
-     *
-     * @psalm-suppress InvalidNullableReturnType
-     * @psalm-suppress NullableReturnStatement
      */
     public function divR(string $a, string $b) : string
     {
-        if (version_compare(PHP_VERSION, '7.2') >= 0) {
-            return \bcmod($a, $b, 0);
-        }
-
         return \bcmod($a, $b);
     }
 
@@ -71,15 +61,7 @@ class BcMathCalculator extends Calculator
     public function divQR(string $a, string $b) : array
     {
         $q = \bcdiv($a, $b, 0);
-
-        if (version_compare(PHP_VERSION, '7.2') >= 0) {
-            $r = \bcmod($a, $b, 0);
-        } else {
-            $r = \bcmod($a, $b);
-        }
-
-        assert($q !== null);
-        assert($r !== null);
+        $r = \bcmod($a, $b);
 
         return [$q, $r];
     }
@@ -94,9 +76,6 @@ class BcMathCalculator extends Calculator
 
     /**
      * {@inheritdoc}
-     *
-     * @psalm-suppress InvalidNullableReturnType
-     * @psalm-suppress NullableReturnStatement
      */
     public function modPow(string $base, string $exp, string $mod) : string
     {
@@ -105,9 +84,6 @@ class BcMathCalculator extends Calculator
 
     /**
      * {@inheritDoc}
-     *
-     * @psalm-suppress NullableReturnStatement
-     * @psalm-suppress InvalidNullableReturnType
      */
     public function sqrt(string $n) : string
     {

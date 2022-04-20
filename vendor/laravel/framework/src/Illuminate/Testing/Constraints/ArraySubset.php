@@ -91,9 +91,9 @@ if (class_exists(Version::class) && (int) Version::series()[0] >= 9) {
         /**
          * Returns a string representation of the constraint.
          *
-         * @return string
-         *
          * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+         *
+         * @return string
          */
         public function toString(): string
         {
@@ -224,9 +224,9 @@ if (class_exists(Version::class) && (int) Version::series()[0] >= 9) {
         /**
          * Returns a string representation of the constraint.
          *
-         * @return string
-         *
          * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+         *
+         * @return string
          */
         public function toString(): string
         {

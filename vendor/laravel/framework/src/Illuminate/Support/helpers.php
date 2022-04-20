@@ -6,7 +6,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Env;
 use Illuminate\Support\HigherOrderTapProxy;
 use Illuminate\Support\Optional;
-use Illuminate\Support\Str;
 
 if (! function_exists('append_config')) {
     /**
@@ -102,7 +101,7 @@ if (! function_exists('e')) {
     /**
      * Encode HTML special characters in a string.
      *
-     * @param  \Illuminate\Contracts\Support\DeferringDisplayableValue|\Illuminate\Contracts\Support\Htmlable|string|null  $value
+     * @param  \Illuminate\Contracts\Support\DeferringDisplayableValue|\Illuminate\Contracts\Support\Htmlable|string  $value
      * @param  bool  $doubleEncode
      * @return string
      */
@@ -116,7 +115,7 @@ if (! function_exists('e')) {
             return $value->toHtml();
         }
 
-        return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8', $doubleEncode);
+        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8', $doubleEncode);
     }
 }
 
@@ -158,7 +157,7 @@ if (! function_exists('object_get')) {
      */
     function object_get($object, $key, $default = null)
     {
-        if (is_null($key) || trim($key) === '') {
+        if (is_null($key) || trim($key) == '') {
             return $object;
         }
 
@@ -204,7 +203,7 @@ if (! function_exists('preg_replace_array')) {
     function preg_replace_array($pattern, array $replacements, $subject)
     {
         return preg_replace_callback($pattern, function () use (&$replacements) {
-            foreach ($replacements as $value) {
+            foreach ($replacements as $key => $value) {
                 return array_shift($replacements);
             }
         }, $subject);
@@ -215,25 +214,17 @@ if (! function_exists('retry')) {
     /**
      * Retry an operation a given number of times.
      *
-     * @param  int|array  $times
+     * @param  int  $times
      * @param  callable  $callback
-     * @param  int|\Closure  $sleepMilliseconds
+     * @param  int  $sleep
      * @param  callable|null  $when
      * @return mixed
      *
      * @throws \Exception
      */
-    function retry($times, callable $callback, $sleepMilliseconds = 0, $when = null)
+    function retry($times, callable $callback, $sleep = 0, $when = null)
     {
         $attempts = 0;
-
-        $backoff = [];
-
-        if (is_array($times)) {
-            $backoff = $times;
-
-            $times = count($times) + 1;
-        }
 
         beginning:
         $attempts++;
@@ -246,42 +237,12 @@ if (! function_exists('retry')) {
                 throw $e;
             }
 
-            $sleepMilliseconds = $backoff[$attempts - 1] ?? $sleepMilliseconds;
-
-            if ($sleepMilliseconds) {
-                usleep(value($sleepMilliseconds, $attempts) * 1000);
+            if ($sleep) {
+                usleep($sleep * 1000);
             }
 
             goto beginning;
         }
-    }
-}
-
-if (! function_exists('str')) {
-    /**
-     * Get a new stringable object from the given string.
-     *
-     * @param  string|null  $string
-     * @return \Illuminate\Support\Stringable|mixed
-     */
-    function str($string = null)
-    {
-        if (func_num_args() === 0) {
-            return new class
-            {
-                public function __call($method, $parameters)
-                {
-                    return Str::$method(...$parameters);
-                }
-
-                public function __toString()
-                {
-                    return '';
-                }
-            };
-        }
-
-        return Str::of($string);
     }
 }
 
@@ -311,19 +272,15 @@ if (! function_exists('throw_if')) {
      *
      * @param  mixed  $condition
      * @param  \Throwable|string  $exception
-     * @param  mixed  ...$parameters
+     * @param  array  ...$parameters
      * @return mixed
      *
      * @throws \Throwable
      */
-    function throw_if($condition, $exception = 'RuntimeException', ...$parameters)
+    function throw_if($condition, $exception, ...$parameters)
     {
         if ($condition) {
-            if (is_string($exception) && class_exists($exception)) {
-                $exception = new $exception(...$parameters);
-            }
-
-            throw is_string($exception) ? new RuntimeException($exception) : $exception;
+            throw (is_string($exception) ? new $exception(...$parameters) : $exception);
         }
 
         return $condition;
@@ -336,14 +293,16 @@ if (! function_exists('throw_unless')) {
      *
      * @param  mixed  $condition
      * @param  \Throwable|string  $exception
-     * @param  mixed  ...$parameters
+     * @param  array  ...$parameters
      * @return mixed
      *
      * @throws \Throwable
      */
-    function throw_unless($condition, $exception = 'RuntimeException', ...$parameters)
+    function throw_unless($condition, $exception, ...$parameters)
     {
-        throw_if(! $condition, $exception, ...$parameters);
+        if (! $condition) {
+            throw (is_string($exception) ? new $exception(...$parameters) : $exception);
+        }
 
         return $condition;
     }
@@ -358,7 +317,7 @@ if (! function_exists('trait_uses_recursive')) {
      */
     function trait_uses_recursive($trait)
     {
-        $traits = class_uses($trait) ?: [];
+        $traits = class_uses($trait);
 
         foreach ($traits as $trait) {
             $traits += trait_uses_recursive($trait);
@@ -407,11 +366,9 @@ if (! function_exists('with')) {
     /**
      * Return the given value, optionally passed through the given callback.
      *
-     * @template TValue
-     *
-     * @param  TValue  $value
-     * @param  (callable(TValue): TValue)|null  $callback
-     * @return TValue
+     * @param  mixed  $value
+     * @param  callable|null  $callback
+     * @return mixed
      */
     function with($value, callable $callback = null)
     {

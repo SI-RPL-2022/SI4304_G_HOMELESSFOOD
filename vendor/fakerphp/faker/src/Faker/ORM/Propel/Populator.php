@@ -12,6 +12,9 @@ class Populator
     protected $entities = [];
     protected $quantities = [];
 
+    /**
+     * @param \Faker\Generator $generator
+     */
     public function __construct(\Faker\Generator $generator)
     {
         $this->generator = $generator;
@@ -29,12 +32,10 @@ class Populator
             $entity = new \Faker\ORM\Propel\EntityPopulator($entity);
         }
         $entity->setColumnFormatters($entity->guessColumnFormatters($this->generator));
-
         if ($customColumnFormatters) {
             $entity->mergeColumnFormattersWith($customColumnFormatters);
         }
         $entity->setModifiers($entity->guessModifiers($this->generator));
-
         if ($customModifiers) {
             $entity->mergeModifiersWith($customModifiers);
         }
@@ -59,14 +60,12 @@ class Populator
         \Propel::disableInstancePooling();
         $insertedEntities = [];
         $con->beginTransaction();
-
         foreach ($this->quantities as $class => $number) {
-            for ($i = 0; $i < $number; ++$i) {
-                $insertedEntities[$class][] = $this->entities[$class]->execute($con, $insertedEntities);
+            for ($i=0; $i < $number; $i++) {
+                $insertedEntities[$class][]= $this->entities[$class]->execute($con, $insertedEntities);
             }
         }
         $con->commit();
-
         if ($isInstancePoolingEnabled) {
             \Propel::enableInstancePooling();
         }

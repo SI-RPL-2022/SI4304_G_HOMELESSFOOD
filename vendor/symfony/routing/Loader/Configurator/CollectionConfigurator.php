@@ -25,8 +25,8 @@ class CollectionConfigurator
 
     private $parent;
     private $parentConfigurator;
-    private ?array $parentPrefixes;
-    private string|array|null $host = null;
+    private $parentPrefixes;
+    private $host;
 
     public function __construct(RouteCollection $parent, string $name, self $parentConfigurator = null, array $parentPrefixes = null)
     {
@@ -36,16 +36,6 @@ class CollectionConfigurator
         $this->route = new Route('');
         $this->parentConfigurator = $parentConfigurator; // for GC control
         $this->parentPrefixes = $parentPrefixes;
-    }
-
-    public function __sleep(): array
-    {
-        throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
-    }
-
-    public function __wakeup()
-    {
-        throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
     }
 
     public function __destruct()
@@ -75,7 +65,7 @@ class CollectionConfigurator
      *
      * @return $this
      */
-    final public function prefix(string|array $prefix): static
+    final public function prefix($prefix): self
     {
         if (\is_array($prefix)) {
             if (null === $this->parentPrefixes) {
@@ -108,7 +98,7 @@ class CollectionConfigurator
      *
      * @return $this
      */
-    final public function host(string|array $host): static
+    final public function host($host): self
     {
         $this->host = $host;
 

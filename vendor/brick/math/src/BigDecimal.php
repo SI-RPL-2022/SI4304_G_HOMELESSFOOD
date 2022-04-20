@@ -96,10 +96,7 @@ final class BigDecimal extends BigNumber
      */
     public static function zero() : BigDecimal
     {
-        /**
-         * @psalm-suppress ImpureStaticVariable
-         * @var BigDecimal|null $zero
-         */
+        /** @psalm-suppress ImpureStaticVariable */
         static $zero;
 
         if ($zero === null) {
@@ -118,10 +115,7 @@ final class BigDecimal extends BigNumber
      */
     public static function one() : BigDecimal
     {
-        /**
-         * @psalm-suppress ImpureStaticVariable
-         * @var BigDecimal|null $one
-         */
+        /** @psalm-suppress ImpureStaticVariable */
         static $one;
 
         if ($one === null) {
@@ -140,10 +134,7 @@ final class BigDecimal extends BigNumber
      */
     public static function ten() : BigDecimal
     {
-        /**
-         * @psalm-suppress ImpureStaticVariable
-         * @var BigDecimal|null $ten
-         */
+        /** @psalm-suppress ImpureStaticVariable */
         static $ten;
 
         if ($ten === null) {
@@ -686,7 +677,11 @@ final class BigDecimal extends BigNumber
      */
     public function toBigInteger() : BigInteger
     {
-        $zeroScaleDecimal = $this->scale === 0 ? $this : $this->dividedBy(1, 0);
+        if ($this->scale === 0) {
+            $zeroScaleDecimal = $this;
+        } else {
+            $zeroScaleDecimal = $this->dividedBy(1, 0);
+        }
 
         return BigInteger::create($zeroScaleDecimal->value);
     }
@@ -753,40 +748,6 @@ final class BigDecimal extends BigNumber
     }
 
     /**
-     * This method is required for serializing the object and SHOULD NOT be accessed directly.
-     *
-     * @internal
-     *
-     * @return array{value: string, scale: int}
-     */
-    public function __serialize(): array
-    {
-        return ['value' => $this->value, 'scale' => $this->scale];
-    }
-
-    /**
-     * This method is only here to allow unserializing the object and cannot be accessed directly.
-     *
-     * @internal
-     * @psalm-suppress RedundantPropertyInitializationCheck
-     *
-     * @param array{value: string, scale: int} $data
-     *
-     * @return void
-     *
-     * @throws \LogicException
-     */
-    public function __unserialize(array $data): void
-    {
-        if (isset($this->value)) {
-            throw new \LogicException('__unserialize() is an internal function, it must not be called directly.');
-        }
-
-        $this->value = $data['value'];
-        $this->scale = $data['scale'];
-    }
-
-    /**
      * This method is required by interface Serializable and SHOULD NOT be accessed directly.
      *
      * @internal
@@ -802,7 +763,6 @@ final class BigDecimal extends BigNumber
      * This method is only here to implement interface Serializable and cannot be accessed directly.
      *
      * @internal
-     * @psalm-suppress RedundantPropertyInitializationCheck
      *
      * @param string $value
      *
@@ -828,7 +788,7 @@ final class BigDecimal extends BigNumber
      * @param BigDecimal $x The first decimal number.
      * @param BigDecimal $y The second decimal number.
      *
-     * @return array{string, string} The scaled integer values of $x and $y.
+     * @return array{0: string, 1: string} The scaled integer values of $x and $y.
      */
     private function scaleValues(BigDecimal $x, BigDecimal $y) : array
     {

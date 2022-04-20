@@ -99,7 +99,7 @@ class Repository implements ArrayAccess, ConfigContract
      */
     public function prepend($key, $value)
     {
-        $array = $this->get($key, []);
+        $array = $this->get($key);
 
         array_unshift($array, $value);
 
@@ -115,7 +115,7 @@ class Repository implements ArrayAccess, ConfigContract
      */
     public function push($key, $value)
     {
-        $array = $this->get($key, []);
+        $array = $this->get($key);
 
         $array[] = $value;
 
@@ -138,7 +138,7 @@ class Repository implements ArrayAccess, ConfigContract
      * @param  string  $key
      * @return bool
      */
-    public function offsetExists($key): bool
+    public function offsetExists($key)
     {
         return $this->has($key);
     }
@@ -149,7 +149,7 @@ class Repository implements ArrayAccess, ConfigContract
      * @param  string  $key
      * @return mixed
      */
-    public function offsetGet($key): mixed
+    public function offsetGet($key)
     {
         return $this->get($key);
     }
@@ -161,7 +161,7 @@ class Repository implements ArrayAccess, ConfigContract
      * @param  mixed  $value
      * @return void
      */
-    public function offsetSet($key, $value): void
+    public function offsetSet($key, $value)
     {
         $this->set($key, $value);
     }
@@ -172,7 +172,7 @@ class Repository implements ArrayAccess, ConfigContract
      * @param  string  $key
      * @return void
      */
-    public function offsetUnset($key): void
+    public function offsetUnset($key)
     {
         $this->set($key, null);
     }

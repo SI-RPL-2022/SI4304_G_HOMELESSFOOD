@@ -16,9 +16,6 @@ namespace Ramsey\Collection\Map;
 
 /**
  * `AssociativeArrayMap` represents a standard associative array object.
- *
- * @template T
- * @extends AbstractMap<T>
  */
 class AssociativeArrayMap extends AbstractMap
 {

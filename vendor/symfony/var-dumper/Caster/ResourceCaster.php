@@ -22,7 +22,12 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 class ResourceCaster
 {
-    public static function castCurl(\CurlHandle $h, array $a, Stub $stub, bool $isNested): array
+    /**
+     * @param \CurlHandle|resource $h
+     *
+     * @return array
+     */
+    public static function castCurl($h, array $a, Stub $stub, bool $isNested)
     {
         return curl_getinfo($h);
     }
@@ -43,7 +48,7 @@ class ResourceCaster
     public static function castStream($stream, array $a, Stub $stub, bool $isNested)
     {
         $a = stream_get_meta_data($stream) + static::castStreamContext($stream, $a, $stub, $isNested);
-        if ($a['uri'] ?? false) {
+        if (isset($a['uri'])) {
             $a['uri'] = new LinkStub($a['uri']);
         }
 
@@ -55,7 +60,7 @@ class ResourceCaster
         return @stream_context_get_params($stream) ?: $a;
     }
 
-    public static function castGd($gd, array $a, Stub $stub, bool $isNested)
+    public static function castGd($gd, array $a, Stub $stub, $isNested)
     {
         $a['size'] = imagesx($gd).'x'.imagesy($gd);
         $a['trueColor'] = imageistruecolor($gd);

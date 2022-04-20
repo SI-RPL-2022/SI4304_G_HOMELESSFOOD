@@ -25,8 +25,6 @@ use function is_int;
 /**
  * `NamedParameterMap` represents a mapping of values to a set of named keys
  * that may optionally be typed
- *
- * @extends AbstractMap<mixed>
  */
 class NamedParameterMap extends AbstractMap
 {
@@ -36,15 +34,15 @@ class NamedParameterMap extends AbstractMap
     /**
      * Named parameters defined for this map.
      *
-     * @var array<string, string>
+     * @var array<mixed, string>
      */
     protected $namedParameters;
 
     /**
      * Constructs a new `NamedParameterMap`.
      *
-     * @param array<array-key, string> $namedParameters The named parameters defined for this map.
-     * @param array<array-key, mixed> $data An initial set of data to set on this map.
+     * @param array<mixed, string> $namedParameters The named parameters defined for this map.
+     * @param mixed[] $data An initial set of data to set on this map.
      */
     public function __construct(array $namedParameters, array $data = [])
     {
@@ -55,7 +53,7 @@ class NamedParameterMap extends AbstractMap
     /**
      * Returns named parameters set for this `NamedParameterMap`.
      *
-     * @return array<string, string>
+     * @return array<mixed, string>
      */
     public function getNamedParameters(): array
     {
@@ -63,17 +61,17 @@ class NamedParameterMap extends AbstractMap
     }
 
     /**
-     * @inheritDoc
+     * Sets the given value to the given offset in the map.
+     *
+     * @param mixed $offset The offset to set.
+     * @param mixed $value The value to set at the given offset.
+     *
+     * @throws InvalidArgumentException if the offset provided is not a
+     *     defined named parameter, or if the value is not of the type defined
+     *     for the given named parameter.
      */
     public function offsetSet($offset, $value): void
     {
-        if ($offset === null) {
-            throw new InvalidArgumentException(
-                'Map elements are key/value pairs; a key must be provided for '
-                . 'value ' . var_export($value, true)
-            );
-        }
-
         if (!array_key_exists($offset, $this->namedParameters)) {
             throw new InvalidArgumentException(
                 'Attempting to set value for unconfigured parameter \''
@@ -96,9 +94,9 @@ class NamedParameterMap extends AbstractMap
      * Given an array of named parameters, constructs a proper mapping of
      * named parameters to types.
      *
-     * @param array<array-key, string> $namedParameters The named parameters to filter.
+     * @param array<mixed, string> $namedParameters The named parameters to filter.
      *
-     * @return array<string, string>
+     * @return array<mixed, string>
      */
     protected function filterNamedParameters(array $namedParameters): array
     {
@@ -107,11 +105,11 @@ class NamedParameterMap extends AbstractMap
 
         foreach ($namedParameters as $key => $value) {
             if (is_int($key)) {
-                $names[] = $value;
+                $names[] = (string) $value;
                 $types[] = 'mixed';
             } else {
                 $names[] = $key;
-                $types[] = $value;
+                $types[] = (string) $value;
             }
         }
 

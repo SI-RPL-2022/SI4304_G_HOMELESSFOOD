@@ -21,31 +21,26 @@ class ColumnTypeGuesser
 
         switch ($schema->columnType($column)) {
             case 'boolean':
-                return static function () use ($generator) {
+                return function () use ($generator) {
                     return $generator->boolean;
                 };
-
             case 'integer':
-                return static function () use ($generator) {
-                    return $generator->numberBetween(0, 2147483647);
+                return function () {
+                    return mt_rand(0, intval('2147483647'));
                 };
-
             case 'biginteger':
-                return static function () use ($generator) {
-                    return $generator->numberBetween(0, PHP_INT_MAX);
+                return function () {
+                    return mt_rand(0, intval('9223372036854775807'));
                 };
-
             case 'decimal':
             case 'float':
-                return static function () use ($generator) {
+                return function () use ($generator) {
                     return $generator->randomFloat();
                 };
-
             case 'uuid':
-                return static function () use ($generator) {
+                return function () use ($generator) {
                     return $generator->uuid();
                 };
-
             case 'string':
                 if (method_exists($schema, 'getColumn')) {
                     $columnData = $schema->getColumn($column);
@@ -53,21 +48,18 @@ class ColumnTypeGuesser
                     $columnData = $schema->column($column);
                 }
                 $length = $columnData['length'];
-
-                return static function () use ($generator, $length) {
+                return function () use ($generator, $length) {
                     return $generator->text($length);
                 };
-
             case 'text':
-                return static function () use ($generator) {
+                return function () use ($generator) {
                     return $generator->text();
                 };
-
             case 'date':
             case 'datetime':
             case 'timestamp':
             case 'time':
-                return static function () use ($generator) {
+                return function () use ($generator) {
                     return $generator->datetime();
                 };
 

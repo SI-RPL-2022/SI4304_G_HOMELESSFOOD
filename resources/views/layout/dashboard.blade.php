@@ -11,6 +11,7 @@
     <!-- Bootstrap core CSS -->
     <link href="/assets/css/bootstrap.css" rel="stylesheet">
     <link href="/assets/css/carousel.css" rel="stylesheet">
+    <script src="/assets/js/jquery.js"></script>
 
     <style>
       .bd-placeholder-img {
@@ -107,14 +108,27 @@
         </div>
 
         <div class="col-3">
-          <a href="/profile" style="text-decoration: none">
-            <div class="card {{ Route::currentRouteName() == 'food' ? 'bg-warning' : '' }}">
-              <div class="card-body p-2">
-                <b class="{{ Route::currentRouteName() == 'food' ? 'text-white' : '' }}">
-                  <img src="/gambar/001-diet.png" style="width: 50px"> Makanan</b>
+          @if(session()->get('user')->akses == 'admin')
+            <a href="/food" style="text-decoration: none">
+              <div class="card {{ Route::currentRouteName() == 'food' ? 'bg-warning' : '' }}">
+                <div class="card-body p-2">
+                  <b class="{{ Route::currentRouteName() == 'food' ? 'text-white' : '' }}">
+                    <img src="/gambar/001-diet.png" style="width: 50px"> Makanan</b>
+                </div>
               </div>
-            </div>
-          </a>
+            </a>
+
+          @elseif(session()->get('user')->akses == 'user')
+            <a href="/homeless" style="text-decoration: none">
+              <div class="card {{ Route::currentRouteName() == 'homeless' ? 'bg-warning' : '' }}">
+                <div class="card-body p-2">
+                  <b class="{{ Route::currentRouteName() == 'homeless' ? 'text-white' : '' }}">
+                    <img src="/gambar/001-diet.png" style="width: 50px"> Tunawisma</b>
+                </div>
+              </div>
+            </a>
+
+          @endif
         </div>
 
         <div class="col-3">
@@ -152,6 +166,5 @@
     <p>&copy; 2021. OkeDoc, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
   </footer>
 </main>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="/assets/js/bootstrap.bundle.min.js"></script>
 </html>

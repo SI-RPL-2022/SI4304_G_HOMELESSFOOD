@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Cron;
 
-use DateTimeInterface;
-
 /**
  * Abstract CRON expression field.
  */
@@ -50,7 +48,6 @@ abstract class AbstractField implements FieldInterface
     /**
      * Check to see if a field is satisfied by a value.
      *
-     * @internal
      * @param int $dateValue Date value to check
      * @param string $value Value to test
      *
@@ -72,7 +69,6 @@ abstract class AbstractField implements FieldInterface
     /**
      * Check if a value is a range.
      *
-     * @internal
      * @param string $value Value to test
      *
      * @return bool
@@ -85,7 +81,6 @@ abstract class AbstractField implements FieldInterface
     /**
      * Check if a value is an increments of ranges.
      *
-     * @internal
      * @param string $value Value to test
      *
      * @return bool
@@ -98,7 +93,6 @@ abstract class AbstractField implements FieldInterface
     /**
      * Test if a value is within a range.
      *
-     * @internal
      * @param int $dateValue Set date value
      * @param string $value Value to test
      *
@@ -121,7 +115,6 @@ abstract class AbstractField implements FieldInterface
     /**
      * Test if a value is within an increments of ranges (offset[-to]/step size).
      *
-     * @internal
      * @param int $dateValue Set date value
      * @param string $value Value to test
      *
@@ -146,9 +139,8 @@ abstract class AbstractField implements FieldInterface
 
         // Generate the requested small range
         $rangeChunks = explode('-', $range, 2);
-        $rangeStart = (int) $rangeChunks[0];
+        $rangeStart = $rangeChunks[0];
         $rangeEnd = $rangeChunks[1] ?? $rangeStart;
-        $rangeEnd = (int) $rangeEnd;
 
         if ($rangeStart < $this->rangeStart || $rangeStart > $this->rangeEnd || $rangeStart > $rangeEnd) {
             throw new \OutOfRangeException('Invalid range start requested');
@@ -158,22 +150,11 @@ abstract class AbstractField implements FieldInterface
             throw new \OutOfRangeException('Invalid range end requested');
         }
 
-        // Steps larger than the range need to wrap around and be handled
-        // slightly differently than smaller steps
-
-        // UPDATE - This is actually false. The C implementation will allow a
-        // larger step as valid syntax, it never wraps around. It will stop
-        // once it hits the end. Unfortunately this means in future versions
-        // we will not wrap around. However, because the logic exists today
-        // per the above documentation, fixing the bug from #89
-        if ($step > $this->rangeEnd) {
+        // Steps larger than the range need to wrap around and be handled slightly differently than smaller steps
+        if ($step >= $this->rangeEnd) {
             $thisRange = [$this->fullRange[$step % \count($this->fullRange)]];
         } else {
-            if ($step > ($rangeEnd - $rangeStart)) {
-                $thisRange[$rangeStart] = (int) $rangeStart;
-            } else {
-                $thisRange = range($rangeStart, $rangeEnd, (int) $step);
-            }
+            $thisRange = range($rangeStart, $rangeEnd, (int) $step);
         }
 
         return \in_array($dateValue, $thisRange, true);
@@ -268,17 +249,6 @@ abstract class AbstractField implements FieldInterface
             return true;
         }
 
-        // Validate each chunk of a list individually
-        if (false !== strpos($value, ',')) {
-            foreach (explode(',', $value) as $listItem) {
-                if (!$this->validate($listItem)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         if (false !== strpos($value, '/')) {
             [$range, $step] = explode('/', $value);
 
@@ -288,6 +258,17 @@ abstract class AbstractField implements FieldInterface
             }
 
             return $this->validate($range) && filter_var($step, FILTER_VALIDATE_INT);
+        }
+
+        // Validate each chunk of a list individually
+        if (false !== strpos($value, ',')) {
+            foreach (explode(',', $value) as $listItem) {
+                if (!$this->validate($listItem)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         if (false !== strpos($value, '-')) {
@@ -318,29 +299,5 @@ abstract class AbstractField implements FieldInterface
         $value = (int) $value;
 
         return \in_array($value, $this->fullRange, true);
-    }
-
-    protected function timezoneSafeModify(DateTimeInterface $dt, string $modification): DateTimeInterface
-    {
-        $timezone = $dt->getTimezone();
-        $dt = $dt->setTimezone(new \DateTimeZone("UTC"));
-        $dt = $dt->modify($modification);
-        $dt = $dt->setTimezone($timezone);
-        return $dt;
-    }
-
-    protected function setTimeHour(DateTimeInterface $date, bool $invert, int $originalTimestamp): DateTimeInterface
-    {
-        $date = $date->setTime((int)$date->format('H'), ($invert ? 59 : 0));
-
-        // setTime caused the offset to change, moving time in the wrong direction
-        $actualTimestamp = $date->format('U');
-        if ((! $invert) && ($actualTimestamp <= $originalTimestamp)) {
-            $date = $this->timezoneSafeModify($date, "+1 hour");
-        } elseif ($invert && ($actualTimestamp >= $originalTimestamp)) {
-            $date = $this->timezoneSafeModify($date, "-1 hour");
-        }
-
-        return $date;
     }
 }

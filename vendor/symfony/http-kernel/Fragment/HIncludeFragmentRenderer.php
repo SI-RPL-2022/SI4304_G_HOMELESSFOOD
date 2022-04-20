@@ -24,10 +24,10 @@ use Twig\Environment;
  */
 class HIncludeFragmentRenderer extends RoutableFragmentRenderer
 {
-    private ?string $globalDefaultTemplate;
+    private $globalDefaultTemplate;
     private $signer;
     private $twig;
-    private string $charset;
+    private $charset;
 
     /**
      * @param string $globalDefaultTemplate The global default content (it can be a template name or the content)
@@ -42,8 +42,10 @@ class HIncludeFragmentRenderer extends RoutableFragmentRenderer
 
     /**
      * Checks if a templating engine has been set.
+     *
+     * @return bool true if the templating engine has been set, false otherwise
      */
-    public function hasTemplating(): bool
+    public function hasTemplating()
     {
         return null !== $this->twig;
     }
@@ -57,16 +59,21 @@ class HIncludeFragmentRenderer extends RoutableFragmentRenderer
      *  * id:         An optional hx:include tag id attribute
      *  * attributes: An optional array of hx:include tag attributes
      */
-    public function render(string|ControllerReference $uri, Request $request, array $options = []): Response
+    public function render($uri, Request $request, array $options = [])
     {
         if ($uri instanceof ControllerReference) {
-            $uri = (new FragmentUriGenerator($this->fragmentPath, $this->signer))->generate($uri, $request);
+            if (null === $this->signer) {
+                throw new \LogicException('You must use a proper URI when using the Hinclude rendering strategy or set a URL signer.');
+            }
+
+            // we need to sign the absolute URI, but want to return the path only.
+            $uri = substr($this->signer->sign($this->generateFragmentUri($uri, $request, true)), \strlen($request->getSchemeAndHttpHost()));
         }
 
         // We need to replace ampersands in the URI with the encoded form in order to return valid html/xml content.
         $uri = str_replace('&', '&amp;', $uri);
 
-        $template = $options['default'] ?? $this->globalDefaultTemplate;
+        $template = isset($options['default']) ? $options['default'] : $this->globalDefaultTemplate;
         if (null !== $this->twig && $template && $this->twig->getLoader()->exists($template)) {
             $content = $this->twig->render($template);
         } else {
@@ -95,7 +102,7 @@ class HIncludeFragmentRenderer extends RoutableFragmentRenderer
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName()
     {
         return 'hinclude';
     }
