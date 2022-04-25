@@ -74,7 +74,7 @@
         @else
             <ul class="navbar-nav mr-auto">
               <li class="nav-item">
-                <a class="nav-link mr-3" href="/auth/register">Daftar disini</a>
+                <a class="nav-link mr-3" href="/auth/register">Daftar disini sekarang</a>
               </li>
             </ul>
             <a href="/auth/login" class="btn btn-warning my-2 my-sm-0 text-white" type="submit">Login</a>
