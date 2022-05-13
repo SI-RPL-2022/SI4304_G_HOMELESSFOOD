@@ -43,7 +43,7 @@
 
 						<hr>
 
-						Belum punya akun ?, <a href="/auth/register" class="text-warning"><b>Daftar Disini</b></a>
+						Anda belum punya akun ?, <a href="/auth/register" class="text-warning"><b>Daftar Disini</b></a>
 
 					</div>
 				</div>

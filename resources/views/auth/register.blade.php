@@ -45,7 +45,7 @@
 
 						<hr>
 
-						Sudah punya akun ?, <a href="/auth/login" class="text-warning"><b>Login Disini</b></a>
+						Anda sudah punya akun ?, <a href="/auth/login" class="text-warning"><b>Login Disini</b></a>
 
 					</div>
 				</div>
