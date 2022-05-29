@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Homeless;
+use Illuminate\Support\Facades\DB;
 
 class HomelessController extends Controller
 {
@@ -18,11 +19,26 @@ class HomelessController extends Controller
     }
 
     public function edit($id){
-        $homeless = new Vaccine();
+        $homeless = new Homeless();
 
-        $data['patient'] = $patient->data('patients.id', $id)->first();
-        $data['vaccine'] = $homeless->data('id', $data['patient']->vaccine_id)->first();
-        return view('patient/edit', $data);
+        $query = $homeless->data('homeless.id', $id);
+        if($query->count() == 0){
+            return redirect('homeless')->with('alert', show_alert('Data tunawisma tidak ditemukan', 'danger'));
+        }
+
+        $homelessData = $query->first();
+        $cityId = '161';
+        $sub = DB::table('subdistricts')
+                ->where('subdis_id', $homelessData->subdis_id)
+                ->first();
+
+        $data = [
+            'homeless' => $query->first(),
+            'disId' => $sub->dis_id,
+            'subdis'   => DB::table('subdistricts')->where('dis_id', $sub->dis_id)->get(),
+            'dis'      => DB::table('districts')->where('city_id', $cityId)->get()
+        ];
+        return view('homeless/edit', $data);
     }
 
     public function update(Request $request, $id){
@@ -32,12 +48,12 @@ class HomelessController extends Controller
             'location_detail'   => 'required',
             'total_count'       => 'required',
             'characteristic'    => 'required',
-            'photo'  => 'required|mimes:jpeg,jpg,png'
+            'photo'             => 'mimes:jpeg,jpg,png'
         ]);
         $input = $request->except(['_token']);
-        $input['created_at'] = date('Y-m-d H:i:s');
+        $input['updated_at'] = date('Y-m-d H:i:s');
 
-        if(isset($input['image_ktp'])){
+        if(isset($input['photo'])){
             $imageName = 'homeless_'.time().'.'.$request->file('photo')->extension();  
             $request->file('photo')->move(public_path('images/homeless'), $imageName);
             $input['photo'] = $imageName;
@@ -46,7 +62,7 @@ class HomelessController extends Controller
         $homeless = new Homeless();
         $homeless->updates($input, $id);
 
-        return redirect('patient/list')->with('alert', show_alert('Data tunawisma berhasil diubah', 'success'));
+        return redirect('homeless')->with('alert', show_alert('Data tunawisma berhasil diubah', 'success'));
     }
 
     public function insert(Request $request){
@@ -77,5 +93,15 @@ class HomelessController extends Controller
         $homeless->deletes($id);
 
         return redirect('homeless')->with('alert', show_alert('Data tunawisma berhasil dihapus', 'success'));
+    }
+
+    public function getById(Request $request){
+        $homeless = new Homeless();
+        $homeless_id = $request->homeless_id;
+        
+        return response()->json([
+            'status' => true,
+            'data' => $homeless->data('homeless.id', $homeless_id)->first()
+        ], 200);
     }
 }

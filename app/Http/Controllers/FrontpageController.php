@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Transaction;
 use Session;
 
 class FrontpageController extends Controller
@@ -63,8 +64,24 @@ class FrontpageController extends Controller
     		return redirect('auth/login');
     	}
 
+        $data = [];
+        if($userData->akses == 'driver'){
+            $transaction = new Transaction();
+            $view = 'driver/dashboard';
+            $data['transaction'] = $transaction->data([
+                                    'driver_id' => Session::get('user')->id,
+                                    'status' => 'on_delivery'
+                                   ])->get();
+        }else{
 
-    	return view('dashboard');
+            if($userData->akses == 'admin'){
+                $driver = new User();
+                $data['driver'] = $driver->data('akses', 'driver')->get();
+            }
+
+            $view = 'dashboard';
+        }
+    	return view($view, $data);
     }
 
     public function profile(){
