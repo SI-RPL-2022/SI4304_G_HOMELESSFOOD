@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('kota');
             $table->string('kodepos');
             $table->string('alamatlengkap');
-            $table->string('detail'); 
+            $table->string('detail');
+            $table->string('kab'); 
             $table->timestamps();
         });
     }
