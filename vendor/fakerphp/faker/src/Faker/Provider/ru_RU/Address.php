@@ -12,11 +12,11 @@ class Address extends \Faker\Provider\Address
         'въезд', 'спуск', 'проезд', 'наб.',
     ];
 
-    protected static $buildingNumber = ['##'];
+    protected static $buildingNumber = ['%#'];
     protected static $postcode = ['######'];
 
     /**
-     * @link https://ru.wikipedia.org/wiki/Общероссийский_классификатор_стран_мира#Список_стран_согласно_Классификатору
+     * @see https://ru.wikipedia.org/wiki/Общероссийский_классификатор_стран_мира#Список_стран_согласно_Классификатору
      */
     protected static $country = [
         'Абхазия', 'Австралия', 'Австрия', 'Азербайджан', 'Албания', 'Алжир', 'Американское Самоа', 'Ангилья', 'Ангола', 'Андорра', 'Антарктида', 'Антигуа и Барбуда', 'Аргентина', 'Армения', 'Аруба', 'Афганистан',
@@ -74,15 +74,15 @@ class Address extends \Faker\Provider\Address
 
     protected static $street = [
         'Косиора', 'Ладыгина', 'Ленина', 'Ломоносова', 'Домодедовская', 'Гоголя', '1905 года', 'Чехова', 'Сталина',
-        'Космонавтов', 'Гагарина', 'Славы', 'Бухарестская', 'Будапештсткая', 'Балканская'
+        'Космонавтов', 'Гагарина', 'Славы', 'Бухарестская', 'Будапештсткая', 'Балканская',
     ];
 
     protected static $addressFormats = [
-        "{{postcode}}, {{region}} {{regionSuffix}}, {{cityPrefix}} {{city}}, {{streetPrefix}} {{street}}, {{buildingNumber}}",
+        '{{postcode}}, {{region}} {{regionSuffix}}, {{cityPrefix}} {{city}}, {{streetPrefix}} {{street}}, {{buildingNumber}}',
     ];
 
     protected static $streetAddressFormats = [
-        "{{streetPrefix}} {{street}}, {{buildingNumber}}"
+        '{{streetPrefix}} {{street}}, {{buildingNumber}}',
     ];
 
     public static function buildingNumber()

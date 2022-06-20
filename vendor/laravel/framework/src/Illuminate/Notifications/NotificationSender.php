@@ -76,7 +76,7 @@ class NotificationSender
             return $this->queueNotification($notifiables, $notification);
         }
 
-        return $this->sendNow($notifiables, $notification);
+        $this->sendNow($notifiables, $notification);
     }
 
     /**
@@ -162,6 +162,11 @@ class NotificationSender
      */
     protected function shouldSendNotification($notifiable, $notification, $channel)
     {
+        if (method_exists($notification, 'shouldSend') &&
+            $notification->shouldSend($notifiable, $channel) === false) {
+            return false;
+        }
+
         return $this->events->until(
             new NotificationSending($notifiable, $notification, $channel)
         ) !== false;
@@ -171,7 +176,7 @@ class NotificationSender
      * Queue the given notification instances.
      *
      * @param  mixed  $notifiables
-     * @param  array[\Illuminate\Notifications\Channels\Notification]  $notification
+     * @param  \Illuminate\Notifications\Notification  $notification
      * @return void
      */
     protected function queueNotification($notifiables, $notification)

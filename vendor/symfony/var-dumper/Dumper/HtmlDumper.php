@@ -116,21 +116,16 @@ class HtmlDumper extends CliDumper
 
     /**
      * Sets an HTML header that will be dumped once in the output stream.
-     *
-     * @param string $header An HTML string
      */
-    public function setDumpHeader($header)
+    public function setDumpHeader(?string $header)
     {
         $this->dumpHeader = $header;
     }
 
     /**
      * Sets an HTML prefix and suffix that will encapse every single dump.
-     *
-     * @param string $prefix The prepended HTML string
-     * @param string $suffix The appended HTML string
      */
-    public function setDumpBoundaries($prefix, $suffix)
+    public function setDumpBoundaries(string $prefix, string $suffix)
     {
         $this->dumpPrefix = $prefix;
         $this->dumpSuffix = $suffix;
@@ -153,7 +148,7 @@ class HtmlDumper extends CliDumper
      */
     protected function getDumpHeader()
     {
-        $this->headerIsDumped = null !== $this->outputStream ? $this->outputStream : $this->lineDumper;
+        $this->headerIsDumped = $this->outputStream ?? $this->lineDumper;
 
         if (null !== $this->dumpHeader) {
             return $this->dumpHeader;
@@ -171,6 +166,9 @@ var refStyle = doc.createElement('style'),
         e.addEventListener(n, cb, false);
     };
 
+refStyle.innerHTML = 'pre.sf-dump .sf-dump-compact, .sf-dump-str-collapse .sf-dump-str-collapse, .sf-dump-str-expand .sf-dump-str-expand { display: none; }';
+(doc.documentElement.firstElementChild || doc.documentElement.children[0]).appendChild(refStyle);
+refStyle = doc.createElement('style');
 (doc.documentElement.firstElementChild || doc.documentElement.children[0]).appendChild(refStyle);
 
 if (!doc.addEventListener) {
@@ -371,7 +369,7 @@ return function (root, x) {
         if (/\bsf-dump-toggle\b/.test(a.className)) {
             e.preventDefault();
             if (!toggle(a, isCtrlKey(e))) {
-                var r = doc.getElementById(a.getAttribute('href').substr(1)),
+                var r = doc.getElementById(a.getAttribute('href').slice(1)),
                     s = r.previousSibling,
                     f = r.parentNode,
                     t = a.parentNode;
@@ -432,7 +430,7 @@ return function (root, x) {
                 x += elt.parentNode.getAttribute('data-depth')/1;
             }
         } else if (/\bsf-dump-ref\b/.test(elt.className) && (a = elt.getAttribute('href'))) {
-            a = a.substr(1);
+            a = a.slice(1);
             elt.className += ' '+a;
 
             if (/[\[{]$/.test(elt.previousSibling.nodeValue)) {
@@ -665,9 +663,6 @@ pre.sf-dump:after {
 pre.sf-dump span {
     display: inline;
 }
-pre.sf-dump .sf-dump-compact {
-    display: none;
-}
 pre.sf-dump a {
     text-decoration: none;
     cursor: pointer;
@@ -698,12 +693,6 @@ pre.sf-dump code {
     display:inline;
     padding:0;
     background:none;
-}
-.sf-dump-str-collapse .sf-dump-str-collapse {
-    display: none;
-}
-.sf-dump-str-expand .sf-dump-str-expand {
-    display: none;
 }
 .sf-dump-public.sf-dump-highlight,
 .sf-dump-protected.sf-dump-highlight,
@@ -857,7 +846,7 @@ EOHTML
     /**
      * {@inheritdoc}
      */
-    protected function style($style, $value, $attr = [])
+    protected function style(string $style, string $value, array $attr = [])
     {
         if ('' === $value) {
             return '';
@@ -929,13 +918,13 @@ EOHTML
                     $s .= '">';
                 }
 
-                $s .= isset($map[$c[$i]]) ? $map[$c[$i]] : sprintf('\x%02X', \ord($c[$i]));
+                $s .= $map[$c[$i]] ?? sprintf('\x%02X', \ord($c[$i]));
             } while (isset($c[++$i]));
 
             return $s.'</span>';
         }, $v).'</span>';
 
-        if (isset($attr['file']) && $href = $this->getSourceLink($attr['file'], isset($attr['line']) ? $attr['line'] : 0)) {
+        if (isset($attr['file']) && $href = $this->getSourceLink($attr['file'], $attr['line'] ?? 0)) {
             $attr['href'] = $href;
         }
         if (isset($attr['href'])) {
@@ -957,7 +946,7 @@ EOHTML
         if (-1 === $this->lastDepth) {
             $this->line = sprintf($this->dumpPrefix, $this->dumpId, $this->indentPad).$this->line;
         }
-        if ($this->headerIsDumped !== (null !== $this->outputStream ? $this->outputStream : $this->lineDumper)) {
+        if ($this->headerIsDumped !== ($this->outputStream ?? $this->lineDumper)) {
             $this->line = $this->getDumpHeader().$this->line;
         }
 
@@ -971,7 +960,7 @@ EOHTML
         }
         $this->lastDepth = $depth;
 
-        $this->line = mb_convert_encoding($this->line, 'HTML-ENTITIES', 'UTF-8');
+        $this->line = mb_encode_numericentity($this->line, [0x80, 0x10FFFF, 0, 0x1FFFFF], 'UTF-8');
 
         if (-1 === $depth) {
             AbstractDumper::dumpLine(0);
@@ -991,7 +980,7 @@ EOHTML
     }
 }
 
-function esc($str)
+function esc(string $str)
 {
     return htmlspecialchars($str, \ENT_QUOTES, 'UTF-8');
 }
