@@ -36,17 +36,26 @@ class FoodController extends Controller
         $request->validate([
             'food_name'         => 'required',
             'food_description'  => 'required',
-            'price'             => 'required|numeric|gt:0',
+            'price'             => 'required|numeric|gt:-1',
+            'price_actual'      => 'required|numeric|gt:0',
             'food_photo'        => 'mimes:jpeg,jpg,png'
         ]);
         $input = $request->except(['_token']);
         $input['updated_at'] = date('Y-m-d H:i:s');
 
+        if($input['price'] > $input['price_actual']){
+            return redirect('food/edit/'.$id)->with('alert', show_alert('Harga diskon harus dibawah harga asli', 'danger'));
+        }
+
+        if($input['price'] == 0){
+            $input['price'] = $input['price_actual'];
+        } 
+
         if(isset($input['food_photo'])){
             $imageName = 'food_'.time().'.'.$request->file('food_photo')->extension();  
             $request->file('food_photo')->move(public_path('images/food'), $imageName);
             $input['food_photo'] = $imageName;
-        }   
+        }  
         
         $food = new Food();
         $food->updates($input, $id);
@@ -58,14 +67,23 @@ class FoodController extends Controller
         $request->validate([
             'food_name'         => 'required',
             'food_description'  => 'required',
-            'price'             => 'required|numeric|gt:0',
-            'food_photo'        => 'required|mimes:jpeg,jpg,png'
+            'price'             => 'required|numeric|gt:-1',
+            'price_actual'      => 'required|numeric|gt:0',
+            'food_photo'        => 'mimes:jpeg,jpg,png'
         ]);
+        $input = $request->except(['_token']);
+
+        if($input['price'] > $input['price_actual']){
+            return redirect('food/add')->with('alert', show_alert('Harga diskon harus dibawah harga asli', 'danger'));
+        }
+
+        if($input['price'] == 0){
+            $input['price'] = $input['price_actual'];
+        } 
 
         $imageName = 'food_'.time().'.'.$request->file('food_photo')->extension();  
         $request->file('food_photo')->move(public_path('images/food'), $imageName);
 
-        $input = $request->except(['_token']);
         $input['food_photo'] = $imageName;
         $input['created_at'] = date('Y-m-d H:i:s');
 

@@ -45,7 +45,7 @@ class User extends Authenticatable
     protected $table = 'user';
 
     public function data($key = '', $value = ''){
-        $tb = DB::table($this->table);
+        $tb = DB::table($this->table)->orderBy($this->table.".id", 'desc');
         
         if($key != ''){
             if(is_array($key)){

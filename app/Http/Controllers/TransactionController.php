@@ -25,7 +25,7 @@ class TransactionController extends Controller
         $homeless = new Homeless();
         $food = new Food();
         $data['homeless'] = $homeless->data()->get();
-        $data['food']     = $food->data()->get();
+        $data['food']     = $food->getFoodListForPage();
         return view('transaction/add', $data);
     }
 
