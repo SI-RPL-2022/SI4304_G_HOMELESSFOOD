@@ -31,10 +31,19 @@
 				    <label>Nama Makanan</label>
 				    <input placeholder="Ex : Nasi goreng padang" type="text" class="form-control" name="food_name" required="" autocomplete="off" required="" value="{{$food->food_name}}">
 				</div>
+			</div>
+
+			<div class="row">
+				<div class="form-group col-md-4">
+				    <label>Harga Asli</label>
+				    <input placeholder="0" type="number" class="form-control" name="price_actual" required="" autocomplete="off" required="" value="{{$food->price_actual}}">
+				</div>
 
 				<div class="form-group col-md-4">
-				    <label>Harga</label>
-				    <input placeholder="0" type="number" class="form-control" name="price" required="" autocomplete="off" required="" value="{{$food->price}}">
+				    <label>Harga Setelah Diskon</label>
+				    <input placeholder="0" type="number" class="form-control" name="price" required="" autocomplete="off" 
+				    value="<?= $food->price < $food->price_actual ? $food->price : '0' ?>">
+				    <small class="text-muted">*Isi 0 jika tidak ada harga diskon</small>
 				</div>
 
 				<div class="form-group col-md-12">
