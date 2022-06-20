@@ -38,7 +38,15 @@
 								<strong>{{ $row->food_name }}</strong><br>
 								<small class="text-muted">{{ $row->food_description }}</small>
 							</td>
-							<td class="text-right">Rp {{$row->price}}</td>
+							<td class="text-right">
+								@if($row->price < $row->price_actual)
+									<small><s>Rp {{$row->price_actual}}</s></small><br>
+									Rp {{$row->price}}
+
+								@else
+									Rp {{$row->price}}
+								@endif
+							</td>
 							<td class="text-center">
 								<a href="/food/edit/{{ $row->id }}" class="btn btn-outline-warning btn-sm">Ubah</a>
 								<a href="/food/delete/{{ $row->id }}" class="btn btn-outline-danger btn-sm">Hapus</a>

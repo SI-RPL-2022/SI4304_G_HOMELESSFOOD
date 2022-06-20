@@ -67,7 +67,7 @@
 		  		<div class="form-group col-md-12">
 		  			<label>Foto</label>
 			  		<input name="photo" type="file" class="btn btn-light"><br>
-					<small class="text-muted">*Upload foto atau lokasi terkini</small>	
+					<small class="text-muted">*Upload foto atau lokasi</small>	
 		  		</div>
 		  		
 		  		<div class="form-group col-md-12" style="margin-top:-6px">

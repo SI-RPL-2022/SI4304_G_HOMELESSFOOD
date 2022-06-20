@@ -16,6 +16,12 @@
 		    </div>
 		@endif
 
+		@if($errors->any())
+			<div class="alert alert-danger mb-3">
+			    {!! implode('', $errors->all('<div>:message</div>')) !!}
+			</div>
+		@endif
+
 		<table class="table mt-4">
 			<thead class="bg-secondary text-white">
 				<tr>
@@ -64,7 +70,7 @@
 							</td>
 							<td class="text-center">{{ $row->total_count }}</td>
 							<td class="text-center">
-								<!--<a href="/homeless/edit/{{ $row->id }}" class="btn btn-outline-warning btn-sm">Ubah</a>-->
+								<a href="/homeless/edit/{{ $row->id }}" class="btn btn-outline-warning btn-sm">Ubah</a>
 								<a href="/homeless/delete/{{ $row->id }}" class="btn btn-outline-danger btn-sm">Hapus</a>
 							</td>
 						</tr>
