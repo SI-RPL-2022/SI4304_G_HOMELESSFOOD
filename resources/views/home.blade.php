@@ -9,6 +9,8 @@
 	            <h6>Memberikan pelayanan ekstra dan nyaman adalah prioritas kami</h6>
 	            <p class="mt-4">
 	            	<a class="btn btn-lg btn-outline-warning text-white" style="border:2px solid #fff" href="/select_food" role="button">Pilih Donasi Makanan</a>
+
+	            	<a href="/driver_hiring" class="btn btn-ghost text-white">Terjadi Menjadi Driver kami ?, Daftar Disini</a>
 	            </p>
 	          </div>
 	          <div class="col-4">

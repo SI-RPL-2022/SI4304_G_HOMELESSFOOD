@@ -20,7 +20,8 @@
 					<h6>Daftar Driver</h6>
 				</div>
 				<div class="card-body">
-					<a class="btn btn-primary mb-3" href="/driver/add">Tambah Driver</a>
+					<a class="btn btn-primary mb-3" href="/driver/add">Tambah Driver</a> &emsp;
+					<a class="btn btn-outline-primary mb-3" href="/driver_verification">Lihat Daftar Verifikasi Driver</a>
 					<table class="table">
 						<thead class="bg-secondary text-white">
 							<tr>

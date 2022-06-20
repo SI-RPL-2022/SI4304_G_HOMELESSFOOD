@@ -190,7 +190,15 @@
 									{{$row->food_name}}<br>
 									<small class="text-muted">{{$row->food_description}}</small>
 								</td>
-								<td>Rp {{$row->price}}</td>
+								<td>
+									@if($row->price < $row->price_actual)
+										<small><s>Rp {{$row->price_actual}}</s></small><br>
+										Rp {{$row->price}}
+
+									@else
+										Rp {{$row->price}}
+									@endif
+								</td>
 								<td class="text-center">{{$row->qty}}</td>
 							</tr>
 						@endforeach

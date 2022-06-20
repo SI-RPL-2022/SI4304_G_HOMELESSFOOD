@@ -113,7 +113,12 @@
 	  						</tr>
 	  					</thead>
 	  					<tbody>
-	  						@foreach($food as $row)
+	  						<tr>
+	  							<th colspan="3">
+	  								<span class="badge badge-success">REKOMENDASI (Paling Laris)</span>
+	  							</th>
+	  						</tr>
+	  						@foreach($food['recommend'] as $row)
 	  							<tr>
 	  								<td>
 	  									<input type="hidden" name="food_price[{{$row->id}}]" value="{{$row->price}}">
@@ -123,12 +128,81 @@
 	  									{{$row->food_name}}<br>
 	  									<small class="text-muted">{{$row->food_description}}</small>
 	  								</td>
-	  								<td>Rp {{$row->price}}</td>
+	  								<td>
+	  									@if($row->price < $row->price_actual)
+											<small><s>Rp {{$row->price_actual}}</s></small><br>
+											Rp {{$row->price}}
+
+										@else
+											Rp {{$row->price}}
+										@endif
+	  								</td>
 	  								<td>
 	  									<input data-price="{{$row->price}}" placeholder="0" type="number" class="form-control qty" name="qty[{{$row->id}}]">
 	  								</td>
 	  							</tr>
 	  						@endforeach
+
+	  						<tr>
+	  							<th colspan="3">
+	  								<span class="badge badge-danger">DISKON</span>
+	  							</th>
+	  						</tr>
+	  						@foreach($food['discount'] as $row)
+	  							<tr>
+	  								<td>
+	  									<input type="hidden" name="food_price[{{$row->id}}]" value="{{$row->price}}">
+	  									<img class="img-fluid" src="/images/food/{{$row->food_photo}}" >
+	  								</td>
+	  								<td>
+	  									{{$row->food_name}}<br>
+	  									<small class="text-muted">{{$row->food_description}}</small>
+	  								</td>
+	  								<td>
+	  									@if($row->price < $row->price_actual)
+											<small><s>Rp {{$row->price_actual}}</s></small><br>
+											Rp {{$row->price}}
+
+										@else
+											Rp {{$row->price}}
+										@endif
+	  								</td>
+	  								<td>
+	  									<input data-price="{{$row->price}}" placeholder="0" type="number" class="form-control qty" name="qty[{{$row->id}}]">
+	  								</td>
+	  							</tr>
+	  						@endforeach
+
+	  						<tr>
+	  							<th colspan="3">
+	  								<span class="badge badge-light">LAINNYA</span>
+	  							</th>
+	  						</tr>
+	  						@foreach($food['common'] as $row)
+	  							<tr>
+	  								<td>
+	  									<input type="hidden" name="food_price[{{$row->id}}]" value="{{$row->price}}">
+	  									<img class="img-fluid" src="/images/food/{{$row->food_photo}}" >
+	  								</td>
+	  								<td>
+	  									{{$row->food_name}}<br>
+	  									<small class="text-muted">{{$row->food_description}}</small>
+	  								</td>
+	  								<td>
+	  									@if($row->price < $row->price_actual)
+											<small><s>Rp {{$row->price_actual}}</s></small><br>
+											Rp {{$row->price}}
+
+										@else
+											Rp {{$row->price}}
+										@endif
+	  								</td>
+	  								<td>
+	  									<input data-price="{{$row->price}}" placeholder="0" type="number" class="form-control qty" name="qty[{{$row->id}}]">
+	  								</td>
+	  							</tr>
+	  						@endforeach
+
 	  					</tbody>
 	  					<tfoot>
 	  						<tr>
