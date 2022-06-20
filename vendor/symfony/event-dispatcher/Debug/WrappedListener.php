@@ -26,6 +26,10 @@ final class WrappedListener
     private string $name;
     private bool $called = false;
     private bool $stoppedPropagation = false;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
     private Stopwatch $stopwatch;
     private ?EventDispatcherInterface $dispatcher;
     private string $pretty;
@@ -35,12 +39,32 @@ final class WrappedListener
     private static bool $hasClassStub;
 
     public function __construct(callable|array $listener, ?string $name, Stopwatch $stopwatch, EventDispatcherInterface $dispatcher = null, int $priority = null)
+<<<<<<< HEAD
+=======
+=======
+    private $stopwatch;
+    private $dispatcher;
+    private string $pretty;
+    private $stub;
+    private ?int $priority = null;
+    private static bool $hasClassStub;
+
+    public function __construct(callable|array $listener, ?string $name, Stopwatch $stopwatch, EventDispatcherInterface $dispatcher = null)
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
     {
         $this->listener = $listener;
         $this->optimizedListener = $listener instanceof \Closure ? $listener : (\is_callable($listener) ? $listener(...) : null);
         $this->stopwatch = $stopwatch;
         $this->dispatcher = $dispatcher;
+<<<<<<< HEAD
         $this->priority = $priority;
+=======
+<<<<<<< HEAD
+        $this->priority = $priority;
+=======
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
 
         if (\is_array($listener)) {
             [$this->name, $this->callableRef] = $this->parseListener($listener);
@@ -93,7 +117,15 @@ final class WrappedListener
 
     public function getInfo(string $eventName): array
     {
+<<<<<<< HEAD
         $this->stub ??= self::$hasClassStub ? new ClassStub($this->pretty.'()', $this->callableRef ?? $this->listener) : $this->pretty.'()';
+=======
+<<<<<<< HEAD
+        $this->stub ??= self::$hasClassStub ? new ClassStub($this->pretty.'()', $this->callableRef ?? $this->listener) : $this->pretty.'()';
+=======
+        $this->stub ??= self::$hasClassStub ? new ClassStub($this->pretty.'()', $this->listener) : $this->pretty.'()';
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
 
         return [
             'event' => $eventName,

@@ -174,12 +174,27 @@ abstract class AbstractOperation implements OperationInterface
 
         foreach ($this->getDomains() as $domain) {
             $intlDomain = $domain.MessageCatalogueInterface::INTL_DOMAIN_SUFFIX;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
             $messages = match ($batch) {
                 self::OBSOLETE_BATCH => $this->getObsoleteMessages($domain),
                 self::NEW_BATCH => $this->getNewMessages($domain),
                 self::ALL_BATCH => $this->getMessages($domain),
                 default => throw new \InvalidArgumentException(sprintf('$batch argument must be one of ["%s", "%s", "%s"].', self::ALL_BATCH, self::NEW_BATCH, self::OBSOLETE_BATCH)),
             };
+<<<<<<< HEAD
+=======
+=======
+            switch ($batch) {
+                case self::OBSOLETE_BATCH: $messages = $this->getObsoleteMessages($domain); break;
+                case self::NEW_BATCH: $messages = $this->getNewMessages($domain); break;
+                case self::ALL_BATCH: $messages = $this->getMessages($domain); break;
+                default: throw new \InvalidArgumentException(sprintf('$batch argument must be one of ["%s", "%s", "%s"].', self::ALL_BATCH, self::NEW_BATCH, self::OBSOLETE_BATCH));
+            }
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
 
             if (!$messages || (!$this->source->all($intlDomain) && $this->source->all($domain))) {
                 continue;

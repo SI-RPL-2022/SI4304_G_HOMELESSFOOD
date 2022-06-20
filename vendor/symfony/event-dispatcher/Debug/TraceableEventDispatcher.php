@@ -37,10 +37,23 @@ class TraceableEventDispatcher implements EventDispatcherInterface, ResetInterfa
      * @var \SplObjectStorage<WrappedListener, array{string, string}>|null
      */
     private ?\SplObjectStorage $callStack = null;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
     private EventDispatcherInterface $dispatcher;
     private array $wrappedListeners = [];
     private array $orphanedEvents = [];
     private ?RequestStack $requestStack;
+<<<<<<< HEAD
+=======
+=======
+    private $dispatcher;
+    private array $wrappedListeners = [];
+    private array $orphanedEvents = [];
+    private $requestStack;
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
     private string $currentRequestHash = '';
 
     public function __construct(EventDispatcherInterface $dispatcher, Stopwatch $stopwatch, LoggerInterface $logger = null, RequestStack $requestStack = null)

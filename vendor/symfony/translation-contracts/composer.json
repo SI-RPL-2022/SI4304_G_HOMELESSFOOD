@@ -16,7 +16,15 @@
         }
     ],
     "require": {
+<<<<<<< HEAD
         "php": ">=8.1"
+=======
+<<<<<<< HEAD
+        "php": ">=8.1"
+=======
+        "php": ">=8.0.2"
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
     },
     "suggest": {
         "symfony/translation-implementation": ""
@@ -30,7 +38,15 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
+<<<<<<< HEAD
             "dev-main": "3.1-dev"
+=======
+<<<<<<< HEAD
+            "dev-main": "3.1-dev"
+=======
+            "dev-main": "3.0-dev"
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
         },
         "thanks": {
             "name": "symfony/contracts",

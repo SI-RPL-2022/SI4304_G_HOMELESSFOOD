@@ -23,9 +23,21 @@ namespace Symfony\Component\CssSelector\Node;
  */
 class CombinedSelectorNode extends AbstractNode
 {
+<<<<<<< HEAD
     private NodeInterface $selector;
     private string $combinator;
     private NodeInterface $subSelector;
+=======
+<<<<<<< HEAD
+    private NodeInterface $selector;
+    private string $combinator;
+    private NodeInterface $subSelector;
+=======
+    private $selector;
+    private string $combinator;
+    private $subSelector;
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
 
     public function __construct(NodeInterface $selector, string $combinator, NodeInterface $subSelector)
     {

@@ -49,6 +49,27 @@ class XliffFileLoader implements LoaderInterface
             if (!is_file($resource)) {
                 throw new InvalidResourceException(sprintf('This is neither a file nor an XLIFF string "%s".', $resource));
             }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
+        }
+
+        try {
+            if ($this->isXmlString($resource)) {
+                $dom = XmlUtils::parse($resource);
+            } else {
+                $dom = XmlUtils::loadFile($resource);
+            }
+        } catch (\InvalidArgumentException|XmlParsingException|InvalidXmlException $e) {
+            throw new InvalidResourceException(sprintf('Unable to load "%s": ', $resource).$e->getMessage(), $e->getCode(), $e);
+<<<<<<< HEAD
+        }
+
+=======
+        }
+
+=======
         }
 
         try {
@@ -61,6 +82,8 @@ class XliffFileLoader implements LoaderInterface
             throw new InvalidResourceException(sprintf('Unable to load "%s": ', $resource).$e->getMessage(), $e->getCode(), $e);
         }
 
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
         if ($errors = XliffUtils::validateSchema($dom)) {
             throw new InvalidResourceException(sprintf('Invalid resource provided: "%s"; Errors: ', $resource).XliffUtils::getErrorsAsString($errors));
         }
@@ -231,6 +254,14 @@ class XliffFileLoader implements LoaderInterface
 
     private function isXmlString(string $resource): bool
     {
+<<<<<<< HEAD
         return str_starts_with($resource, '<?xml');
+=======
+<<<<<<< HEAD
+        return str_starts_with($resource, '<?xml');
+=======
+        return 0 === strpos($resource, '<?xml');
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
     }
 }

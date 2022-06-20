@@ -45,8 +45,18 @@ class XliffLintCommand extends Command
     {
         parent::__construct($name);
 
+<<<<<<< HEAD
         $this->directoryIteratorProvider = null === $directoryIteratorProvider ? null : $directoryIteratorProvider(...);
         $this->isReadableProvider = null === $isReadableProvider ? null : $isReadableProvider(...);
+=======
+<<<<<<< HEAD
+        $this->directoryIteratorProvider = null === $directoryIteratorProvider ? null : $directoryIteratorProvider(...);
+        $this->isReadableProvider = null === $isReadableProvider ? null : $isReadableProvider(...);
+=======
+        $this->directoryIteratorProvider = null === $directoryIteratorProvider || $directoryIteratorProvider instanceof \Closure ? $directoryIteratorProvider : \Closure::fromCallable($directoryIteratorProvider);
+        $this->isReadableProvider = null === $isReadableProvider || $isReadableProvider instanceof \Closure ? $isReadableProvider : \Closure::fromCallable($isReadableProvider);
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
         $this->requireStrictFileNames = $requireStrictFileNames;
     }
 
@@ -156,12 +166,31 @@ EOF
 
     private function display(SymfonyStyle $io, array $files)
     {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
         return match ($this->format) {
             'txt' => $this->displayTxt($io, $files),
             'json' => $this->displayJson($io, $files),
             'github' => $this->displayTxt($io, $files, true),
             default => throw new InvalidArgumentException(sprintf('The format "%s" is not supported.', $this->format)),
         };
+<<<<<<< HEAD
+=======
+=======
+        switch ($this->format) {
+            case 'txt':
+                return $this->displayTxt($io, $files);
+            case 'json':
+                return $this->displayJson($io, $files);
+            case 'github':
+                return $this->displayTxt($io, $files, true);
+            default:
+                throw new InvalidArgumentException(sprintf('The format "%s" is not supported.', $this->format));
+        }
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
     }
 
     private function displayTxt(SymfonyStyle $io, array $filesInfo, bool $errorAsGithubAnnotations = false)
@@ -180,7 +209,17 @@ EOF
                     // general document errors have a '-1' line number
                     $line = -1 === $error['line'] ? null : $error['line'];
 
+<<<<<<< HEAD
                     $githubReporter?->error($error['message'], $info['file'], $line, null !== $line ? $error['column'] : null);
+=======
+<<<<<<< HEAD
+                    $githubReporter?->error($error['message'], $info['file'], $line, null !== $line ? $error['column'] : null);
+=======
+                    if ($githubReporter) {
+                        $githubReporter->error($error['message'], $info['file'], $line, null !== $line ? $error['column'] : null);
+                    }
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
 
                     return null === $line ? $error['message'] : sprintf('Line %d, Column %d: %s', $line, $error['column'], $error['message']);
                 }, $info['messages']));

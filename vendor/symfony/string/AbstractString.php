@@ -558,7 +558,15 @@ abstract class AbstractString implements \Stringable, \JsonSerializable
      */
     public function trimPrefix($prefix): static
     {
+<<<<<<< HEAD
         if (\is_array($prefix) || $prefix instanceof \Traversable) { // don't use is_iterable(), it's slow
+=======
+<<<<<<< HEAD
+        if (\is_array($prefix) || $prefix instanceof \Traversable) { // don't use is_iterable(), it's slow
+=======
+        if (\is_array($prefix) || $prefix instanceof \Traversable) {
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
             foreach ($prefix as $s) {
                 $t = $this->trimPrefix($s);
 
@@ -592,7 +600,15 @@ abstract class AbstractString implements \Stringable, \JsonSerializable
      */
     public function trimSuffix($suffix): static
     {
+<<<<<<< HEAD
         if (\is_array($suffix) || $suffix instanceof \Traversable) { // don't use is_iterable(), it's slow
+=======
+<<<<<<< HEAD
+        if (\is_array($suffix) || $suffix instanceof \Traversable) { // don't use is_iterable(), it's slow
+=======
+        if (\is_array($suffix) || $suffix instanceof \Traversable) {
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
             foreach ($suffix as $s) {
                 $t = $this->trimSuffix($s);
 

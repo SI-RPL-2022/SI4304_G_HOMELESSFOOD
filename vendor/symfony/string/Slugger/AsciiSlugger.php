@@ -96,7 +96,15 @@ class AsciiSlugger implements SluggerInterface, LocaleAwareInterface
         $locale ??= $this->defaultLocale;
 
         $transliterator = [];
+<<<<<<< HEAD
         if ($locale && ('de' === $locale || str_starts_with($locale, 'de_'))) {
+=======
+<<<<<<< HEAD
+        if ($locale && ('de' === $locale || str_starts_with($locale, 'de_'))) {
+=======
+        if ($locale && ('de' === $locale || 0 === strpos($locale, 'de_'))) {
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
+>>>>>>> 7413426f6e8ef32dfdb70b196b80d6be902b54c1
             // Use the shortcut for German in UnicodeString::ascii() if possible (faster and no requirement on intl)
             $transliterator = ['de-ASCII'];
         } elseif (\function_exists('transliterator_transliterate') && $locale) {
