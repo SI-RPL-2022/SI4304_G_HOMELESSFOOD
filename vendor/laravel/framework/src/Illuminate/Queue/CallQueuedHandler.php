@@ -7,15 +7,12 @@ use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pipeline\Pipeline;
-use Illuminate\Support\Str;
 use ReflectionClass;
-use RuntimeException;
 
 class CallQueuedHandler
 {
@@ -57,7 +54,7 @@ class CallQueuedHandler
     {
         try {
             $command = $this->setJobInstanceIfNecessary(
-                $job, $this->getCommand($data)
+                $job, unserialize($data['command'])
             );
         } catch (ModelNotFoundException $e) {
             return $this->handleModelNotFound($job, $e);
@@ -81,27 +78,6 @@ class CallQueuedHandler
         if (! $job->isDeletedOrReleased()) {
             $job->delete();
         }
-    }
-
-    /**
-     * Get the command from the given payload.
-     *
-     * @param  array  $data
-     * @return mixed
-     *
-     * @throws \RuntimeException
-     */
-    protected function getCommand(array $data)
-    {
-        if (Str::startsWith($data['command'], 'O:')) {
-            return unserialize($data['command']);
-        }
-
-        if ($this->container->bound(Encrypter::class)) {
-            return unserialize($this->container[Encrypter::class]->decrypt($data['command']));
-        }
-
-        throw new RuntimeException('Unable to extract job payload.');
     }
 
     /**
@@ -250,7 +226,7 @@ class CallQueuedHandler
      */
     public function failed(array $data, $e, string $uuid)
     {
-        $command = $this->getCommand($data);
+        $command = unserialize($data['command']);
 
         if (! $command instanceof ShouldBeUniqueUntilProcessing) {
             $this->ensureUniqueJobLockIsReleased($command);

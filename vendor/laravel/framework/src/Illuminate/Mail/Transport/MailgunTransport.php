@@ -3,9 +3,7 @@
 namespace Illuminate\Mail\Transport;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
 use Swift_Mime_SimpleMessage;
-use Swift_TransportException;
 
 class MailgunTransport extends Transport
 {
@@ -57,8 +55,6 @@ class MailgunTransport extends Transport
 
     /**
      * {@inheritdoc}
-     *
-     * @return int
      */
     public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
@@ -70,15 +66,11 @@ class MailgunTransport extends Transport
 
         $message->setBcc([]);
 
-        try {
-            $response = $this->client->request(
-                'POST',
-                "https://{$this->endpoint}/v3/{$this->domain}/messages.mime",
-                $this->payload($message, $to)
-            );
-        } catch (GuzzleException $e) {
-            throw new Swift_TransportException('Request to Mailgun API failed.', $e->getCode(), $e);
-        }
+        $response = $this->client->request(
+            'POST',
+            "https://{$this->endpoint}/v3/{$this->domain}/messages.mime",
+            $this->payload($message, $to)
+        );
 
         $messageId = $this->getMessageId($response);
 

@@ -8,14 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Carbon;
 
 use Carbon\Exceptions\InvalidCastException;
 use Carbon\Exceptions\InvalidTimeZoneException;
 use DateTimeInterface;
 use DateTimeZone;
-use Throwable;
 
 class CarbonTimeZone extends DateTimeZone
 {
@@ -30,12 +28,12 @@ class CarbonTimeZone extends DateTimeZone
             throw new InvalidTimeZoneException('Absolute timezone offset cannot be greater than 100.');
         }
 
-        return ($timezone >= 0 ? '+' : '').ltrim($timezone, '+').':00';
+        return ($timezone >= 0 ? '+' : '').$timezone.':00';
     }
 
     protected static function getDateTimeZoneNameFromMixed($timezone)
     {
-        if ($timezone === null) {
+        if (\is_null($timezone)) {
             return date_default_timezone_get();
         }
 
@@ -101,15 +99,15 @@ class CarbonTimeZone extends DateTimeZone
             $tz = static::getDateTimeZoneFromName($object);
         }
 
-        if ($tz !== false) {
-            return new static($tz->getName());
+        if ($tz === false) {
+            if (Carbon::isStrictModeEnabled()) {
+                throw new InvalidTimeZoneException('Unknown or bad timezone ('.($objectDump ?: $object).')');
+            }
+
+            return false;
         }
 
-        if (Carbon::isStrictModeEnabled()) {
-            throw new InvalidTimeZoneException('Unknown or bad timezone ('.($objectDump ?: $object).')');
-        }
-
-        return false;
+        return new static($tz->getName());
     }
 
     /**
@@ -200,7 +198,7 @@ class CarbonTimeZone extends DateTimeZone
         // @codeCoverageIgnoreStart
         try {
             $offset = @$this->getOffset($date) ?: 0;
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $offset = 0;
         }
         // @codeCoverageIgnoreEnd
@@ -231,15 +229,15 @@ class CarbonTimeZone extends DateTimeZone
     {
         $tz = $this->toRegionName($date);
 
-        if ($tz !== false) {
-            return new static($tz);
+        if ($tz === false) {
+            if (Carbon::isStrictModeEnabled()) {
+                throw new InvalidTimeZoneException('Unknown timezone for offset '.$this->getOffset($date ?: Carbon::now($this)).' seconds.');
+            }
+
+            return false;
         }
 
-        if (Carbon::isStrictModeEnabled()) {
-            throw new InvalidTimeZoneException('Unknown timezone for offset '.$this->getOffset($date ?: Carbon::now($this)).' seconds.');
-        }
-
-        return false;
+        return new static($tz);
     }
 
     /**

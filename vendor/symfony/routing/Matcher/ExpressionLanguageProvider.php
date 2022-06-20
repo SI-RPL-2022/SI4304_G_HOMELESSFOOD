@@ -34,10 +34,8 @@ class ExpressionLanguageProvider implements ExpressionFunctionProviderInterface
      */
     public function getFunctions()
     {
-        $functions = [];
-
         foreach ($this->functions->getProvidedServices() as $function => $type) {
-            $functions[] = new ExpressionFunction(
+            yield new ExpressionFunction(
                 $function,
                 static function (...$args) use ($function) {
                     return sprintf('($context->getParameter(\'_functions\')->get(%s)(%s))', var_export($function, true), implode(', ', $args));
@@ -47,8 +45,6 @@ class ExpressionLanguageProvider implements ExpressionFunctionProviderInterface
                 }
             );
         }
-
-        return $functions;
     }
 
     public function get(string $function): callable

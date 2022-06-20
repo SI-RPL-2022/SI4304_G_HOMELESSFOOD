@@ -21,6 +21,8 @@ final class RepositoryBuilder
 {
     /**
      * The set of default adapters.
+     *
+     * @var string[]
      */
     private const DEFAULT_ADAPTERS = [
         ServerConstAdapter::class,

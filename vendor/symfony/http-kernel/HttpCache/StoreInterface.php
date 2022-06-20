@@ -27,7 +27,7 @@ interface StoreInterface
     /**
      * Locates a cached Response for the Request provided.
      *
-     * @return Response|null
+     * @return Response|null A Response instance, or null if no cache entry was found
      */
     public function lookup(Request $request);
 

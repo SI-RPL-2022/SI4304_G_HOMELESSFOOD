@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2020 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -22,7 +22,6 @@ use Psy\ExecutionLoop\RunkitReloader;
 use Psy\Formatter\TraceFormatter;
 use Psy\Input\ShellInput;
 use Psy\Input\SilentInput;
-use Psy\Output\ShellOutput;
 use Psy\TabCompletion\Matcher;
 use Psy\VarDumper\PresenterAware;
 use Symfony\Component\Console\Application;
@@ -49,7 +48,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Shell extends Application
 {
-    const VERSION = 'v0.11.5';
+    const VERSION = 'v0.10.5';
 
     const PROMPT = '>>> ';
     const BUFF_PROMPT = '... ';
@@ -75,8 +74,6 @@ class Shell extends Application
     private $matchers = [];
     private $commandsMatcher;
     private $lastExecSuccess = true;
-    private $nonInteractive = false;
-    private $errorReporting;
 
     /**
      * Create a new Psy Shell.
@@ -109,20 +106,10 @@ class Shell extends Application
      * This is used by the psysh bin to decide whether to start a shell on boot,
      * or to simply autoload the library.
      */
-    public static function isIncluded(array $trace): bool
+    public static function isIncluded(array $trace)
     {
-        $isIncluded = isset($trace[0]['function']) &&
+        return isset($trace[0]['function']) &&
           \in_array($trace[0]['function'], ['require', 'include', 'require_once', 'include_once']);
-
-        // Detect Composer PHP bin proxies.
-        if ($isIncluded && \array_key_exists('_composer_autoload_path', $GLOBALS) && \preg_match('{[\\\\/]psysh$}', $trace[0]['file'])) {
-            // If we're in a bin proxy, we'll *always* see one include, but we
-            // care if we see a second immediately after that.
-            return isset($trace[1]['function']) &&
-                \in_array($trace[1]['function'], ['require', 'include', 'require_once', 'include_once']);
-        }
-
-        return $isIncluded;
     }
 
     /**
@@ -136,7 +123,7 @@ class Shell extends Application
      *
      * @return array Scope variables from the debugger session
      */
-    public static function debug(array $vars = [], $bindTo = null): array
+    public static function debug(array $vars = [], $bindTo = null)
     {
         return \Psy\debug($vars, $bindTo);
     }
@@ -150,7 +137,7 @@ class Shell extends Application
      *
      * @return BaseCommand The registered command
      */
-    public function add(BaseCommand $command): BaseCommand
+    public function add(BaseCommand $command)
     {
         if ($ret = parent::add($command)) {
             if ($ret instanceof ContextAware) {
@@ -174,7 +161,7 @@ class Shell extends Application
      *
      * @return InputDefinition An InputDefinition instance
      */
-    protected function getDefaultInputDefinition(): InputDefinition
+    protected function getDefaultInputDefinition()
     {
         return new InputDefinition([
             new InputArgument('command', InputArgument::REQUIRED, 'The command to execute'),
@@ -187,7 +174,7 @@ class Shell extends Application
      *
      * @return array An array of default Command instances
      */
-    protected function getDefaultCommands(): array
+    protected function getDefaultCommands()
     {
         $sudo = new Command\SudoCommand();
         $sudo->setReadline($this->readline);
@@ -219,7 +206,7 @@ class Shell extends Application
     /**
      * @return array
      */
-    protected function getDefaultMatchers(): array
+    protected function getDefaultMatchers()
     {
         // Store the Commands Matcher for later. If more commands are added,
         // we'll update the Commands Matcher too.
@@ -255,7 +242,7 @@ class Shell extends Application
      *
      * @return array An array of Execution Loop Listener instances
      */
-    protected function getDefaultLoopListeners(): array
+    protected function getDefaultLoopListeners()
     {
         $listeners = [];
 
@@ -313,7 +300,7 @@ class Shell extends Application
      *
      * @return int 0 if everything went fine, or an error code
      */
-    public function run(InputInterface $input = null, OutputInterface $output = null): int
+    public function run(InputInterface $input = null, OutputInterface $output = null)
     {
         // We'll just ignore the input passed in, and set up our own!
         $input = new ArrayInput([]);
@@ -344,7 +331,7 @@ class Shell extends Application
      *
      * @return int 0 if everything went fine, or an error code
      */
-    public function doRun(InputInterface $input, OutputInterface $output): int
+    public function doRun(InputInterface $input, OutputInterface $output)
     {
         $this->setOutput($output);
         $this->resetCodeBuffer();
@@ -367,7 +354,7 @@ class Shell extends Application
      *
      * @return int 0 if everything went fine, or an error code
      */
-    private function doInteractiveRun(): int
+    private function doInteractiveRun()
     {
         $this->initializeTabCompletion();
         $this->readline->readHistory();
@@ -401,10 +388,8 @@ class Shell extends Application
      *
      * @return int 0 if everything went fine, or an error code
      */
-    private function doNonInteractiveRun(bool $rawOutput): int
+    private function doNonInteractiveRun($rawOutput)
     {
-        $this->nonInteractive = true;
-
         // If raw output is enabled (or output is piped) we don't want startup messages.
         if (!$rawOutput && !$this->config->outputIsPiped()) {
             $this->output->writeln($this->getHeader());
@@ -428,7 +413,6 @@ class Shell extends Application
         }
 
         $this->afterRun();
-        $this->nonInteractive = false;
 
         return 0;
     }
@@ -488,7 +472,7 @@ class Shell extends Application
      *
      * @param bool $interactive
      */
-    public function getInput(bool $interactive = true)
+    public function getInput($interactive = true)
     {
         $this->codeBufferOpen = false;
 
@@ -545,7 +529,7 @@ class Shell extends Application
      *
      * @return bool true if the input is in an open string or comment
      */
-    private function inputInOpenStringOrComment(string $input): bool
+    private function inputInOpenStringOrComment($input)
     {
         if (!$this->hasCode()) {
             return false;
@@ -587,7 +571,7 @@ class Shell extends Application
      *
      * @return string
      */
-    public function onInput(string $input): string
+    public function onInput($input)
     {
         foreach ($this->loopListeners as $listeners) {
             if (($return = $listeners->onInput($this, $input)) !== null) {
@@ -605,10 +589,8 @@ class Shell extends Application
      *
      * @return string
      */
-    public function onExecute(string $code): string
+    public function onExecute($code)
     {
-        $this->errorReporting = \error_reporting();
-
         foreach ($this->loopListeners as $listener) {
             if (($return = $listener->onExecute($this, $code)) !== null) {
                 $code = $return;
@@ -664,7 +646,7 @@ class Shell extends Application
      *
      * @return array Associative array of scope variables
      */
-    public function getScopeVariables(bool $includeBoundObject = true): array
+    public function getScopeVariables($includeBoundObject = true)
     {
         $vars = $this->context->getAll();
 
@@ -684,7 +666,7 @@ class Shell extends Application
      *
      * @return array Associative array of magic scope variables
      */
-    public function getSpecialScopeVariables(bool $includeBoundObject = true): array
+    public function getSpecialScopeVariables($includeBoundObject = true)
     {
         $vars = $this->context->getSpecialVariables();
 
@@ -706,7 +688,7 @@ class Shell extends Application
      *
      * @return array Associative array of scope variables which differ from $currentVars
      */
-    public function getScopeVariablesDiff(array $currentVars): array
+    public function getScopeVariablesDiff(array $currentVars)
     {
         $newVars = [];
 
@@ -724,7 +706,7 @@ class Shell extends Application
      *
      * @return array Array of unused variable names
      */
-    public function getUnusedCommandScopeVariableNames(): array
+    public function getUnusedCommandScopeVariableNames()
     {
         return $this->context->getUnusedCommandScopeVariableNames();
     }
@@ -734,7 +716,7 @@ class Shell extends Application
      *
      * @return array Array of variable names
      */
-    public function getScopeVariableNames(): array
+    public function getScopeVariableNames()
     {
         return \array_keys($this->context->getAll());
     }
@@ -746,7 +728,7 @@ class Shell extends Application
      *
      * @return mixed
      */
-    public function getScopeVariable(string $name)
+    public function getScopeVariable($name)
     {
         return $this->context->get($name);
     }
@@ -806,7 +788,7 @@ class Shell extends Application
      *
      * @return array
      */
-    public function getIncludes(): array
+    public function getIncludes()
     {
         return \array_merge($this->config->getDefaultIncludes(), $this->includes);
     }
@@ -816,7 +798,7 @@ class Shell extends Application
      *
      * @return bool True if the code buffer contains code
      */
-    public function hasCode(): bool
+    public function hasCode()
     {
         return !empty($this->codeBuffer);
     }
@@ -828,7 +810,7 @@ class Shell extends Application
      *
      * @return bool True if the code buffer content is valid
      */
-    protected function hasValidCode(): bool
+    protected function hasValidCode()
     {
         return !$this->codeBufferOpen && $this->code !== false;
     }
@@ -839,7 +821,7 @@ class Shell extends Application
      * @param string $code
      * @param bool   $silent
      */
-    public function addCode(string $code, bool $silent = false)
+    public function addCode($code, $silent = false)
     {
         try {
             // Code lines ending in \ keep the buffer open
@@ -852,7 +834,7 @@ class Shell extends Application
 
             $this->codeBuffer[] = $silent ? new SilentInput($code) : $code;
             $this->code = $this->cleaner->clean($this->codeBuffer, $this->config->requireSemicolons());
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             // Add failed code blocks to the readline history.
             $this->addCodeBufferToHistory();
 
@@ -872,7 +854,7 @@ class Shell extends Application
      * @param string $code
      * @param bool   $silent
      */
-    private function setCode(string $code, bool $silent = false)
+    private function setCode($code, $silent = false)
     {
         if ($this->hasCode()) {
             $this->codeStack[] = [$this->codeBuffer, $this->codeBufferOpen, $this->code];
@@ -882,6 +864,10 @@ class Shell extends Application
         try {
             $this->addCode($code, $silent);
         } catch (\Throwable $e) {
+            $this->popCodeStack();
+
+            throw $e;
+        } catch (\Exception $e) {
             $this->popCodeStack();
 
             throw $e;
@@ -901,7 +887,7 @@ class Shell extends Application
      *
      * @return array
      */
-    public function getCodeBuffer(): array
+    public function getCodeBuffer()
     {
         return $this->codeBuffer;
     }
@@ -915,7 +901,7 @@ class Shell extends Application
      *
      * @return mixed Who knows?
      */
-    protected function runCommand(string $input)
+    protected function runCommand($input)
     {
         $command = $this->getCommand($input);
 
@@ -955,7 +941,7 @@ class Shell extends Application
      * @param string|array $input
      * @param bool         $silent
      */
-    public function addInput($input, bool $silent = false)
+    public function addInput($input, $silent = false)
     {
         foreach ((array) $input as $line) {
             $this->inputBuffer[] = $silent ? new SilentInput($line) : $line;
@@ -968,7 +954,7 @@ class Shell extends Application
      * If the code buffer is valid, resets the code buffer and returns the
      * current code.
      *
-     * @return string|null PHP code buffer contents
+     * @return string PHP code buffer contents
      */
     public function flushCode()
     {
@@ -1040,7 +1026,7 @@ class Shell extends Application
      *
      * @see CodeCleaner::getNamespace
      *
-     * @return string|null Current code namespace
+     * @return string Current code namespace
      */
     public function getNamespace()
     {
@@ -1057,14 +1043,8 @@ class Shell extends Application
      * @param string $out
      * @param int    $phase Output buffering phase
      */
-    public function writeStdout(string $out, int $phase = \PHP_OUTPUT_HANDLER_END)
+    public function writeStdout($out, $phase = \PHP_OUTPUT_HANDLER_END)
     {
-        if ($phase & \PHP_OUTPUT_HANDLER_START) {
-            if ($this->output instanceof ShellOutput) {
-                $this->output->startPaging();
-            }
-        }
-
         $isCleaning = $phase & \PHP_OUTPUT_HANDLER_CLEAN;
 
         // Incremental flush
@@ -1091,10 +1071,6 @@ class Shell extends Application
                 $this->context->setLastStdout($this->stdoutBuffer);
                 $this->stdoutBuffer = '';
             }
-
-            if ($this->output instanceof ShellOutput) {
-                $this->output->stopPaging();
-            }
         }
     }
 
@@ -1109,7 +1085,7 @@ class Shell extends Application
      * @param mixed $ret
      * @param bool  $rawOutput Write raw var_export-style values
      */
-    public function writeReturnValue($ret, bool $rawOutput = false)
+    public function writeReturnValue($ret, $rawOutput = false)
     {
         $this->lastExecSuccess = true;
 
@@ -1127,11 +1103,7 @@ class Shell extends Application
             $formatted = static::RETVAL.\str_replace(\PHP_EOL, \PHP_EOL.$indent, $formatted);
         }
 
-        if ($this->output instanceof ShellOutput) {
-            $this->output->page($formatted.\PHP_EOL);
-        } else {
-            $this->output->writeln($formatted);
-        }
+        $this->output->writeln($formatted);
     }
 
     /**
@@ -1146,18 +1118,8 @@ class Shell extends Application
      */
     public function writeException(\Exception $e)
     {
-        // No need to write the break exception during a non-interactive run.
-        if ($e instanceof BreakException && $this->nonInteractive) {
-            $this->resetCodeBuffer();
-
-            return;
-        }
-
-        // Break exceptions don't count :)
-        if (!$e instanceof BreakException) {
-            $this->lastExecSuccess = false;
-            $this->context->setLastException($e);
-        }
+        $this->lastExecSuccess = false;
+        $this->context->setLastException($e);
 
         $output = $this->output;
         if ($output instanceof ConsoleOutput) {
@@ -1185,7 +1147,7 @@ class Shell extends Application
      *
      * @return bool
      */
-    public function getLastExecSuccess(): bool
+    public function getLastExecSuccess()
     {
         return $this->lastExecSuccess;
     }
@@ -1199,7 +1161,7 @@ class Shell extends Application
      *
      * @return string
      */
-    public function formatException(\Exception $e): string
+    public function formatException(\Exception $e)
     {
         $message = $e->getMessage();
         if (!$e instanceof PsyException) {
@@ -1230,7 +1192,7 @@ class Shell extends Application
      *
      * @return string
      */
-    protected function getSeverity(\ErrorException $e): string
+    protected function getSeverity(\ErrorException $e)
     {
         $severity = $e->getSeverity();
         if ($severity & \error_reporting()) {
@@ -1261,7 +1223,7 @@ class Shell extends Application
      *
      * @return mixed
      */
-    public function execute(string $code, bool $throwExceptions = false)
+    public function execute($code, $throwExceptions = false)
     {
         $this->setCode($code, true);
         $closure = new ExecutionClosure($this);
@@ -1316,12 +1278,8 @@ class Shell extends Application
             ErrorException::throwException($errno, $errstr, $errfile, $errline);
         }
 
-        // When errors are suppressed, the error_reporting value will differ
-        // from when we started executing. In that case, we won't log errors.
-        $errorsSuppressed = $this->errorReporting !== null && $this->errorReporting !== \error_reporting();
-
         // Otherwise log it and continue.
-        if ($errno & \error_reporting() || (!$errorsSuppressed && ($errno & $this->config->errorLoggingLevel()))) {
+        if ($errno & \error_reporting() || $errno & $this->config->errorLoggingLevel()) {
             $this->writeException(new ErrorException($errstr, 0, $errno, $errfile, $errline));
         }
     }
@@ -1335,7 +1293,7 @@ class Shell extends Application
      *
      * @return string Formatted value
      */
-    protected function presentValue($val): string
+    protected function presentValue($val)
     {
         return $this->config->getPresenter()->present($val);
     }
@@ -1347,7 +1305,7 @@ class Shell extends Application
      *
      * @return BaseCommand|null
      */
-    protected function getCommand(string $input)
+    protected function getCommand($input)
     {
         $input = new StringInput($input);
         if ($name = $input->getFirstArgument()) {
@@ -1362,7 +1320,7 @@ class Shell extends Application
      *
      * @return bool True if the shell has a command for the given input
      */
-    protected function hasCommand(string $input): bool
+    protected function hasCommand($input)
     {
         if (\preg_match('/([^\s]+?)(?:\s|$)/A', \ltrim($input), $match)) {
             return $this->has($match[1]);
@@ -1374,7 +1332,7 @@ class Shell extends Application
     /**
      * Get the current input prompt.
      *
-     * @return string|null
+     * @return string | null
      */
     protected function getPrompt()
     {
@@ -1400,9 +1358,9 @@ class Shell extends Application
      *
      * @param bool $interactive
      *
-     * @return string|false One line of user input
+     * @return string One line of user input
      */
-    protected function readline(bool $interactive = true)
+    protected function readline($interactive = true)
     {
         if (!empty($this->inputBuffer)) {
             $line = \array_shift($this->inputBuffer);
@@ -1433,7 +1391,7 @@ class Shell extends Application
      *
      * @return string
      */
-    protected function getHeader(): string
+    protected function getHeader()
     {
         return \sprintf('<aside>%s by Justin Hileman</aside>', $this->getVersion());
     }
@@ -1445,7 +1403,7 @@ class Shell extends Application
      *
      * @return string
      */
-    public function getVersion(): string
+    public function getVersion()
     {
         return self::getVersionHeader($this->config->useUnicode());
     }
@@ -1457,7 +1415,7 @@ class Shell extends Application
      *
      * @return string
      */
-    public static function getVersionHeader(bool $useUnicode = false): string
+    public static function getVersionHeader($useUnicode = false)
     {
         $separator = $useUnicode ? '—' : '-';
 

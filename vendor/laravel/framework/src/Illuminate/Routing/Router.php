@@ -18,7 +18,6 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
 use Illuminate\Support\Traits\Macroable;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -515,11 +514,10 @@ class Router implements BindingRegistrar, RegistrarContract
             $action = ['uses' => $action];
         }
 
-        // Here we'll merge any group "controller" and "uses" statements if necessary so that
-        // the action has the proper clause for this property. Then, we can simply set the
-        // name of this controller on the action plus return the action array for usage.
+        // Here we'll merge any group "uses" statement if necessary so that the action
+        // has the proper clause for this property. Then we can simply set the name
+        // of the controller on the action and return the action array for usage.
         if ($this->hasGroupStack()) {
-            $action['uses'] = $this->prependGroupController($action['uses']);
             $action['uses'] = $this->prependGroupNamespace($action['uses']);
         }
 
@@ -543,31 +541,6 @@ class Router implements BindingRegistrar, RegistrarContract
 
         return isset($group['namespace']) && strpos($class, '\\') !== 0
                 ? $group['namespace'].'\\'.$class : $class;
-    }
-
-    /**
-     * Prepend the last group controller onto the use clause.
-     *
-     * @param  string  $class
-     * @return string
-     */
-    protected function prependGroupController($class)
-    {
-        $group = end($this->groupStack);
-
-        if (! isset($group['controller'])) {
-            return $class;
-        }
-
-        if (class_exists($class)) {
-            return $class;
-        }
-
-        if (strpos($class, '@') !== false) {
-            return $class;
-        }
-
-        return $group['controller'].'@'.$class;
     }
 
     /**
@@ -672,8 +645,6 @@ class Router implements BindingRegistrar, RegistrarContract
     {
         $this->current = $route = $this->routes->match($request);
 
-        $route->setContainer($this->container);
-
         $this->container->instance(Route::class, $route);
 
         return $route;
@@ -731,24 +702,16 @@ class Router implements BindingRegistrar, RegistrarContract
      */
     public function gatherRouteMiddleware(Route $route)
     {
-        $computedMiddleware = $route->gatherMiddleware();
-
         $excluded = collect($route->excludedMiddleware())->map(function ($name) {
             return (array) MiddlewareNameResolver::resolve($name, $this->middleware, $this->middlewareGroups);
         })->flatten()->values()->all();
 
-        $middleware = collect($computedMiddleware)->map(function ($name) {
+        $middleware = collect($route->gatherMiddleware())->map(function ($name) {
             return (array) MiddlewareNameResolver::resolve($name, $this->middleware, $this->middlewareGroups);
         })->flatten()->reject(function ($name) use ($excluded) {
             if (empty($excluded)) {
                 return false;
-            }
-
-            if ($name instanceof Closure) {
-                return false;
-            }
-
-            if (in_array($name, $excluded, true)) {
+            } elseif (in_array($name, $excluded, true)) {
                 return true;
             }
 
@@ -806,14 +769,11 @@ class Router implements BindingRegistrar, RegistrarContract
             $response = (new HttpFoundationFactory)->createResponse($response);
         } elseif ($response instanceof Model && $response->wasRecentlyCreated) {
             $response = new JsonResponse($response, 201);
-        } elseif ($response instanceof Stringable) {
-            $response = new Response($response->__toString(), 200, ['Content-Type' => 'text/html']);
         } elseif (! $response instanceof SymfonyResponse &&
                    ($response instanceof Arrayable ||
                     $response instanceof Jsonable ||
                     $response instanceof ArrayObject ||
                     $response instanceof JsonSerializable ||
-                    $response instanceof \stdClass ||
                     is_array($response))) {
             $response = new JsonResponse($response);
         } elseif (! $response instanceof SymfonyResponse) {
@@ -980,18 +940,6 @@ class Router implements BindingRegistrar, RegistrarContract
         if (! in_array($middleware, $this->middlewareGroups[$group])) {
             $this->middlewareGroups[$group][] = $middleware;
         }
-
-        return $this;
-    }
-
-    /**
-     * Flush the router's middleware groups.
-     *
-     * @return $this
-     */
-    public function flushMiddlewareGroups()
-    {
-        $this->middlewareGroups = [];
 
         return $this;
     }
@@ -1323,19 +1271,6 @@ class Router implements BindingRegistrar, RegistrarContract
     }
 
     /**
-     * Set the container instance used by the router.
-     *
-     * @param  \Illuminate\Container\Container  $container
-     * @return $this
-     */
-    public function setContainer(Container $container)
-    {
-        $this->container = $container;
-
-        return $this;
-    }
-
-    /**
      * Dynamically handle calls into the router instance.
      *
      * @param  string  $method
@@ -1352,6 +1287,6 @@ class Router implements BindingRegistrar, RegistrarContract
             return (new RouteRegistrar($this))->attribute($method, is_array($parameters[0]) ? $parameters[0] : $parameters);
         }
 
-        return (new RouteRegistrar($this))->attribute($method, array_key_exists(0, $parameters) ? $parameters[0] : true);
+        return (new RouteRegistrar($this))->attribute($method, $parameters[0]);
     }
 }

@@ -15,11 +15,12 @@ use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
+ * EventDataCollector.
+ *
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @final
@@ -41,7 +42,7 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
      */
     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
-        $this->currentRequest = $this->requestStack && $this->requestStack->getMainRequest() !== $request ? $request : null;
+        $this->currentRequest = $this->requestStack && $this->requestStack->getMasterRequest() !== $request ? $request : null;
         $this->data = [
             'called_listeners' => [],
             'not_called_listeners' => [],
@@ -70,6 +71,8 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
     }
 
     /**
+     * Sets the called listeners.
+     *
      * @param array $listeners An array of called listeners
      *
      * @see TraceableEventDispatcher
@@ -80,9 +83,11 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
     }
 
     /**
-     * @see TraceableEventDispatcher
+     * Gets the called listeners.
      *
-     * @return array|Data
+     * @return array An array of called listeners
+     *
+     * @see TraceableEventDispatcher
      */
     public function getCalledListeners()
     {
@@ -90,6 +95,8 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
     }
 
     /**
+     * Sets the not called listeners.
+     *
      * @see TraceableEventDispatcher
      */
     public function setNotCalledListeners(array $listeners)
@@ -98,9 +105,11 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
     }
 
     /**
-     * @see TraceableEventDispatcher
+     * Gets the not called listeners.
      *
-     * @return array|Data
+     * @return array
+     *
+     * @see TraceableEventDispatcher
      */
     public function getNotCalledListeners()
     {
@@ -108,6 +117,8 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
     }
 
     /**
+     * Sets the orphaned events.
+     *
      * @param array $events An array of orphaned events
      *
      * @see TraceableEventDispatcher
@@ -118,9 +129,11 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
     }
 
     /**
-     * @see TraceableEventDispatcher
+     * Gets the orphaned events.
      *
-     * @return array|Data
+     * @return array An array of orphaned events
+     *
+     * @see TraceableEventDispatcher
      */
     public function getOrphanedEvents()
     {
@@ -130,7 +143,7 @@ class EventDataCollector extends DataCollector implements LateDataCollectorInter
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName()
     {
         return 'events';
     }

@@ -63,7 +63,7 @@ class Profiler implements ResetInterface
     /**
      * Loads the Profile for the given Response.
      *
-     * @return Profile|null
+     * @return Profile|null A Profile instance
      */
     public function loadProfileFromResponse(Response $response)
     {
@@ -77,7 +77,7 @@ class Profiler implements ResetInterface
     /**
      * Loads the Profile for the given token.
      *
-     * @return Profile|null
+     * @return Profile|null A Profile instance
      */
     public function loadProfile(string $token)
     {
@@ -120,7 +120,7 @@ class Profiler implements ResetInterface
      * @param string|null $start The start date to search from
      * @param string|null $end   The end date to search to
      *
-     * @return array
+     * @return array An array of tokens
      *
      * @see https://php.net/datetime.formats for the supported date/time formats
      */
@@ -132,7 +132,7 @@ class Profiler implements ResetInterface
     /**
      * Collects data for the given Response.
      *
-     * @return Profile|null
+     * @return Profile|null A Profile instance or null if the profiler is disabled
      */
     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
@@ -178,7 +178,7 @@ class Profiler implements ResetInterface
     /**
      * Gets the Collectors associated with this profiler.
      *
-     * @return array
+     * @return array An array of collectors
      */
     public function all()
     {
@@ -223,7 +223,7 @@ class Profiler implements ResetInterface
      *
      * @param string $name A collector name
      *
-     * @return DataCollectorInterface
+     * @return DataCollectorInterface A DataCollectorInterface instance
      *
      * @throws \InvalidArgumentException if the collector does not exist
      */

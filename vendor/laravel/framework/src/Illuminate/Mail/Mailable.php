@@ -7,21 +7,18 @@ use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Contracts\Mail\Factory as MailFactory;
 use Illuminate\Contracts\Mail\Mailable as MailableContract;
 use Illuminate\Contracts\Queue\Factory as Queue;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Illuminate\Support\Traits\Localizable;
-use PHPUnit\Framework\Assert as PHPUnit;
 use ReflectionClass;
 use ReflectionProperty;
 
 class Mailable implements MailableContract, Renderable
 {
-    use Conditionable, ForwardsCalls, Localizable;
+    use ForwardsCalls, Localizable;
 
     /**
      * The locale of the message.
@@ -77,7 +74,7 @@ class Mailable implements MailableContract, Renderable
      *
      * @var string
      */
-    public $markdown;
+    protected $markdown;
 
     /**
      * The HTML to use for the message.
@@ -150,13 +147,6 @@ class Mailable implements MailableContract, Renderable
     public $mailer;
 
     /**
-     * The rendered mailable views for testing / assertions.
-     *
-     * @var array
-     */
-    protected $assertionableRenderStrings;
-
-    /**
      * The callback that should be invoked while building the view data.
      *
      * @var callable
@@ -171,7 +161,7 @@ class Mailable implements MailableContract, Renderable
      */
     public function send($mailer)
     {
-        $this->withLocale($this->locale, function () use ($mailer) {
+        return $this->withLocale($this->locale, function () use ($mailer) {
             Container::getInstance()->call([$this, 'build']);
 
             $mailer = $mailer instanceof MailFactory
@@ -234,11 +224,7 @@ class Mailable implements MailableContract, Renderable
      */
     protected function newQueuedJob()
     {
-        return (new SendQueuedMailable($this))
-                    ->through(array_merge(
-                        method_exists($this, 'middleware') ? $this->middleware() : [],
-                        $this->middleware ?? []
-                    ));
+        return new SendQueuedMailable($this);
     }
 
     /**
@@ -618,10 +604,6 @@ class Mailable implements MailableContract, Renderable
      */
     protected function setAddress($address, $name = null, $property = 'to')
     {
-        if (empty($address)) {
-            return $this;
-        }
-
         foreach ($this->addressesToArray($address, $name) as $recipient) {
             $recipient = $this->normalizeRecipient($recipient);
 
@@ -683,10 +665,6 @@ class Mailable implements MailableContract, Renderable
      */
     protected function hasRecipient($address, $name = null, $property = 'to')
     {
-        if (empty($address)) {
-            return false;
-        }
-
         $expected = $this->normalizeRecipient(
             $this->addressesToArray($address, $name)[0]
         );
@@ -867,114 +845,6 @@ class Mailable implements MailableContract, Renderable
     }
 
     /**
-     * Assert that the given text is present in the HTML email body.
-     *
-     * @param  string  $string
-     * @return $this
-     */
-    public function assertSeeInHtml($string)
-    {
-        [$html, $text] = $this->renderForAssertions();
-
-        PHPUnit::assertTrue(
-            Str::contains($html, $string),
-            "Did not see expected text [{$string}] within email body."
-        );
-
-        return $this;
-    }
-
-    /**
-     * Assert that the given text is not present in the HTML email body.
-     *
-     * @param  string  $string
-     * @return $this
-     */
-    public function assertDontSeeInHtml($string)
-    {
-        [$html, $text] = $this->renderForAssertions();
-
-        PHPUnit::assertFalse(
-            Str::contains($html, $string),
-            "Saw unexpected text [{$string}] within email body."
-        );
-
-        return $this;
-    }
-
-    /**
-     * Assert that the given text is present in the plain-text email body.
-     *
-     * @param  string  $string
-     * @return $this
-     */
-    public function assertSeeInText($string)
-    {
-        [$html, $text] = $this->renderForAssertions();
-
-        PHPUnit::assertTrue(
-            Str::contains($text, $string),
-            "Did not see expected text [{$string}] within text email body."
-        );
-
-        return $this;
-    }
-
-    /**
-     * Assert that the given text is not present in the plain-text email body.
-     *
-     * @param  string  $string
-     * @return $this
-     */
-    public function assertDontSeeInText($string)
-    {
-        [$html, $text] = $this->renderForAssertions();
-
-        PHPUnit::assertFalse(
-            Str::contains($text, $string),
-            "Saw unexpected text [{$string}] within text email body."
-        );
-
-        return $this;
-    }
-
-    /**
-     * Render the HTML and plain-text version of the mailable into views for assertions.
-     *
-     * @return array
-     *
-     * @throws \ReflectionException
-     */
-    protected function renderForAssertions()
-    {
-        if ($this->assertionableRenderStrings) {
-            return $this->assertionableRenderStrings;
-        }
-
-        return $this->assertionableRenderStrings = $this->withLocale($this->locale, function () {
-            Container::getInstance()->call([$this, 'build']);
-
-            $html = Container::getInstance()->make('mailer')->render(
-                $view = $this->buildView(), $this->buildViewData()
-            );
-
-            if (is_array($view) && isset($view[1])) {
-                $text = $view[1];
-            }
-
-            $text = $text ?? $view['text'] ?? '';
-
-            if (! empty($text) && ! $text instanceof Htmlable) {
-                $text = Container::getInstance()->make('mailer')->render(
-                    $text, $this->buildViewData()
-                );
-            }
-
-            return [(string) $html, (string) $text];
-        });
-    }
-
-    /**
      * Set the name of the mailer that should send the message.
      *
      * @param  string  $mailer
@@ -1009,6 +879,25 @@ class Mailable implements MailableContract, Renderable
     public static function buildViewDataUsing(callable $callback)
     {
         static::$viewDataCallback = $callback;
+    }
+
+    /**
+     * Apply the callback's message changes if the given "value" is true.
+     *
+     * @param  mixed  $value
+     * @param  callable  $callback
+     * @param  mixed  $default
+     * @return mixed|$this
+     */
+    public function when($value, $callback, $default = null)
+    {
+        if ($value) {
+            return $callback($this, $value) ?: $this;
+        } elseif ($default) {
+            return $default($this, $value) ?: $this;
+        }
+
+        return $this;
     }
 
     /**

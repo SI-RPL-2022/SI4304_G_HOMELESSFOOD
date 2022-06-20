@@ -2,7 +2,6 @@
 
 namespace Facade\Ignition\Facades;
 
-use Facade\Ignition\Support\SentReports;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -19,10 +18,5 @@ class Flare extends Facade
     protected static function getFacadeAccessor()
     {
         return \Facade\FlareClient\Flare::class;
-    }
-
-    public static function sentReports(): SentReports
-    {
-        return app(SentReports::class);
     }
 }

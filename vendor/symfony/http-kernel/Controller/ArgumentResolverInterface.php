@@ -24,7 +24,7 @@ interface ArgumentResolverInterface
     /**
      * Returns the arguments to pass to the controller.
      *
-     * @return array
+     * @return array An array of arguments to pass to the controller
      *
      * @throws \RuntimeException When no value could be provided for a required argument
      */

@@ -22,24 +22,13 @@ class JsonResponse extends BaseJsonResponse
      * @param  int  $status
      * @param  array  $headers
      * @param  int  $options
-     * @param  bool  $json
      * @return void
      */
-    public function __construct($data = null, $status = 200, $headers = [], $options = 0, $json = false)
+    public function __construct($data = null, $status = 200, $headers = [], $options = 0)
     {
         $this->encodingOptions = $options;
 
-        parent::__construct($data, $status, $headers, $json);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return static
-     */
-    public static function fromJsonString(?string $data = null, int $status = 200, array $headers = [])
-    {
-        return new static($data, $status, $headers, 0, true);
+        parent::__construct($data, $status, $headers);
     }
 
     /**
@@ -67,15 +56,10 @@ class JsonResponse extends BaseJsonResponse
 
     /**
      * {@inheritdoc}
-     *
-     * @return static
      */
     public function setData($data = [])
     {
         $this->original = $data;
-
-        // Ensure json_last_error() is cleared...
-        json_decode('[]');
 
         if ($data instanceof Jsonable) {
             $this->data = $data->toJson($this->encodingOptions);
@@ -116,8 +100,6 @@ class JsonResponse extends BaseJsonResponse
 
     /**
      * {@inheritdoc}
-     *
-     * @return static
      */
     public function setEncodingOptions($options)
     {

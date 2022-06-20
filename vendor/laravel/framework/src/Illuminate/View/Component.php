@@ -75,7 +75,7 @@ abstract class Component
         $resolver = function ($view) {
             $factory = Container::getInstance()->make('view');
 
-            return strlen($view) <= PHP_MAXPATHLEN && $factory->exists($view)
+            return $factory->exists($view)
                         ? $view
                         : $this->createBladeViewFromString($factory, $view);
         };
@@ -121,7 +121,7 @@ abstract class Component
      */
     public function data()
     {
-        $this->attributes = $this->attributes ?: $this->newAttributeBag();
+        $this->attributes = $this->attributes ?: new ComponentAttributeBag;
 
         return array_merge($this->extractPublicProperties(), $this->extractPublicMethods());
     }
@@ -266,22 +266,11 @@ abstract class Component
      */
     public function withAttributes(array $attributes)
     {
-        $this->attributes = $this->attributes ?: $this->newAttributeBag();
+        $this->attributes = $this->attributes ?: new ComponentAttributeBag;
 
         $this->attributes->setAttributes($attributes);
 
         return $this;
-    }
-
-    /**
-     * Get a new attribute bag instance.
-     *
-     * @param  array  $attributes
-     * @return \Illuminate\View\ComponentAttributeBag
-     */
-    protected function newAttributeBag(array $attributes = [])
-    {
-        return new ComponentAttributeBag($attributes);
     }
 
     /**

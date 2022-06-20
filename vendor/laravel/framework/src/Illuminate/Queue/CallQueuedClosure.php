@@ -3,6 +3,7 @@
 namespace Illuminate\Queue;
 
 use Closure;
+use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Container\Container;
@@ -17,7 +18,7 @@ class CallQueuedClosure implements ShouldQueue
     /**
      * The serializable Closure instance.
      *
-     * @var \Laravel\SerializableClosure\SerializableClosure
+     * @var \Illuminate\Queue\SerializableClosure
      */
     public $closure;
 
@@ -38,10 +39,10 @@ class CallQueuedClosure implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  \Laravel\SerializableClosure\SerializableClosure  $closure
+     * @param  \Illuminate\Queue\SerializableClosure  $closure
      * @return void
      */
-    public function __construct($closure)
+    public function __construct(SerializableClosure $closure)
     {
         $this->closure = $closure;
     }
@@ -54,7 +55,7 @@ class CallQueuedClosure implements ShouldQueue
      */
     public static function create(Closure $job)
     {
-        return new self(SerializableClosureFactory::make($job));
+        return new self(new SerializableClosure($job));
     }
 
     /**
@@ -77,7 +78,7 @@ class CallQueuedClosure implements ShouldQueue
     public function onFailure($callback)
     {
         $this->failureCallbacks[] = $callback instanceof Closure
-                        ? SerializableClosureFactory::make($callback)
+                        ? new SerializableClosure($callback)
                         : $callback;
 
         return $this;
@@ -86,13 +87,13 @@ class CallQueuedClosure implements ShouldQueue
     /**
      * Handle a job failure.
      *
-     * @param  \Throwable  $e
+     * @param  \Exception  $exception
      * @return void
      */
-    public function failed($e)
+    public function failed(Exception $e)
     {
         foreach ($this->failureCallbacks as $callback) {
-            $callback($e);
+            call_user_func($callback instanceof SerializableClosure ? $callback->getClosure() : $callback, $e);
         }
     }
 

@@ -7,16 +7,16 @@ use Facade\FlareClient\Stacktrace\Codesnippet;
 class Frame
 {
     /** @var string */
-    protected $file;
+    private $file;
 
     /** @var int */
-    protected $lineNumber;
+    private $lineNumber;
 
     /** @var string */
-    protected $method;
+    private $method;
 
     /** @var string */
-    protected $class;
+    private $class;
 
     public function __construct(
         string $file,

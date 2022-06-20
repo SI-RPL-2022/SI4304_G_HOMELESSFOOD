@@ -25,8 +25,8 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  *
- * @method Request  getRequest()
- * @method Response getResponse()
+ * @method Request  getRequest()  A Request instance
+ * @method Response getResponse() A Response instance
  */
 class HttpKernelBrowser extends AbstractBrowser
 {
@@ -54,15 +54,13 @@ class HttpKernelBrowser extends AbstractBrowser
     }
 
     /**
-     * {@inheritdoc}
+     * Makes a request.
      *
-     * @param Request $request
-     *
-     * @return Response
+     * @return Response A Response instance
      */
-    protected function doRequest(object $request)
+    protected function doRequest($request)
     {
-        $response = $this->kernel->handle($request, HttpKernelInterface::MAIN_REQUEST, $this->catchExceptions);
+        $response = $this->kernel->handle($request, HttpKernelInterface::MASTER_REQUEST, $this->catchExceptions);
 
         if ($this->kernel instanceof TerminableInterface) {
             $this->kernel->terminate($request, $response);
@@ -72,13 +70,11 @@ class HttpKernelBrowser extends AbstractBrowser
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param Request $request
+     * Returns the script to execute when the request must be insulated.
      *
      * @return string
      */
-    protected function getScript(object $request)
+    protected function getScript($request)
     {
         $kernel = var_export(serialize($this->kernel), true);
         $request = var_export(serialize($request), true);
@@ -128,9 +124,9 @@ EOF;
     }
 
     /**
-     * {@inheritdoc}
+     * Converts the BrowserKit request to a HttpKernel request.
      *
-     * @return Request
+     * @return Request A Request instance
      */
     protected function filterRequest(DomRequest $request)
     {
@@ -157,7 +153,7 @@ EOF;
      *
      * @see UploadedFile
      *
-     * @return array
+     * @return array An array with all uploaded files marked as already moved
      */
     protected function filterFiles(array $files)
     {
@@ -190,13 +186,11 @@ EOF;
     }
 
     /**
-     * {@inheritdoc}
+     * Converts the HttpKernel response to a BrowserKit response.
      *
-     * @param Response $response
-     *
-     * @return DomResponse
+     * @return DomResponse A DomResponse instance
      */
-    protected function filterResponse(object $response)
+    protected function filterResponse($response)
     {
         // this is needed to support StreamedResponse
         ob_start();

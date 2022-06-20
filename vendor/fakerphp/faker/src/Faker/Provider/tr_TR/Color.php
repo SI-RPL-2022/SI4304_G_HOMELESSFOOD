@@ -5,7 +5,7 @@ namespace Faker\Provider\tr_TR;
 class Color extends \Faker\Provider\Color
 {
     /**
-     * @see http://tr.wikipedia.org/wiki/Renkler_listesi
+     * @link http://tr.wikipedia.org/wiki/Renkler_listesi
      */
     protected static $safeColorNames = [
         'siyah', 'kırmızı', 'sarı', 'mavi', 'turuncu',

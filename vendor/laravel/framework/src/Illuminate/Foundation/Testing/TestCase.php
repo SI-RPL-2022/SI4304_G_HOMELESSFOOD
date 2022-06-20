@@ -6,9 +6,7 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Application as Artisan;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Queue\Queue;
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Facades\ParallelTesting;
 use Illuminate\Support\Str;
 use Mockery;
 use Mockery\Exception\InvalidCountException;
@@ -22,7 +20,6 @@ abstract class TestCase extends BaseTestCase
         Concerns\InteractsWithAuthentication,
         Concerns\InteractsWithConsole,
         Concerns\InteractsWithDatabase,
-        Concerns\InteractsWithDeprecationHandling,
         Concerns\InteractsWithExceptionHandling,
         Concerns\InteractsWithSession,
         Concerns\InteractsWithTime,
@@ -32,7 +29,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * The Illuminate application instance.
      *
-     * @var \Illuminate\Foundation\Application
+     * @var \Illuminate\Contracts\Foundation\Application
      */
     protected $app;
 
@@ -84,8 +81,6 @@ abstract class TestCase extends BaseTestCase
 
         if (! $this->app) {
             $this->refreshApplication();
-
-            ParallelTesting::callSetUpTestCaseCallbacks($this);
         }
 
         $this->setUpTraits();
@@ -157,8 +152,6 @@ abstract class TestCase extends BaseTestCase
         if ($this->app) {
             $this->callBeforeApplicationDestroyedCallbacks();
 
-            ParallelTesting::callTearDownTestCaseCallbacks($this);
-
             $this->app->flush();
 
             $this->app = null;
@@ -200,8 +193,6 @@ abstract class TestCase extends BaseTestCase
         $this->beforeApplicationDestroyedCallbacks = [];
 
         Artisan::forgetBootstrappers();
-
-        Queue::createPayloadUsing(null);
 
         if ($this->callbackException) {
             throw $this->callbackException;

@@ -47,10 +47,7 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    #[\ReturnTypeWillChange]
     public function open($savePath, $sessionName)
     {
         return true;
@@ -58,10 +55,7 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    #[\ReturnTypeWillChange]
     public function close()
     {
         return true;
@@ -69,10 +63,7 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return string|false
      */
-    #[\ReturnTypeWillChange]
     public function read($sessionId)
     {
         $value = $this->request->cookies->get($sessionId) ?: '';
@@ -88,10 +79,7 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    #[\ReturnTypeWillChange]
     public function write($sessionId, $data)
     {
         $this->cookie->queue($sessionId, json_encode([
@@ -104,10 +92,7 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    #[\ReturnTypeWillChange]
     public function destroy($sessionId)
     {
         $this->cookie->queue($this->cookie->forget($sessionId));
@@ -117,10 +102,7 @@ class CookieSessionHandler implements SessionHandlerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return int|false
      */
-    #[\ReturnTypeWillChange]
     public function gc($lifetime)
     {
         return true;

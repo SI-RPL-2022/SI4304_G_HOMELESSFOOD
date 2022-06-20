@@ -3,7 +3,6 @@
 namespace Illuminate\Broadcasting\Broadcasters;
 
 use Ably\AblyRest;
-use Ably\Models\Message as AblyMessage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -73,17 +72,11 @@ class AblyBroadcaster extends Broadcaster
 
         $channelName = $this->normalizeChannelName($request->channel_name);
 
-        $user = $this->retrieveUser($request, $channelName);
-
-        $broadcastIdentifier = method_exists($user, 'getAuthIdentifierForBroadcasting')
-                    ? $user->getAuthIdentifierForBroadcasting()
-                    : $user->getAuthIdentifier();
-
         $signature = $this->generateAblySignature(
             $request->channel_name,
             $request->socket_id,
             $userData = array_filter([
-                'user_id' => (string) $broadcastIdentifier,
+                'user_id' => $this->retrieveUser($request, $channelName)->getAuthIdentifier(),
                 'user_info' => $result,
             ])
         );
@@ -122,30 +115,12 @@ class AblyBroadcaster extends Broadcaster
     public function broadcast(array $channels, $event, array $payload = [])
     {
         foreach ($this->formatChannels($channels) as $channel) {
-            $this->ably->channels->get($channel)->publish(
-                $this->buildAblyMessage($event, $payload)
-            );
+            $this->ably->channels->get($channel)->publish($event, $payload);
         }
     }
 
     /**
-     * Build an Ably message object for broadcasting.
-     *
-     * @param  string  $event
-     * @param  array  $payload
-     * @return \Ably\Models\Message
-     */
-    protected function buildAblyMessage($event, array $payload = [])
-    {
-        return tap(new AblyMessage, function ($message) use ($event, $payload) {
-            $message->name = $event;
-            $message->data = $payload;
-            $message->connectionKey = data_get($payload, 'socket');
-        });
-    }
-
-    /**
-     * Return true if the channel is protected by authentication.
+     * Return true if channel is protected by authentication.
      *
      * @param  string  $channel
      * @return bool

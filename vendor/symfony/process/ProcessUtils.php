@@ -35,7 +35,7 @@ class ProcessUtils
      * @param string $caller The name of method call that validates the input
      * @param mixed  $input  The input to validate
      *
-     * @return mixed
+     * @return mixed The validated input
      *
      * @throws InvalidArgumentException In case the input is not valid
      */

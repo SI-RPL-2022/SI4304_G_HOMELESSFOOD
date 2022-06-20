@@ -17,17 +17,14 @@ use Symfony\Component\Finder\Glob;
  * FilenameFilterIterator filters files by patterns (a regexp, a glob, or a string).
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @extends MultiplePcreFilterIterator<string, \SplFileInfo>
  */
 class FilenameFilterIterator extends MultiplePcreFilterIterator
 {
     /**
      * Filters the iterator values.
      *
-     * @return bool
+     * @return bool true if the value should be kept, false otherwise
      */
-    #[\ReturnTypeWillChange]
     public function accept()
     {
         return $this->isAccepted($this->current()->getFilename());
@@ -41,7 +38,7 @@ class FilenameFilterIterator extends MultiplePcreFilterIterator
      *
      * @param string $str Pattern: glob or regexp
      *
-     * @return string
+     * @return string regexp corresponding to a given glob or regexp
      */
     protected function toRegex(string $str)
     {

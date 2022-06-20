@@ -42,7 +42,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
     /**
      * The "data" wrapper that should be applied.
      *
-     * @var string|null
+     * @var string
      */
     public static $wrap = 'data';
 
@@ -69,7 +69,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
     }
 
     /**
-     * Create a new anonymous resource collection.
+     * Create new anonymous resource collection.
      *
      * @param  mixed  $resource
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -108,7 +108,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     * @return array
      */
     public function toArray($request)
     {
@@ -162,16 +162,6 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
         $this->additional = $data;
 
         return $this;
-    }
-
-    /**
-     * Get the JSON serialization options that should be applied to the resource response.
-     *
-     * @return int
-     */
-    public function jsonOptions()
-    {
-        return 0;
     }
 
     /**
@@ -236,7 +226,6 @@ class JsonResource implements ArrayAccess, JsonSerializable, Responsable, UrlRou
      *
      * @return array
      */
-    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->resolve(Container::getInstance()->make('request'));

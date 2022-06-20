@@ -156,8 +156,6 @@ class BoundMethod
      * @param  array  $parameters
      * @param  array  $dependencies
      * @return void
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected static function addDependencyForCallParameter($container, $parameter,
                                                             array &$parameters, &$dependencies)
@@ -172,15 +170,7 @@ class BoundMethod
 
                 unset($parameters[$className]);
             } else {
-                if ($parameter->isVariadic()) {
-                    $variadicDependencies = $container->make($className);
-
-                    $dependencies = array_merge($dependencies, is_array($variadicDependencies)
-                                ? $variadicDependencies
-                                : [$variadicDependencies]);
-                } else {
-                    $dependencies[] = $container->make($className);
-                }
+                $dependencies[] = $container->make($className);
             }
         } elseif ($parameter->isDefaultValueAvailable()) {
             $dependencies[] = $parameter->getDefaultValue();

@@ -15,7 +15,6 @@ namespace Symfony\Component\Routing\Annotation;
  * Annotation class for @Route().
  *
  * @Annotation
- * @NamedArgumentConstructor
  * @Target({"CLASS", "METHOD"})
  *
  * @author Fabien Potencier <fabien@symfony.com>
@@ -35,14 +34,13 @@ class Route
     private $schemes = [];
     private $condition;
     private $priority;
-    private $env;
 
     /**
      * @param array|string      $data         data array managed by the Doctrine Annotations library or the path
      * @param array|string|null $path
      * @param string[]          $requirements
-     * @param string[]|string   $methods
-     * @param string[]|string   $schemes
+     * @param string[]          $methods
+     * @param string[]          $schemes
      *
      * @throws \BadMethodCallException
      */
@@ -54,34 +52,19 @@ class Route
         array $options = [],
         array $defaults = [],
         string $host = null,
-        $methods = [],
-        $schemes = [],
+        array $methods = [],
+        array $schemes = [],
         string $condition = null,
         int $priority = null,
         string $locale = null,
         string $format = null,
         bool $utf8 = null,
-        bool $stateless = null,
-        string $env = null
+        bool $stateless = null
     ) {
         if (\is_string($data)) {
             $data = ['path' => $data];
         } elseif (!\is_array($data)) {
             throw new \TypeError(sprintf('"%s": Argument $data is expected to be a string or array, got "%s".', __METHOD__, get_debug_type($data)));
-        } elseif ([] !== $data) {
-            $deprecation = false;
-            foreach ($data as $key => $val) {
-                if (\in_array($key, ['path', 'name', 'requirements', 'options', 'defaults', 'host', 'methods', 'schemes', 'condition', 'priority', 'locale', 'format', 'utf8', 'stateless', 'env', 'value'])) {
-                    $deprecation = true;
-                }
-            }
-
-            if ($deprecation) {
-                trigger_deprecation('symfony/routing', '5.3', 'Passing an array as first argument to "%s" is deprecated. Use named arguments instead.', __METHOD__);
-            } else {
-                $localizedPaths = $data;
-                $data = ['path' => $localizedPaths];
-            }
         }
         if (null !== $path && !\is_string($path) && !\is_array($path)) {
             throw new \TypeError(sprintf('"%s": Argument $path is expected to be a string, array or null, got "%s".', __METHOD__, get_debug_type($path)));
@@ -101,7 +84,6 @@ class Route
         $data['format'] = $data['format'] ?? $format;
         $data['utf8'] = $data['utf8'] ?? $utf8;
         $data['stateless'] = $data['stateless'] ?? $stateless;
-        $data['env'] = $data['env'] ?? $env;
 
         $data = array_filter($data, static function ($value): bool {
             return null !== $value;
@@ -150,7 +132,7 @@ class Route
         }
     }
 
-    public function setPath(string $path)
+    public function setPath($path)
     {
         $this->path = $path;
     }
@@ -170,7 +152,7 @@ class Route
         return $this->localizedPaths;
     }
 
-    public function setHost(string $pattern)
+    public function setHost($pattern)
     {
         $this->host = $pattern;
     }
@@ -180,7 +162,7 @@ class Route
         return $this->host;
     }
 
-    public function setName(string $name)
+    public function setName($name)
     {
         $this->name = $name;
     }
@@ -190,7 +172,7 @@ class Route
         return $this->name;
     }
 
-    public function setRequirements(array $requirements)
+    public function setRequirements($requirements)
     {
         $this->requirements = $requirements;
     }
@@ -200,7 +182,7 @@ class Route
         return $this->requirements;
     }
 
-    public function setOptions(array $options)
+    public function setOptions($options)
     {
         $this->options = $options;
     }
@@ -210,7 +192,7 @@ class Route
         return $this->options;
     }
 
-    public function setDefaults(array $defaults)
+    public function setDefaults($defaults)
     {
         $this->defaults = $defaults;
     }
@@ -240,7 +222,7 @@ class Route
         return $this->methods;
     }
 
-    public function setCondition(?string $condition)
+    public function setCondition($condition)
     {
         $this->condition = $condition;
     }
@@ -258,15 +240,5 @@ class Route
     public function getPriority(): ?int
     {
         return $this->priority;
-    }
-
-    public function setEnv(?string $env): void
-    {
-        $this->env = $env;
-    }
-
-    public function getEnv(): ?string
-    {
-        return $this->env;
     }
 }

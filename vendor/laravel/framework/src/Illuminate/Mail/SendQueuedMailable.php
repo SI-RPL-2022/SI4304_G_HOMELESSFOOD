@@ -2,15 +2,11 @@
 
 namespace Illuminate\Mail;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Mail\Factory as MailFactory;
 use Illuminate\Contracts\Mail\Mailable as MailableContract;
-use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 
 class SendQueuedMailable
 {
-    use Queueable;
-
     /**
      * The mailable message instance.
      *
@@ -33,13 +29,6 @@ class SendQueuedMailable
     public $timeout;
 
     /**
-     * Indicates if the job should be encrypted.
-     *
-     * @var bool
-     */
-    public $shouldBeEncrypted = false;
-
-    /**
      * Create a new job instance.
      *
      * @param  \Illuminate\Contracts\Mail\Mailable  $mailable
@@ -50,8 +39,6 @@ class SendQueuedMailable
         $this->mailable = $mailable;
         $this->tries = property_exists($mailable, 'tries') ? $mailable->tries : null;
         $this->timeout = property_exists($mailable, 'timeout') ? $mailable->timeout : null;
-        $this->afterCommit = property_exists($mailable, 'afterCommit') ? $mailable->afterCommit : null;
-        $this->shouldBeEncrypted = $mailable instanceof ShouldBeEncrypted;
     }
 
     /**
@@ -89,7 +76,7 @@ class SendQueuedMailable
     }
 
     /**
-     * Get the number of seconds before a released mailable will be available.
+     * Get number of seconds before a released mailable will be available.
      *
      * @return mixed
      */

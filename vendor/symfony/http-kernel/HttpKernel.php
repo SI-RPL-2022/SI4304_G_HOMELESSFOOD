@@ -33,6 +33,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 // Help opcache.preload discover always-needed symbols
+class_exists(LegacyEventDispatcherProxy::class);
 class_exists(ControllerArgumentsEvent::class);
 class_exists(ControllerEvent::class);
 class_exists(ExceptionEvent::class);
@@ -59,14 +60,18 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
     {
         $this->dispatcher = $dispatcher;
         $this->resolver = $resolver;
-        $this->requestStack = $requestStack ?? new RequestStack();
-        $this->argumentResolver = $argumentResolver ?? new ArgumentResolver();
+        $this->requestStack = $requestStack ?: new RequestStack();
+        $this->argumentResolver = $argumentResolver;
+
+        if (null === $this->argumentResolver) {
+            $this->argumentResolver = new ArgumentResolver();
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function handle(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST, bool $catch = true)
+    public function handle(Request $request, int $type = HttpKernelInterface::MASTER_REQUEST, bool $catch = true)
     {
         $request->headers->set('X-Php-Ob-Level', (string) ob_get_level());
 
@@ -99,11 +104,11 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
      */
     public function terminateWithException(\Throwable $exception, Request $request = null)
     {
-        if (!$request = $request ?: $this->requestStack->getMainRequest()) {
+        if (!$request = $request ?: $this->requestStack->getMasterRequest()) {
             throw $exception;
         }
 
-        $response = $this->handleThrowable($exception, $request, self::MAIN_REQUEST);
+        $response = $this->handleThrowable($exception, $request, self::MASTER_REQUEST);
 
         $response->sendHeaders();
         $response->sendContent();
@@ -119,7 +124,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
      * @throws \LogicException       If one of the listener does not behave as expected
      * @throws NotFoundHttpException When controller cannot be found
      */
-    private function handleRaw(Request $request, int $type = self::MAIN_REQUEST): Response
+    private function handleRaw(Request $request, int $type = self::MASTER_REQUEST): Response
     {
         $this->requestStack->push($request);
 

@@ -91,7 +91,7 @@ trait SerializesModels
      * Restore the model after serialization.
      *
      * @param  array  $values
-     * @return void
+     * @return array
      */
     public function __unserialize(array $values)
     {
@@ -122,6 +122,8 @@ trait SerializesModels
                 $this, $this->getRestoredPropertyValue($values[$name])
             );
         }
+
+        return $values;
     }
 
     /**

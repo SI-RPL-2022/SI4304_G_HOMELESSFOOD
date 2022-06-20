@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\Date;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Throwable;
 
-/**
- * @deprecated Will be removed in a future Laravel version.
- */
 class MaintenanceModeException extends ServiceUnavailableHttpException
 {
     /**

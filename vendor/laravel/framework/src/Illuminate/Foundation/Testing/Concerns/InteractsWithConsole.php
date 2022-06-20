@@ -30,7 +30,7 @@ trait InteractsWithConsole
     public $unexpectedOutput = [];
 
     /**
-     * All of the expected output tables.
+     * All of the expected ouput tables.
      *
      * @var array
      */

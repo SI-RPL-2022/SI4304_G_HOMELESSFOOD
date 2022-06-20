@@ -34,8 +34,8 @@ final class Headers
         'cc' => MailboxListHeader::class,
         'bcc' => MailboxListHeader::class,
         'message-id' => IdentificationHeader::class,
-        'in-reply-to' => UnstructuredHeader::class, // `In-Reply-To` and `References` are less strict than RFC 2822 (3.6.4) to allow users entering the original email's ...
-        'references' => UnstructuredHeader::class, // ... `Message-ID`, even if that is no valid `msg-id`
+        'in-reply-to' => IdentificationHeader::class,
+        'references' => IdentificationHeader::class,
         'return-path' => PathHeader::class,
     ];
 
@@ -75,7 +75,7 @@ final class Headers
     }
 
     /**
-     * @param array<Address|string> $addresses
+     * @param (Address|string)[] $addresses
      *
      * @return $this
      */
@@ -143,7 +143,7 @@ final class Headers
      */
     public function addHeader(string $name, $argument, array $more = []): self
     {
-        $parts = explode('\\', self::HEADER_CLASS_MAP[strtolower($name)] ?? UnstructuredHeader::class);
+        $parts = explode('\\', self::HEADER_CLASS_MAP[$name] ?? UnstructuredHeader::class);
         $method = 'add'.ucfirst(array_pop($parts));
         if ('addUnstructuredHeader' === $method) {
             $method = 'addTextHeader';
@@ -217,7 +217,7 @@ final class Headers
 
     public static function isUniqueHeader(string $name): bool
     {
-        return \in_array(strtolower($name), self::UNIQUE_HEADERS, true);
+        return \in_array($name, self::UNIQUE_HEADERS, true);
     }
 
     /**
@@ -257,7 +257,7 @@ final class Headers
     /**
      * @internal
      */
-    public function getHeaderBody(string $name)
+    public function getHeaderBody($name)
     {
         return $this->has($name) ? $this->get($name)->getBody() : null;
     }
@@ -274,6 +274,9 @@ final class Headers
         }
     }
 
+    /**
+     * @internal
+     */
     public function getHeaderParameter(string $name, string $parameter): ?string
     {
         if (!$this->has($name)) {
@@ -291,7 +294,7 @@ final class Headers
     /**
      * @internal
      */
-    public function setHeaderParameter(string $name, string $parameter, ?string $value): void
+    public function setHeaderParameter(string $name, string $parameter, $value): void
     {
         if (!$this->has($name)) {
             throw new LogicException(sprintf('Unable to set parameter "%s" on header "%s" as the header is not defined.', $parameter, $name));

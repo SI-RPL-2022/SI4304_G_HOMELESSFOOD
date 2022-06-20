@@ -4,13 +4,13 @@ namespace Facade\FlareClient\Enums;
 
 class MessageLevels
 {
-    public const INFO = 'info';
+    const INFO = 'info';
 
-    public const DEBUG = 'debug';
+    const DEBUG = 'debug';
 
-    public const WARNING = 'warning';
+    const WARNING = 'warning';
 
-    public const ERROR = 'error';
+    const ERROR = 'error';
 
-    public const CRITICAL = 'critical';
+    const CRITICAL = 'critical';
 }

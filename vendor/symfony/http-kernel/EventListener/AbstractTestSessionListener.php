@@ -19,8 +19,6 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-trigger_deprecation('symfony/http-kernel', '5.4', '"%s" is deprecated use "%s" instead.', AbstractTestSessionListener::class, AbstractSessionListener::class);
-
 /**
  * TestSessionListener.
  *
@@ -30,8 +28,6 @@ trigger_deprecation('symfony/http-kernel', '5.4', '"%s" is deprecated use "%s" i
  * @author Fabien Potencier <fabien@symfony.com>
  *
  * @internal
- *
- * @deprecated since Symfony 5.4, use AbstractSessionListener instead
  */
 abstract class AbstractTestSessionListener implements EventSubscriberInterface
 {
@@ -45,14 +41,12 @@ abstract class AbstractTestSessionListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event)
     {
-        if (!$event->isMainRequest()) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
         // bootstrap the session
-        if ($event->getRequest()->hasSession()) {
-            $session = $event->getRequest()->getSession();
-        } elseif (!$session = $this->getSession()) {
+        if (!$session = $this->getSession()) {
             return;
         }
 
@@ -65,12 +59,12 @@ abstract class AbstractTestSessionListener implements EventSubscriberInterface
     }
 
     /**
-     * Checks if session was initialized and saves if current request is the main request
+     * Checks if session was initialized and saves if current request is master
      * Runs on 'kernel.response' in test environment.
      */
     public function onKernelResponse(ResponseEvent $event)
     {
-        if (!$event->isMainRequest()) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
@@ -87,7 +81,7 @@ abstract class AbstractTestSessionListener implements EventSubscriberInterface
         if ($session instanceof Session ? !$session->isEmpty() || (null !== $this->sessionId && $session->getId() !== $this->sessionId) : $wasStarted) {
             $params = session_get_cookie_params() + ['samesite' => null];
             foreach ($this->sessionOptions as $k => $v) {
-                if (str_starts_with($k, 'cookie_')) {
+                if (0 === strpos($k, 'cookie_')) {
                     $params[substr($k, 7)] = $v;
                 }
             }
@@ -106,7 +100,7 @@ abstract class AbstractTestSessionListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest', 127], // AFTER SessionListener
+            KernelEvents::REQUEST => ['onKernelRequest', 192],
             KernelEvents::RESPONSE => ['onKernelResponse', -128],
         ];
     }
@@ -114,7 +108,7 @@ abstract class AbstractTestSessionListener implements EventSubscriberInterface
     /**
      * Gets the session object.
      *
-     * @return SessionInterface|null
+     * @return SessionInterface|null A SessionInterface instance or null if no session is available
      */
     abstract protected function getSession();
 }

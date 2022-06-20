@@ -9,7 +9,7 @@ use Throwable;
 
 class DefaultDbNameSolutionProvider implements HasSolutionsForThrowable
 {
-    public const MYSQL_UNKNOWN_DATABASE_CODE = 1049;
+    const MYSQL_UNKNOWN_DATABASE_CODE = 1049;
 
     public function canSolve(Throwable $throwable): bool
     {

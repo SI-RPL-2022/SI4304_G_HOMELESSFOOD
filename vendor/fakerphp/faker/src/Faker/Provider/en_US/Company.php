@@ -66,12 +66,12 @@ class Company extends \Faker\Provider\Company
     protected static $companySuffix = ['Inc', 'and Sons', 'LLC', 'Group', 'PLC', 'Ltd'];
 
     /**
-     * @see https://www.irs.gov/businesses/small-businesses-self-employed/how-eins-are-assigned-and-valid-ein-prefixes
+     * @link https://www.irs.gov/businesses/small-businesses-self-employed/how-eins-are-assigned-and-valid-ein-prefixes
      */
     protected static $einPrefixes = [
         01, 02, 03, 04, 05, 06, 10, 11, 12, 13, 14, 15, 16, 20, 21, 22, 23, 24, 25, 26, 27, 30, 31, 32, 33, 34, 35, 36,
         37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65,
-        66, 67, 68, 71, 72, 73, 74, 75, 76, 77, 80, 81, 82, 83, 84, 85, 86, 87, 88, 90, 91, 92, 93, 94, 95, 98, 99,
+        66, 67, 68, 71, 72, 73, 74, 75, 76, 77, 80, 81, 82, 83, 84, 85, 86, 87, 88, 90, 91, 92, 93, 94, 95, 98, 99
     ];
 
     /**
@@ -80,7 +80,6 @@ class Company extends \Faker\Provider\Company
     public function catchPhrase()
     {
         $result = [];
-
         foreach (static::$catchPhraseWords as &$word) {
             $result[] = static::randomElement($word);
         }
@@ -94,7 +93,6 @@ class Company extends \Faker\Provider\Company
     public function bs()
     {
         $result = [];
-
         foreach (static::$bsWords as &$word) {
             $result[] = static::randomElement($word);
         }
@@ -105,15 +103,14 @@ class Company extends \Faker\Provider\Company
     /**
      * Employer Identification Number (EIN)
      *
-     * @see https://en.wikipedia.org/wiki/Employer_Identification_Number
-     *
+     * @link https://en.wikipedia.org/wiki/Employer_Identification_Number
      * @example '12-3456789'
      */
     public static function ein()
     {
         $prefix = static::randomElement(static::$einPrefixes);
-        $suffix = self::numberBetween(0, 9999999);
+        $suffix = static::numberBetween(0, 9999999);
 
-        return sprintf('%02d-%07d', $prefix, $suffix);
+        return sprintf("%02d-%07d", $prefix, $suffix);
     }
 }

@@ -22,7 +22,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\VarDumper\Cloner\Data;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -31,14 +30,11 @@ use Symfony\Component\VarDumper\Cloner\Data;
  */
 class RequestDataCollector extends DataCollector implements EventSubscriberInterface, LateDataCollectorInterface
 {
-    /**
-     * @var \SplObjectStorage<Request, callable>
-     */
-    private $controllers;
+    protected $controllers;
     private $sessionUsages = [];
     private $requestStack;
 
-    public function __construct(RequestStack $requestStack = null)
+    public function __construct(?RequestStack $requestStack = null)
     {
         $this->controllers = new \SplObjectStorage();
         $this->requestStack = $requestStack;
@@ -61,7 +57,12 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
             }
         }
 
-        $content = $request->getContent();
+        try {
+            $content = $request->getContent();
+        } catch (\LogicException $e) {
+            // the user already got the request content as a resource
+            $content = false;
+        }
 
         $sessionMetadata = [];
         $sessionAttributes = [];
@@ -95,7 +96,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
             'method' => $request->getMethod(),
             'format' => $request->getRequestFormat(),
             'content_type' => $response->headers->get('Content-Type', 'text/html'),
-            'status_text' => Response::$statusTexts[$statusCode] ?? '',
+            'status_text' => isset(Response::$statusTexts[$statusCode]) ? Response::$statusTexts[$statusCode] : '',
             'status_code' => $statusCode,
             'request_query' => $request->query->all(),
             'request_request' => $request->request->all(),
@@ -110,7 +111,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
             'session_metadata' => $sessionMetadata,
             'session_attributes' => $sessionAttributes,
             'session_usages' => array_values($this->sessionUsages),
-            'stateless_check' => $this->requestStack && $this->requestStack->getMainRequest()->attributes->get('_stateless', false),
+            'stateless_check' => $this->requestStack && $this->requestStack->getMasterRequest()->attributes->get('_stateless', false),
             'flashes' => $flashes,
             'path_info' => $request->getPathInfo(),
             'controller' => 'n/a',
@@ -163,7 +164,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
                     'method' => $request->getMethod(),
                     'controller' => $this->parseController($request->attributes->get('_controller')),
                     'status_code' => $statusCode,
-                    'status_text' => Response::$statusTexts[$statusCode],
+                    'status_text' => Response::$statusTexts[(int) $statusCode],
                 ]),
                 0, '/', null, $request->isSecure(), true, false, 'lax'
             ));
@@ -218,12 +219,12 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
         return new ParameterBag($this->data['request_headers']->getValue());
     }
 
-    public function getRequestServer(bool $raw = false)
+    public function getRequestServer($raw = false)
     {
         return new ParameterBag($this->data['request_server']->getValue($raw));
     }
 
-    public function getRequestCookies(bool $raw = false)
+    public function getRequestCookies($raw = false)
     {
         return new ParameterBag($this->data['request_cookies']->getValue($raw));
     }
@@ -319,8 +320,10 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
      * Gets the route name.
      *
      * The _route request attributes is automatically set by the Router Matcher.
+     *
+     * @return string The route
      */
-    public function getRoute(): string
+    public function getRoute()
     {
         return $this->data['route'];
     }
@@ -334,8 +337,10 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
      * Gets the route parameters.
      *
      * The _route_params request attributes is automatically set by the RouterListener.
+     *
+     * @return array The parameters
      */
-    public function getRouteParams(): array
+    public function getRouteParams()
     {
         return isset($this->data['request_attributes']['_route_params']) ? $this->data['request_attributes']['_route_params']->getValue() : [];
     }
@@ -343,8 +348,8 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
     /**
      * Gets the parsed controller.
      *
-     * @return array|string|Data The controller as a string or array of data
-     *                           with keys 'class', 'method', 'file' and 'line'
+     * @return array|string The controller as a string or array of data
+     *                      with keys 'class', 'method', 'file' and 'line'
      */
     public function getController()
     {
@@ -354,17 +359,17 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
     /**
      * Gets the previous request attributes.
      *
-     * @return array|Data|false A legacy array of data from the previous redirection response
-     *                          or false otherwise
+     * @return array|bool A legacy array of data from the previous redirection response
+     *                    or false otherwise
      */
     public function getRedirect()
     {
-        return $this->data['redirect'] ?? false;
+        return isset($this->data['redirect']) ? $this->data['redirect'] : false;
     }
 
     public function getForwardToken()
     {
-        return $this->data['forward_token'] ?? null;
+        return isset($this->data['forward_token']) ? $this->data['forward_token'] : null;
     }
 
     public function onKernelController(ControllerEvent $event)
@@ -374,7 +379,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
 
     public function onKernelResponse(ResponseEvent $event)
     {
-        if (!$event->isMainRequest()) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
@@ -383,7 +388,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
         }
     }
 
-    public static function getSubscribedEvents(): array
+    public static function getSubscribedEvents()
     {
         return [
             KernelEvents::CONTROLLER => 'onKernelController',
@@ -394,7 +399,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
     /**
      * {@inheritdoc}
      */
-    public function getName(): string
+    public function getName()
     {
         return 'request';
     }
@@ -431,13 +436,15 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
     }
 
     /**
-     * @param string|object|array|null $controller The controller to parse
+     * Parse a controller.
+     *
+     * @param mixed $controller The controller to parse
      *
      * @return array|string An array of controller data or a simple string
      */
-    private function parseController($controller)
+    protected function parseController($controller)
     {
-        if (\is_string($controller) && str_contains($controller, '::')) {
+        if (\is_string($controller) && false !== strpos($controller, '::')) {
             $controller = explode('::', $controller);
         }
 
@@ -474,7 +481,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
                 'line' => $r->getStartLine(),
             ];
 
-            if (str_contains($r->name, '{closure}')) {
+            if (false !== strpos($r->name, '{closure}')) {
                 return $controller;
             }
             $controller['method'] = $r->name;

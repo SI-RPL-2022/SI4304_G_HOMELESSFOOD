@@ -1,11 +1,11 @@
 <?php
 /* ===========================================================================
- * Copyright (c) 2018-2021 Zindex Software
+ * Copyright (c) 2018-2019 Zindex Software
  *
  * Licensed under the MIT License
  * =========================================================================== */
 
-require_once __DIR__ . '/functions.php';
+require_once 'functions.php';
 
 spl_autoload_register(function($class){
    

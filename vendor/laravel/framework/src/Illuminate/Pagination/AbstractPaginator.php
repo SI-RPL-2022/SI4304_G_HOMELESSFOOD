@@ -8,14 +8,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;
-use Illuminate\Support\Traits\Tappable;
 
 /**
  * @mixin \Illuminate\Support\Collection
  */
 abstract class AbstractPaginator implements Htmlable
 {
-    use ForwardsCalls, Tappable;
+    use ForwardsCalls;
 
     /**
      * All of the items being paginated.
@@ -380,16 +379,6 @@ abstract class AbstractPaginator implements Htmlable
     }
 
     /**
-     * Determine if the paginator is on the last page.
-     *
-     * @return bool
-     */
-    public function onLastPage()
-    {
-        return ! $this->hasMorePages();
-    }
-
-    /**
      * Get the current page.
      *
      * @return int
@@ -505,7 +494,7 @@ abstract class AbstractPaginator implements Htmlable
     public static function resolveCurrentPage($pageName = 'page', $default = 1)
     {
         if (isset(static::$currentPageResolver)) {
-            return (int) call_user_func(static::$currentPageResolver, $pageName);
+            return call_user_func(static::$currentPageResolver, $pageName);
         }
 
         return $default;
@@ -520,21 +509,6 @@ abstract class AbstractPaginator implements Htmlable
     public static function currentPageResolver(Closure $resolver)
     {
         static::$currentPageResolver = $resolver;
-    }
-
-    /**
-     * Resolve the query string or return the default value.
-     *
-     * @param  string|array|null  $default
-     * @return string
-     */
-    public static function resolveQueryString($default = null)
-    {
-        if (isset(static::$queryStringResolver)) {
-            return (static::$queryStringResolver)();
-        }
-
-        return $default;
     }
 
     /**
@@ -629,7 +603,6 @@ abstract class AbstractPaginator implements Htmlable
      *
      * @return \ArrayIterator
      */
-    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return $this->items->getIterator();
@@ -660,7 +633,6 @@ abstract class AbstractPaginator implements Htmlable
      *
      * @return int
      */
-    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->items->count();
@@ -705,7 +677,6 @@ abstract class AbstractPaginator implements Htmlable
      * @param  mixed  $key
      * @return bool
      */
-    #[\ReturnTypeWillChange]
     public function offsetExists($key)
     {
         return $this->items->has($key);
@@ -717,7 +688,6 @@ abstract class AbstractPaginator implements Htmlable
      * @param  mixed  $key
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         return $this->items->get($key);
@@ -730,7 +700,6 @@ abstract class AbstractPaginator implements Htmlable
      * @param  mixed  $value
      * @return void
      */
-    #[\ReturnTypeWillChange]
     public function offsetSet($key, $value)
     {
         $this->items->put($key, $value);
@@ -742,7 +711,6 @@ abstract class AbstractPaginator implements Htmlable
      * @param  mixed  $key
      * @return void
      */
-    #[\ReturnTypeWillChange]
     public function offsetUnset($key)
     {
         $this->items->forget($key);
@@ -771,7 +739,7 @@ abstract class AbstractPaginator implements Htmlable
     }
 
     /**
-     * Render the contents of the paginator when casting to a string.
+     * Render the contents of the paginator when casting to string.
      *
      * @return string
      */

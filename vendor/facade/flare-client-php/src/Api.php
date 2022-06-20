@@ -2,20 +2,19 @@
 
 namespace Facade\FlareClient;
 
-use Exception;
 use Facade\FlareClient\Http\Client;
 use Facade\FlareClient\Truncation\ReportTrimmer;
 
 class Api
 {
     /** @var \Facade\FlareClient\Http\Client */
-    protected $client;
+    private $client;
 
     /** @var bool */
     public static $sendInBatches = true;
 
     /** @var array */
-    protected $queue = [];
+    private $queue = [];
 
     public function __construct(Client $client)
     {
@@ -37,7 +36,7 @@ class Api
             } else {
                 $this->sendReportToApi($report);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //
         }
     }
@@ -47,7 +46,7 @@ class Api
         $this->sendReportToApi($report);
     }
 
-    protected function addReportToQueue(Report $report)
+    private function addReportToQueue(Report $report)
     {
         $this->queue[] = $report;
     }
@@ -58,19 +57,19 @@ class Api
             foreach ($this->queue as $report) {
                 $this->sendReportToApi($report);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //
         } finally {
             $this->queue = [];
         }
     }
 
-    protected function sendReportToApi(Report $report)
+    private function sendReportToApi(Report $report)
     {
         $this->client->post('reports', $this->truncateReport($report->toArray()));
     }
 
-    protected function truncateReport(array $payload): array
+    private function truncateReport(array $payload): array
     {
         return (new ReportTrimmer())->trim($payload);
     }

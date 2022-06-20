@@ -65,7 +65,7 @@ class FragmentListener implements EventSubscriberInterface
             return;
         }
 
-        if ($event->isMainRequest()) {
+        if ($event->isMasterRequest()) {
             $this->validateRequest($request);
         }
 

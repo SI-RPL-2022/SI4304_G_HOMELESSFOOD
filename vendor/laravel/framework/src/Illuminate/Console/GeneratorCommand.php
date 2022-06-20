@@ -2,7 +2,6 @@
 
 namespace Illuminate\Console;
 
-use Illuminate\Console\Concerns\CreatesMatchingTest;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
@@ -109,10 +108,6 @@ abstract class GeneratorCommand extends Command
     {
         parent::__construct();
 
-        if (in_array(CreatesMatchingTest::class, class_uses_recursive($this))) {
-            $this->addTestOptions();
-        }
-
         $this->files = $files;
     }
 
@@ -164,10 +159,6 @@ abstract class GeneratorCommand extends Command
         $this->files->put($path, $this->sortImports($this->buildClass($name)));
 
         $this->info($this->type.' created successfully.');
-
-        if (in_array(CreatesMatchingTest::class, class_uses_recursive($this))) {
-            $this->handleTestCreation($path);
-        }
     }
 
     /**

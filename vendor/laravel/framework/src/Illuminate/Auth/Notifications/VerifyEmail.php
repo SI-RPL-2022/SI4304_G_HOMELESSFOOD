@@ -56,7 +56,7 @@ class VerifyEmail extends Notification
     /**
      * Get the verify email notification mail message for the given URL.
      *
-     * @param  string  $url
+     * @param  string  $verificationUrl
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     protected function buildMailMessage($url)

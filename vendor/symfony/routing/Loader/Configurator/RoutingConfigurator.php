@@ -24,15 +24,13 @@ class RoutingConfigurator
     private $loader;
     private $path;
     private $file;
-    private $env;
 
-    public function __construct(RouteCollection $collection, PhpFileLoader $loader, string $path, string $file, string $env = null)
+    public function __construct(RouteCollection $collection, PhpFileLoader $loader, string $path, string $file)
     {
         $this->collection = $collection;
         $this->loader = $loader;
         $this->path = $path;
         $this->file = $file;
-        $this->env = $env;
     }
 
     /**
@@ -58,14 +56,6 @@ class RoutingConfigurator
     final public function collection(string $name = ''): CollectionConfigurator
     {
         return new CollectionConfigurator($this->collection, $name);
-    }
-
-    /**
-     * Get the current environment to be able to write conditional configuration.
-     */
-    final public function env(): ?string
-    {
-        return $this->env;
     }
 
     /**

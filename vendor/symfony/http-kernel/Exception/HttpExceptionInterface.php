@@ -21,14 +21,14 @@ interface HttpExceptionInterface extends \Throwable
     /**
      * Returns the status code.
      *
-     * @return int
+     * @return int An HTTP response status code
      */
     public function getStatusCode();
 
     /**
      * Returns response headers.
      *
-     * @return array
+     * @return array Response headers
      */
     public function getHeaders();
 }

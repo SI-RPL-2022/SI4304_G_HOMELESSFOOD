@@ -56,7 +56,7 @@ class Profile
     /**
      * Gets the token.
      *
-     * @return string
+     * @return string The token
      */
     public function getToken()
     {
@@ -74,7 +74,7 @@ class Profile
     /**
      * Returns the parent profile.
      *
-     * @return self|null
+     * @return self
      */
     public function getParent()
     {
@@ -84,7 +84,7 @@ class Profile
     /**
      * Returns the parent token.
      *
-     * @return string|null
+     * @return string|null The parent token
      */
     public function getParentToken()
     {
@@ -94,7 +94,7 @@ class Profile
     /**
      * Returns the IP.
      *
-     * @return string|null
+     * @return string|null The IP
      */
     public function getIp()
     {
@@ -109,7 +109,7 @@ class Profile
     /**
      * Returns the request method.
      *
-     * @return string|null
+     * @return string|null The request method
      */
     public function getMethod()
     {
@@ -124,7 +124,7 @@ class Profile
     /**
      * Returns the URL.
      *
-     * @return string|null
+     * @return string|null The URL
      */
     public function getUrl()
     {
@@ -137,11 +137,15 @@ class Profile
     }
 
     /**
-     * @return int
+     * @return int The time
      */
     public function getTime()
     {
-        return $this->time ?? 0;
+        if (null === $this->time) {
+            return 0;
+        }
+
+        return $this->time;
     }
 
     public function setTime(int $time)
@@ -208,7 +212,7 @@ class Profile
     /**
      * Gets a Collector by name.
      *
-     * @return DataCollectorInterface
+     * @return DataCollectorInterface A DataCollectorInterface instance
      *
      * @throws \InvalidArgumentException if the collector does not exist
      */

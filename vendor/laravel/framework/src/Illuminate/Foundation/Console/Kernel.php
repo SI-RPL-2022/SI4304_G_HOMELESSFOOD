@@ -111,7 +111,7 @@ class Kernel implements KernelContract
      */
     protected function scheduleCache()
     {
-        return $this->app['config']->get('cache.schedule_store', Env::get('SCHEDULE_CACHE_DRIVER'));
+        return Env::get('SCHEDULE_CACHE_DRIVER');
     }
 
     /**

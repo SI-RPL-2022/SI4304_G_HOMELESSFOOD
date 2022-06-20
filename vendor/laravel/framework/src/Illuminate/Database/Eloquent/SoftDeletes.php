@@ -3,7 +3,7 @@
 namespace Illuminate\Database\Eloquent;
 
 /**
- * @method static static|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder withTrashed(bool $withTrashed = true)
+ * @method static static|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder withTrashed()
  * @method static static|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder onlyTrashed()
  * @method static static|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder withoutTrashed()
  */
@@ -64,9 +64,9 @@ trait SoftDeletes
     protected function performDeleteOnModel()
     {
         if ($this->forceDeleting) {
-            return tap($this->setKeysForSaveQuery($this->newModelQuery())->forceDelete(), function () {
-                $this->exists = false;
-            });
+            $this->exists = false;
+
+            return $this->setKeysForSaveQuery($this->newModelQuery())->forceDelete();
         }
 
         return $this->runSoftDelete();
@@ -96,8 +96,6 @@ trait SoftDeletes
         $query->update($columns);
 
         $this->syncOriginalAttributes(array_keys($columns));
-
-        $this->fireModelEvent('trashed', false);
     }
 
     /**
@@ -136,17 +134,6 @@ trait SoftDeletes
     public function trashed()
     {
         return ! is_null($this->{$this->getDeletedAtColumn()});
-    }
-
-    /**
-     * Register a "softDeleted" model event callback with the dispatcher.
-     *
-     * @param  \Closure|string  $callback
-     * @return void
-     */
-    public static function softDeleted($callback)
-    {
-        static::registerModelEvent('trashed', $callback);
     }
 
     /**

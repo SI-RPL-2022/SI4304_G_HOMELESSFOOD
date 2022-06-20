@@ -12,12 +12,12 @@ use NunoMaduro\Collision\Exceptions\ShouldNotHappen;
  */
 final class ConsoleColor
 {
-    public const FOREGROUND = 38;
-    public const BACKGROUND = 48;
+    const FOREGROUND = 38;
+    const BACKGROUND = 48;
 
-    public const COLOR256_REGEXP = '~^(bg_)?color_(\d{1,3})$~';
+    const COLOR256_REGEXP = '~^(bg_)?color_(\d{1,3})$~';
 
-    public const RESET_STYLE = 0;
+    const RESET_STYLE = 0;
 
     /** @var bool */
     private $isSupported;
@@ -205,11 +205,6 @@ final class ConsoleColor
      */
     public function isSupported()
     {
-        // The COLLISION_FORCE_COLORS variable is for internal purposes only
-        if (getenv('COLLISION_FORCE_COLORS') !== false) {
-            return true;
-        }
-
         if (DIRECTORY_SEPARATOR === '\\') {
             return getenv('ANSICON') !== false || getenv('ConEmuANSI') === 'ON';
         }

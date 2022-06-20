@@ -8,11 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Carbon\Exceptions;
 
+use Exception;
 use InvalidArgumentException as BaseInvalidArgumentException;
-use Throwable;
 
 class InvalidDateException extends BaseInvalidArgumentException implements InvalidArgumentException
 {
@@ -36,9 +35,9 @@ class InvalidDateException extends BaseInvalidArgumentException implements Inval
      * @param string         $field
      * @param mixed          $value
      * @param int            $code
-     * @param Throwable|null $previous
+     * @param Exception|null $previous
      */
-    public function __construct($field, $value, $code = 0, Throwable $previous = null)
+    public function __construct($field, $value, $code = 0, Exception $previous = null)
     {
         $this->field = $field;
         $this->value = $value;

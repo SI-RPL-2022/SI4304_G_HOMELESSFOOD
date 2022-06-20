@@ -74,18 +74,14 @@ trait AuthorizesRequests
     /**
      * Authorize a resource action based on the incoming request.
      *
-     * @param  string|array  $model
-     * @param  string|array|null  $parameter
+     * @param  string  $model
+     * @param  string|null  $parameter
      * @param  array  $options
      * @param  \Illuminate\Http\Request|null  $request
      * @return void
      */
     public function authorizeResource($model, $parameter = null, array $options = [], $request = null)
     {
-        $model = is_array($model) ? implode(',', $model) : $model;
-
-        $parameter = is_array($parameter) ? implode(',', $parameter) : $parameter;
-
         $parameter = $parameter ?: Str::snake(class_basename($model));
 
         $middleware = [];

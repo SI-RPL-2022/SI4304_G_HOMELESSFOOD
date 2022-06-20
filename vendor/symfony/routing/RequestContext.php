@@ -84,7 +84,7 @@ class RequestContext
     /**
      * Gets the base URL.
      *
-     * @return string
+     * @return string The base URL
      */
     public function getBaseUrl()
     {
@@ -98,7 +98,7 @@ class RequestContext
      */
     public function setBaseUrl(string $baseUrl)
     {
-        $this->baseUrl = rtrim($baseUrl, '/');
+        $this->baseUrl = $baseUrl;
 
         return $this;
     }
@@ -106,7 +106,7 @@ class RequestContext
     /**
      * Gets the path info.
      *
-     * @return string
+     * @return string The path info
      */
     public function getPathInfo()
     {
@@ -130,7 +130,7 @@ class RequestContext
      *
      * The method is always an uppercased string.
      *
-     * @return string
+     * @return string The HTTP method
      */
     public function getMethod()
     {
@@ -154,7 +154,7 @@ class RequestContext
      *
      * The host is always lowercased because it must be treated case-insensitive.
      *
-     * @return string
+     * @return string The HTTP host
      */
     public function getHost()
     {
@@ -176,7 +176,7 @@ class RequestContext
     /**
      * Gets the HTTP scheme.
      *
-     * @return string
+     * @return string The HTTP scheme
      */
     public function getScheme()
     {
@@ -198,7 +198,7 @@ class RequestContext
     /**
      * Gets the HTTP port.
      *
-     * @return int
+     * @return int The HTTP port
      */
     public function getHttpPort()
     {
@@ -220,7 +220,7 @@ class RequestContext
     /**
      * Gets the HTTPS port.
      *
-     * @return int
+     * @return int The HTTPS port
      */
     public function getHttpsPort()
     {
@@ -240,9 +240,9 @@ class RequestContext
     }
 
     /**
-     * Gets the query string without the "?".
+     * Gets the query string.
      *
-     * @return string
+     * @return string The query string without the "?"
      */
     public function getQueryString()
     {
@@ -265,7 +265,7 @@ class RequestContext
     /**
      * Returns the parameters.
      *
-     * @return array
+     * @return array The parameters
      */
     public function getParameters()
     {
@@ -289,17 +289,17 @@ class RequestContext
     /**
      * Gets a parameter value.
      *
-     * @return mixed
+     * @return mixed The parameter value or null if nonexistent
      */
     public function getParameter(string $name)
     {
-        return $this->parameters[$name] ?? null;
+        return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
     }
 
     /**
      * Checks if a parameter value is set for the given parameter.
      *
-     * @return bool
+     * @return bool True if the parameter value is set, false otherwise
      */
     public function hasParameter(string $name)
     {

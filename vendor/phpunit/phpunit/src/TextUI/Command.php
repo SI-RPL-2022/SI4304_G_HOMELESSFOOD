@@ -20,7 +20,6 @@ use function extension_loaded;
 use function fgets;
 use function file_get_contents;
 use function file_put_contents;
-use function get_class;
 use function getcwd;
 use function ini_get;
 use function ini_set;
@@ -561,20 +560,7 @@ class Command
         try {
             FileLoader::checkAndLoad($filename);
         } catch (Throwable $t) {
-            if ($t instanceof \PHPUnit\Exception) {
-                $this->exitWithErrorMessage($t->getMessage());
-            }
-
-            $this->exitWithErrorMessage(
-                sprintf(
-                    'Error in bootstrap script: %s:%s%s%s%s',
-                    get_class($t),
-                    PHP_EOL,
-                    $t->getMessage(),
-                    PHP_EOL,
-                    $t->getTraceAsString()
-                )
-            );
+            $this->exitWithErrorMessage($t->getMessage());
         }
     }
 

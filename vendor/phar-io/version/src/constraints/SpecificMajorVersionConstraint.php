@@ -11,9 +11,13 @@ namespace PharIo\Version;
 
 class SpecificMajorVersionConstraint extends AbstractVersionConstraint {
     /** @var int */
-    private $major;
+    private $major = 0;
 
-    public function __construct(string $originalValue, int $major) {
+    /**
+     * @param string $originalValue
+     * @param int    $major
+     */
+    public function __construct($originalValue, $major) {
         parent::__construct($originalValue);
 
         $this->major = $major;

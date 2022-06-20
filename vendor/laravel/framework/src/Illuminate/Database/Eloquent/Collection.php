@@ -92,9 +92,7 @@ class Collection extends BaseCollection implements QueueableCollection
         $this->each(function ($model) use ($models, $attributes) {
             $extraAttributes = Arr::only($models->get($model->getKey())->getAttributes(), $attributes);
 
-            $model->forceFill($extraAttributes)
-                ->syncOriginalAttributes($attributes)
-                ->mergeCasts($models->get($model->getKey())->getCasts());
+            $model->forceFill($extraAttributes)->syncOriginalAttributes($attributes);
         });
 
         return $this;
@@ -157,17 +155,6 @@ class Collection extends BaseCollection implements QueueableCollection
     public function loadAvg($relations, $column)
     {
         return $this->loadAggregate($relations, $column, 'avg');
-    }
-
-    /**
-     * Load a set of related existences onto the collection.
-     *
-     * @param  array|string  $relations
-     * @return $this
-     */
-    public function loadExists($relations)
-    {
-        return $this->loadAggregate($relations, '*', 'exists');
     }
 
     /**
@@ -234,7 +221,7 @@ class Collection extends BaseCollection implements QueueableCollection
             return;
         }
 
-        $models = $models->pluck($name)->whereNotNull();
+        $models = $models->pluck($name);
 
         if ($models->first() instanceof BaseCollection) {
             $models = $models->collapse();
@@ -694,7 +681,7 @@ class Collection extends BaseCollection implements QueueableCollection
         } elseif (count($relations) === 1) {
             return reset($relations);
         } else {
-            return array_intersect(...array_values($relations));
+            return array_intersect(...$relations);
         }
     }
 

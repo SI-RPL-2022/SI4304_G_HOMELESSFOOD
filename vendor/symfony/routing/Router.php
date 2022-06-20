@@ -102,7 +102,7 @@ class Router implements RouterInterface, RequestMatcherInterface
         $this->loader = $loader;
         $this->resource = $resource;
         $this->logger = $logger;
-        $this->context = $context ?? new RequestContext();
+        $this->context = $context ?: new RequestContext();
         $this->setOptions($options);
         $this->defaultLocale = $defaultLocale;
     }
@@ -171,7 +171,7 @@ class Router implements RouterInterface, RequestMatcherInterface
     /**
      * Gets an option value.
      *
-     * @return mixed
+     * @return mixed The value
      *
      * @throws \InvalidArgumentException
      */
@@ -303,7 +303,7 @@ class Router implements RouterInterface, RequestMatcherInterface
     /**
      * Gets the UrlGenerator instance associated with this Router.
      *
-     * @return UrlGeneratorInterface
+     * @return UrlGeneratorInterface A UrlGeneratorInterface instance
      */
     public function getGenerator()
     {
@@ -313,14 +313,11 @@ class Router implements RouterInterface, RequestMatcherInterface
 
         if (null === $this->options['cache_dir']) {
             $routes = $this->getRouteCollection();
-            $aliases = [];
             $compiled = is_a($this->options['generator_class'], CompiledUrlGenerator::class, true);
             if ($compiled) {
-                $generatorDumper = new CompiledUrlGeneratorDumper($routes);
-                $routes = $generatorDumper->getCompiledRoutes();
-                $aliases = $generatorDumper->getCompiledAliases();
+                $routes = (new CompiledUrlGeneratorDumper($routes))->getCompiledRoutes();
             }
-            $this->generator = new $this->options['generator_class'](array_merge($routes, $aliases), $this->context, $this->logger, $this->defaultLocale);
+            $this->generator = new $this->options['generator_class']($routes, $this->context, $this->logger, $this->defaultLocale);
         } else {
             $cache = $this->getConfigCacheFactory()->cache($this->options['cache_dir'].'/url_generating_routes.php',
                 function (ConfigCacheInterface $cache) {

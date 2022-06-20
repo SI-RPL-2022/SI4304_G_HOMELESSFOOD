@@ -3,7 +3,6 @@
 namespace Illuminate\Testing\Constraints;
 
 use Illuminate\Database\Connection;
-use Illuminate\Database\Query\Expression;
 use PHPUnit\Framework\Constraint\Constraint;
 
 class HasInDatabase extends Constraint

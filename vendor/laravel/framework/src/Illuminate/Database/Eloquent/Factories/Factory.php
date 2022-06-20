@@ -5,26 +5,22 @@ namespace Illuminate\Database\Eloquent\Factories;
 use Closure;
 use Faker\Generator;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\ForwardsCalls;
-use Illuminate\Support\Traits\Macroable;
 use Throwable;
 
 abstract class Factory
 {
-    use Conditionable, ForwardsCalls, Macroable {
-        __call as macroCall;
-    }
+    use ForwardsCalls;
 
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string|null
+     * @var string
      */
     protected $model;
 
@@ -109,12 +105,12 @@ abstract class Factory
      * Create a new factory instance.
      *
      * @param  int|null  $count
-     * @param  \Illuminate\Support\Collection|null  $states
-     * @param  \Illuminate\Support\Collection|null  $has
-     * @param  \Illuminate\Support\Collection|null  $for
-     * @param  \Illuminate\Support\Collection|null  $afterMaking
-     * @param  \Illuminate\Support\Collection|null  $afterCreating
-     * @param  string|null  $connection
+     * @param  \Illuminate\Support\Collection  $states
+     * @param  \Illuminate\Support\Collection  $has
+     * @param  \Illuminate\Support\Collection  $for
+     * @param  \Illuminate\Support\Collection  $afterMaking
+     * @param  \Illuminate\Support\Collection  $afterCreating
+     * @param  string  $connection
      * @return void
      */
     public function __construct($count = null,
@@ -204,42 +200,18 @@ abstract class Factory
     }
 
     /**
-     * Create a single model and persist it to the database.
-     *
-     * @param  array  $attributes
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function createOneQuietly($attributes = [])
-    {
-        return $this->count(null)->createQuietly($attributes);
-    }
-
-    /**
      * Create a collection of models and persist them to the database.
      *
      * @param  iterable  $records
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection|mixed
      */
     public function createMany(iterable $records)
     {
         return new EloquentCollection(
-            collect($records)->map(function ($record) {
+            array_map(function ($record) {
                 return $this->state($record)->create();
-            })
+            }, $records)
         );
-    }
-
-    /**
-     * Create a collection of models and persist them to the database.
-     *
-     * @param  iterable  $records
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function createManyQuietly(iterable $records)
-    {
-        return Model::withoutEvents(function () use ($records) {
-            return $this->createMany($records);
-        });
     }
 
     /**
@@ -247,7 +219,7 @@ abstract class Factory
      *
      * @param  array  $attributes
      * @param  \Illuminate\Database\Eloquent\Model|null  $parent
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed
      */
     public function create($attributes = [], ?Model $parent = null)
     {
@@ -268,20 +240,6 @@ abstract class Factory
         }
 
         return $results;
-    }
-
-    /**
-     * Create a collection of models and persist them to the database.
-     *
-     * @param  array  $attributes
-     * @param  \Illuminate\Database\Eloquent\Model|null  $parent
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
-     */
-    public function createQuietly($attributes = [], ?Model $parent = null)
-    {
-        return Model::withoutEvents(function () use ($attributes, $parent) {
-            return $this->create($attributes, $parent);
-        });
     }
 
     /**
@@ -348,7 +306,7 @@ abstract class Factory
      *
      * @param  array  $attributes
      * @param  \Illuminate\Database\Eloquent\Model|null  $parent
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed
      */
     public function make($attributes = [], ?Model $parent = null)
     {
@@ -492,17 +450,6 @@ abstract class Factory
     }
 
     /**
-     * Add a new cross joined sequenced state transformation to the model definition.
-     *
-     * @param  array  $sequence
-     * @return static
-     */
-    public function crossJoinSequence(...$sequence)
-    {
-        return $this->state(new CrossJoinSequence(...$sequence));
-    }
-
-    /**
      * Define a child relationship for the model.
      *
      * @param  \Illuminate\Database\Eloquent\Factories\Factory  $factory
@@ -534,22 +481,18 @@ abstract class Factory
     /**
      * Define an attached relationship for the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Factories\Factory|\Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model  $factory
+     * @param  \Illuminate\Database\Eloquent\Factories\Factory  $factory
      * @param  callable|array  $pivot
      * @param  string|null  $relationship
      * @return static
      */
-    public function hasAttached($factory, $pivot = [], $relationship = null)
+    public function hasAttached(self $factory, $pivot = [], $relationship = null)
     {
         return $this->newInstance([
             'has' => $this->has->concat([new BelongsToManyRelationship(
                 $factory,
                 $pivot,
-                $relationship ?: Str::camel(Str::plural(class_basename(
-                    $factory instanceof Factory
-                        ? $factory->modelName()
-                        : Collection::wrap($factory)->first()
-                )))
+                $relationship ?: Str::camel(Str::plural(class_basename($factory->modelName())))
             )]),
         ]);
     }
@@ -557,17 +500,15 @@ abstract class Factory
     /**
      * Define a parent relationship for the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Factories\Factory|\Illuminate\Database\Eloquent\Model  $factory
+     * @param  \Illuminate\Database\Eloquent\Factories\Factory  $factory
      * @param  string|null  $relationship
      * @return static
      */
-    public function for($factory, $relationship = null)
+    public function for(self $factory, $relationship = null)
     {
         return $this->newInstance(['for' => $this->for->concat([new BelongsToRelationship(
             $factory,
-            $relationship ?: Str::camel(class_basename(
-                $factory instanceof Factory ? $factory->modelName() : $factory
-            ))
+            $relationship ?: Str::camel(class_basename($factory->modelName()))
         )])]);
     }
 
@@ -686,16 +627,12 @@ abstract class Factory
     public function modelName()
     {
         $resolver = static::$modelNameResolver ?: function (self $factory) {
-            $namespacedFactoryBasename = Str::replaceLast(
-                'Factory', '', Str::replaceFirst(static::$namespace, '', get_class($factory))
-            );
-
             $factoryBasename = Str::replaceLast('Factory', '', class_basename($factory));
 
             $appNamespace = static::appNamespace();
 
-            return class_exists($appNamespace.'Models\\'.$namespacedFactoryBasename)
-                        ? $appNamespace.'Models\\'.$namespacedFactoryBasename
+            return class_exists($appNamespace.'Models\\'.$factoryBasename)
+                        ? $appNamespace.'Models\\'.$factoryBasename
                         : $appNamespace.$factoryBasename;
         };
 
@@ -804,10 +741,6 @@ abstract class Factory
      */
     public function __call($method, $parameters)
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
         if (! Str::startsWith($method, ['for', 'has'])) {
             static::throwBadMethodCallException($method);
         }

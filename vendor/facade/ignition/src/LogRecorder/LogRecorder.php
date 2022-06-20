@@ -14,13 +14,9 @@ class LogRecorder
     /** @var \Illuminate\Contracts\Foundation\Application */
     protected $app;
 
-    /** @var int|null */
-    private $maxLogs;
-
-    public function __construct(Application $app, ?int $maxLogs = null)
+    public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->maxLogs = $maxLogs;
     }
 
     public function register(): self
@@ -37,10 +33,6 @@ class LogRecorder
         }
 
         $this->logMessages[] = LogMessage::fromMessageLoggedEvent($event);
-
-        if (is_int($this->maxLogs)) {
-            $this->logMessages = array_slice($this->logMessages, -$this->maxLogs);
-        }
     }
 
     public function getLogMessages(): array
@@ -75,17 +67,5 @@ class LogRecorder
     public function reset(): void
     {
         $this->logMessages = [];
-    }
-
-    public function getMaxLogs(): ?int
-    {
-        return $this->maxLogs;
-    }
-
-    public function setMaxLogs(?int $maxLogs): self
-    {
-        $this->maxLogs = $maxLogs;
-
-        return $this;
     }
 }

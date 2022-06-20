@@ -5,13 +5,10 @@ namespace Illuminate\Http\Client;
 use ArrayAccess;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Support\Traits\Macroable;
 use LogicException;
 
 class Request implements ArrayAccess
 {
-    use Macroable;
-
     /**
      * The underlying PSR request.
      *
@@ -120,7 +117,9 @@ class Request implements ArrayAccess
      */
     public function headers()
     {
-        return $this->request->getHeaders();
+        return collect($this->request->getHeaders())->mapWithKeys(function ($values, $header) {
+            return [$header => $values];
+        })->all();
     }
 
     /**
@@ -261,7 +260,6 @@ class Request implements ArrayAccess
      * @param  string  $offset
      * @return bool
      */
-    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->data()[$offset]);
@@ -273,7 +271,6 @@ class Request implements ArrayAccess
      * @param  string  $offset
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->data()[$offset];
@@ -288,7 +285,6 @@ class Request implements ArrayAccess
      *
      * @throws \LogicException
      */
-    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new LogicException('Request data may not be mutated using array access.');
@@ -302,7 +298,6 @@ class Request implements ArrayAccess
      *
      * @throws \LogicException
      */
-    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new LogicException('Request data may not be mutated using array access.');

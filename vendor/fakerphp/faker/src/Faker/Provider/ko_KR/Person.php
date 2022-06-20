@@ -7,6 +7,7 @@ class Person extends \Faker\Provider\Person
     /**
      * This provider uses wikipedia's top Korean last names. These cover more than 90% of Korean population.
      */
+
     protected static $maleNameFormats = [
         '{{lastName}}{{firstNameMale}}',
     ];

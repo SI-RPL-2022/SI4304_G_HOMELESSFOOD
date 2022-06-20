@@ -1,13 +1,13 @@
 <?php
 
-namespace {{ namespace }};
+namespace DummyNamespace;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class {{ class }} extends Mailable
+class DummyClass extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -28,6 +28,6 @@ class {{ class }} extends Mailable
      */
     public function build()
     {
-        return $this->markdown('{{ view }}');
+        return $this->markdown('DummyView');
     }
 }

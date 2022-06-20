@@ -6,7 +6,6 @@ use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Testing\LoggedExceptionCollection;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile as SymfonyUploadedFile;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
@@ -143,8 +142,7 @@ trait MakesHttpRequests
         }
 
         foreach ((array) $middleware as $abstract) {
-            $this->app->instance($abstract, new class
-            {
+            $this->app->instance($abstract, new class {
                 public function handle($request, $next)
                 {
                     return $next($request);
@@ -510,11 +508,11 @@ trait MakesHttpRequests
             $request = Request::createFromBase($symfonyRequest)
         );
 
-        $kernel->terminate($request, $response);
-
         if ($this->followRedirects) {
             $response = $this->followRedirects($response);
         }
+
+        $kernel->terminate($request, $response);
 
         return $this->createTestResponse($response);
     }
@@ -625,11 +623,11 @@ trait MakesHttpRequests
      */
     protected function followRedirects($response)
     {
-        $this->followRedirects = false;
-
         while ($response->isRedirect()) {
             $response = $this->get($response->headers->get('Location'));
         }
+
+        $this->followRedirects = false;
 
         return $response;
     }
@@ -642,12 +640,6 @@ trait MakesHttpRequests
      */
     protected function createTestResponse($response)
     {
-        return tap(TestResponse::fromBaseResponse($response), function ($response) {
-            $response->withExceptions(
-                $this->app->bound(LoggedExceptionCollection::class)
-                    ? $this->app->make(LoggedExceptionCollection::class)
-                    : new LoggedExceptionCollection
-            );
-        });
+        return TestResponse::fromBaseResponse($response);
     }
 }

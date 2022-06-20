@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2020 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -28,10 +28,9 @@ class RunkitReloader extends AbstractListener
      *
      * @return bool
      */
-    public static function isSupported(): bool
+    public static function isSupported()
     {
-        // runkit_import was removed in runkit7-4.0.0a1
-        return \extension_loaded('runkit') || \extension_loaded('runkit7') && \function_exists('runkit_import');
+        return \extension_loaded('runkit');
     }
 
     /**
@@ -51,7 +50,7 @@ class RunkitReloader extends AbstractListener
      * @param Shell  $shell
      * @param string $input
      */
-    public function onInput(Shell $shell, string $input)
+    public function onInput(Shell $shell, $input)
     {
         $this->reload($shell);
     }
@@ -102,22 +101,14 @@ class RunkitReloader extends AbstractListener
         // }
 
         foreach ($modified as $file) {
-            $flags = (
+            runkit_import($file, (
                 RUNKIT_IMPORT_FUNCTIONS |
                 RUNKIT_IMPORT_CLASSES |
                 RUNKIT_IMPORT_CLASS_METHODS |
                 RUNKIT_IMPORT_CLASS_CONSTS |
                 RUNKIT_IMPORT_CLASS_PROPS |
                 RUNKIT_IMPORT_OVERRIDE
-            );
-
-            // these two const cannot be used with RUNKIT_IMPORT_OVERRIDE  in runkit7
-            if (\extension_loaded('runkit7')) {
-                $flags &= ~RUNKIT_IMPORT_CLASS_PROPS & ~RUNKIT_IMPORT_CLASS_STATIC_PROPS;
-                runkit7_import($file, $flags);
-            } else {
-                runkit_import($file, $flags);
-            }
+            ));
         }
     }
 
@@ -130,12 +121,12 @@ class RunkitReloader extends AbstractListener
      *
      * @return bool
      */
-    private function lintFile(string $file): bool
+    private function lintFile($file)
     {
         // first try to parse it
         try {
             $this->parser->parse(\file_get_contents($file));
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             return false;
         }
 

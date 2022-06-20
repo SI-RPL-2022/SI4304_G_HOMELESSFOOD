@@ -26,14 +26,14 @@ interface SurrogateInterface
     /**
      * Returns a new cache strategy instance.
      *
-     * @return ResponseCacheStrategyInterface
+     * @return ResponseCacheStrategyInterface A ResponseCacheStrategyInterface instance
      */
     public function createCacheStrategy();
 
     /**
      * Checks that at least one surrogate has Surrogate capability.
      *
-     * @return bool
+     * @return bool true if one surrogate has Surrogate capability, false otherwise
      */
     public function hasSurrogateCapability(Request $request);
 
@@ -52,7 +52,7 @@ interface SurrogateInterface
     /**
      * Checks that the Response needs to be parsed for Surrogate tags.
      *
-     * @return bool
+     * @return bool true if the Response needs to be parsed, false otherwise
      */
     public function needsParsing(Response $response);
 

@@ -146,7 +146,6 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
                 'bindingFields' => $route->bindingFields(),
                 'lockSeconds' => $route->locksFor(),
                 'waitSeconds' => $route->waitsFor(),
-                'withTrashed' => $route->allowsTrashedBindings(),
             ];
         }
 
@@ -195,18 +194,13 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
      * @param  \Symfony\Component\Routing\RouteCollection  $symfonyRoutes
      * @param  \Illuminate\Routing\Route  $route
      * @return \Symfony\Component\Routing\RouteCollection
-     *
-     * @throws \LogicException
      */
     protected function addToSymfonyRoutesCollection(SymfonyRouteCollection $symfonyRoutes, Route $route)
     {
         $name = $route->getName();
 
-        if (
-            ! is_null($name)
-            && Str::endsWith($name, '.')
-            && ! is_null($symfonyRoutes->get($name))
-        ) {
+        if (Str::endsWith($name, '.') &&
+            ! is_null($symfonyRoutes->get($name))) {
             $name = null;
         }
 
@@ -238,7 +232,6 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
      *
      * @return \ArrayIterator
      */
-    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new ArrayIterator($this->getRoutes());
@@ -249,7 +242,6 @@ abstract class AbstractRouteCollection implements Countable, IteratorAggregate, 
      *
      * @return int
      */
-    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->getRoutes());

@@ -433,17 +433,6 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a tiny text type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    protected function typeTinyText(Fluent $column)
-    {
-        return 'text';
-    }
-
-    /**
      * Create the column definition for a text type.
      *
      * @param  \Illuminate\Support\Fluent  $column
@@ -638,7 +627,6 @@ class SQLiteGrammar extends Grammar
      * Create the column definition for a date-time (with time zone) type.
      *
      * Note: "SQLite does not have a storage class set aside for storing dates and/or times."
-     *
      * @link https://www.sqlite.org/datatype3.html
      *
      * @param  \Illuminate\Support\Fluent  $column
@@ -887,7 +875,7 @@ class SQLiteGrammar extends Grammar
     protected function modifyNullable(Blueprint $blueprint, Fluent $column)
     {
         if (is_null($column->virtualAs) && is_null($column->storedAs)) {
-            return $column->nullable ? '' : ' not null';
+            return $column->nullable ? ' null' : ' not null';
         }
 
         if ($column->nullable === false) {

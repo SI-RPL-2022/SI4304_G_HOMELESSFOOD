@@ -31,21 +31,15 @@ class SqlServerGrammar extends Grammar
             return parent::compileSelect($query);
         }
 
+        // If an offset is present on the query, we will need to wrap the query in
+        // a big "ANSI" offset syntax block. This is very nasty compared to the
+        // other database systems but is necessary for implementing features.
         if (is_null($query->columns)) {
             $query->columns = ['*'];
         }
 
-        $components = $this->compileComponents($query);
-
-        if (! empty($components['orders'])) {
-            return parent::compileSelect($query)." offset {$query->offset} rows fetch next {$query->limit} rows only";
-        }
-
-        // If an offset is present on the query, we will need to wrap the query in
-        // a big "ANSI" offset syntax block. This is very nasty compared to the
-        // other database systems but is necessary for implementing features.
         return $this->compileAnsiOffset(
-            $query, $components
+            $query, $this->compileComponents($query)
         );
     }
 
@@ -67,8 +61,8 @@ class SqlServerGrammar extends Grammar
         // If there is a limit on the query, but not an offset, we will add the top
         // clause to the query, which serves as a "limit" type clause within the
         // SQL Server system similar to the limit keywords available in MySQL.
-        if (is_numeric($query->limit) && $query->limit > 0 && $query->offset <= 0) {
-            $select .= 'top '.((int) $query->limit).' ';
+        if ($query->limit > 0 && $query->offset <= 0) {
+            $select .= 'top '.$query->limit.' ';
         }
 
         return $select.$this->columnize($columns);
@@ -94,22 +88,6 @@ class SqlServerGrammar extends Grammar
         }
 
         return $from;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    protected function whereBitwise(Builder $query, $where)
-    {
-        $value = $this->parameter($where['value']);
-
-        $operator = str_replace('?', '??', $where['operator']);
-
-        return '('.$this->wrap($where['column']).' '.$operator.' '.$value.') != 0';
     }
 
     /**
@@ -181,36 +159,6 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param  array  $having
-     * @return string
-     */
-    protected function compileHaving(array $having)
-    {
-        if ($having['type'] === 'Bitwise') {
-            return $this->compileHavingBitwise($having);
-        }
-
-        return parent::compileHaving($having);
-    }
-
-    /**
-     * Compile a having clause involving a bitwise operator.
-     *
-     * @param  array  $having
-     * @return string
-     */
-    protected function compileHavingBitwise($having)
-    {
-        $column = $this->wrap($having['column']);
-
-        $parameter = $this->parameter($having['value']);
-
-        return $having['boolean'].' ('.$column.' '.$having['operator'].' '.$parameter.') != 0';
-    }
-
-    /**
      * Create a full ANSI offset clause for the query.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
@@ -233,10 +181,6 @@ class SqlServerGrammar extends Grammar
 
         unset($components['orders']);
 
-        if ($this->queryOrderContainsSubquery($query)) {
-            $query->bindings = $this->sortBindingsForSubqueryOrderBy($query);
-        }
-
         // Next we need to calculate the constraints that should be placed on the query
         // to get the right offset and limit from our query but if there is no limit
         // set we will just handle the offset only since that is all that matters.
@@ -254,36 +198,6 @@ class SqlServerGrammar extends Grammar
     protected function compileOver($orderings)
     {
         return ", row_number() over ({$orderings}) as row_num";
-    }
-
-    /**
-     * Determine if the query's order by clauses contain a subquery.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return bool
-     */
-    protected function queryOrderContainsSubquery($query)
-    {
-        if (! is_array($query->orders)) {
-            return false;
-        }
-
-        return Arr::first($query->orders, function ($value) {
-            return $this->isExpression($value['column'] ?? null);
-        }, false) !== false;
-    }
-
-    /**
-     * Move the order bindings to be after the "select" statement to account for an order by subquery.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return array
-     */
-    protected function sortBindingsForSubqueryOrderBy($query)
-    {
-        return Arr::sort($query->bindings, function ($bindings, $key) {
-            return array_search($key, ['select', 'order', 'from', 'join', 'where', 'groupBy', 'having', 'union', 'unionOrder']);
-        });
     }
 
     /**
@@ -308,10 +222,10 @@ class SqlServerGrammar extends Grammar
      */
     protected function compileRowConstraint($query)
     {
-        $start = (int) $query->offset + 1;
+        $start = $query->offset + 1;
 
         if ($query->limit > 0) {
-            $finish = (int) $query->offset + (int) $query->limit;
+            $finish = $query->offset + $query->limit;
 
             return "between {$start} and {$finish}";
         }
