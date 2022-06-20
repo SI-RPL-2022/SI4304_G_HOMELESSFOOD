@@ -52,6 +52,10 @@
             </li>
           @endif
         @endif
+
+        <li class="nav-item active">
+          <a class="nav-link {{ Request::is('/timeline') ? 'active' : '' }}" href="/timeline">Timeline</a>
+        </li>
         
       </ul>
       <form class="form-inline mt-2 mt-md-0">
@@ -74,7 +78,7 @@
         @else
             <ul class="navbar-nav mr-auto">
               <li class="nav-item">
-                <a class="nav-link mr-3" href="/auth/register">Daftar disini sekarang</a>
+                <a class="nav-link mr-3" href="/auth/register">Daftar disini</a>
               </li>
             </ul>
             <a href="/auth/login" class="btn btn-warning my-2 my-sm-0 text-white" type="submit">Login</a>
@@ -96,62 +100,88 @@
     <div class="container mt-4 mb-4">
       <div class="row">
         <div class="col-3">
-          <a href="/dashboard" style="text-decoration: none">
-            <div class="card {{ Route::currentRouteName() == 'dashboard' ? 'bg-warning' : '' }}">
-              <div class="card-body p-2">
-                <b class="{{ Route::currentRouteName() == 'dashboard' ? 'text-white' : '' }}">
-                  <img src="/gambar/007-dashboard.png" style="width: 50px"> Dashboard
-                </b>
-              </div>
-            </div>
-          </a>
-        </div>
-
-        <div class="col-3">
           @if(session()->get('user')->akses == 'admin')
-            <a href="/food" style="text-decoration: none">
-              <div class="card {{ Route::currentRouteName() == 'food' ? 'bg-warning' : '' }}">
+            <a href="/dashboard" style="text-decoration: none">
+              <div class="card {{ Route::currentRouteName() == 'dashboard' ? 'bg-warning' : '' }}">
                 <div class="card-body p-2">
-                  <b class="{{ Route::currentRouteName() == 'food' ? 'text-white' : '' }}">
-                    <img src="/gambar/001-diet.png" style="width: 50px"> Makanan</b>
+                  <b class="{{ Route::currentRouteName() == 'dashboard' ? 'text-white' : '' }}">
+                    <img src="/gambar/005-delivery.png" style="width: 50px"> Driver
+                  </b>
                 </div>
               </div>
             </a>
-
-          @elseif(session()->get('user')->akses == 'user')
-            <a href="/homeless" style="text-decoration: none">
-              <div class="card {{ Route::currentRouteName() == 'homeless' ? 'bg-warning' : '' }}">
+          @else
+            <a href="/dashboard" style="text-decoration: none">
+              <div class="card {{ Route::currentRouteName() == 'dashboard' ? 'bg-warning' : '' }}">
                 <div class="card-body p-2">
-                  <b class="{{ Route::currentRouteName() == 'homeless' ? 'text-white' : '' }}">
-                    <img src="/gambar/001-diet.png" style="width: 50px"> Tunawisma</b>
+                  <b class="{{ Route::currentRouteName() == 'dashboard' ? 'text-white' : '' }}">
+                    <img src="/gambar/007-dashboard.png" style="width: 50px"> Dashboard
+                  </b>
                 </div>
               </div>
             </a>
-
           @endif
         </div>
 
-        <div class="col-3">
-          <a href="/profile" style="text-decoration: none">
-            <div class="card {{ Route::currentRouteName() == 'transaction' ? 'bg-warning' : '' }}">
-              <div class="card-body p-2">
-                <b class="{{ Route::currentRouteName() == 'transaction' ? 'text-white' : '' }}">
-                  <img src="/gambar/006-payment-method.png" style="width: 50px"> Transaksi</b>
-              </div>
-            </div>
-          </a>
-        </div>
+        @if(session()->get('user')->akses == 'driver')
+          <div class="col-3">
+            <a href="/driver/history" style="text-decoration: none">
+                <div class="card {{ Route::currentRouteName() == 'history' ? 'bg-warning' : '' }}">
+                  <div class="card-body p-2">
+                    <b class="{{ Route::currentRouteName() == 'history' ? 'text-white' : '' }}">
+                      <img src="/gambar/005-delivery.png" style="width: 50px"> History</b>
+                  </div>
+                </div>
+              </a>
+          </div>
+        @else
+          <div class="col-3">
+            @if(session()->get('user')->akses == 'admin')
+              <a href="/food" style="text-decoration: none">
+                <div class="card {{ Route::currentRouteName() == 'food' ? 'bg-warning' : '' }}">
+                  <div class="card-body p-2">
+                    <b class="{{ Route::currentRouteName() == 'food' ? 'text-white' : '' }}">
+                      <img src="/gambar/001-diet.png" style="width: 50px"> Makanan</b>
+                  </div>
+                </div>
+              </a>
 
-        <div class="col-3">
-          <a href="/profile" style="text-decoration: none">
-            <div class="card {{ Route::currentRouteName() == 'profile' ? 'bg-warning' : '' }}">
-              <div class="card-body p-2">
-                <b class="{{ Route::currentRouteName() == 'profile' ? 'text-white' : '' }}">
-                  <img src="/gambar/008-girl.png" style="width: 50px"> Profil</b>
+            @elseif(session()->get('user')->akses == 'user')
+              <a href="/homeless" style="text-decoration: none">
+                <div class="card {{ Route::currentRouteName() == 'homeless' ? 'bg-warning' : '' }}">
+                  <div class="card-body p-2">
+                    <b class="{{ Route::currentRouteName() == 'homeless' ? 'text-white' : '' }}">
+                      <img src="/gambar/001-diet.png" style="width: 50px"> Tunawisma</b>
+                  </div>
+                </div>
+              </a>
+
+            @endif
+          </div>
+
+          <div class="col-3">
+            <a href="/transaction" style="text-decoration: none">
+              <div class="card {{ Route::currentRouteName() == 'transaction' ? 'bg-warning' : '' }}">
+                <div class="card-body p-2">
+                  <b class="{{ Route::currentRouteName() == 'transaction' ? 'text-white' : '' }}">
+                    <img src="/gambar/006-payment-method.png" style="width: 50px"> Transaksi</b>
+                </div>
               </div>
-            </div>
-          </a>
-        </div>
+            </a>
+          </div>
+
+          <div class="col-3">
+            <a href="/profile" style="text-decoration: none">
+              <div class="card {{ Route::currentRouteName() == 'profile' ? 'bg-warning' : '' }}">
+                <div class="card-body p-2">
+                  <b class="{{ Route::currentRouteName() == 'profile' ? 'text-white' : '' }}">
+                    <img src="/gambar/008-girl.png" style="width: 50px"> Profil</b>
+                </div>
+              </div>
+            </a>
+          </div>
+        @endif
+
       </div>
     </div>
 

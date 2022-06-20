@@ -52,6 +52,10 @@
           @endif
         @endif
 
+        <li class="nav-item active">
+          <a class="nav-link {{ Request::is('/timeline') ? 'active' : '' }}" href="/timeline">Timeline</a>
+        </li>
+
       </ul>
       <form class="form-inline mt-2 mt-md-0">
         @if(session()->has('user'))
@@ -66,7 +70,7 @@
                   <a class="dropdown-item" href="/dashboard">Dashboard</a>
                   
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="proses/logout.php">Logout</a>
+                  <a class="dropdown-item" href="/auth/do_logout">Logout</a>
                 </div>
               </li>
             </ul>
@@ -74,7 +78,7 @@
         @else
             <ul class="navbar-nav mr-auto">
               <li class="nav-item">
-                <a class="nav-link mr-3" href="/auth/register">Daftar disini sekarang</a>
+                <a class="nav-link mr-3" href="/auth/register">Daftar disini</a>
               </li>
             </ul>
             <a href="/auth/login" class="btn btn-warning my-2 my-sm-0 text-white" type="submit">Login</a>
