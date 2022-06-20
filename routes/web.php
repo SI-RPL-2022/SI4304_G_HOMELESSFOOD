@@ -8,7 +8,7 @@ use App\Http\Controllers\RegionController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\DriverController;
-
+use App\Http\Controllers\TimelineController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +22,17 @@ use App\Http\Controllers\DriverController;
 */
 
 Route::get('/', [FrontpageController::class, 'index']);
+Route::get('/driver_hiring', [FrontpageController::class, 'driverHiring']);
+Route::get('/driver_hiring/register', [FrontpageController::class, 'registerDriver']);
+Route::get('/driver_verification', [FrontpageController::class, 'verificationDriver']);
+Route::get('/driver_verification/{status}/{user_id}', [FrontpageController::class, 'doVerificationDriver']);
+
+Route::get('/timeline', [TimelineController::class, 'timeline']);
+Route::post('/insert_timeline', [TimelineController::class, 'insert']);
+Route::get('/delete_timeline/{timeline_id}', [TimelineController::class, 'delete']);
+Route::get('/edit_timeline/{timeline_id}', [TimelineController::class, 'edit']);
+Route::post('/update_timeline/{timeline_id}', [TimelineController::class, 'update']);
+
 Route::get('/dashboard', [FrontpageController::class, 'dashboard'])->name('dashboard');
 
 Route::prefix('region')->name('region')->group(function () {
@@ -77,6 +88,7 @@ Route::prefix('auth')->name('auth')->group(function () {
 
     Route::post('do_login', [FrontpageController::class, 'do_login']);
     Route::post('do_register', [FrontpageController::class, 'do_register']);
+    Route::post('do_register_driver', [FrontpageController::class, 'do_register_driver']);
     Route::get('do_logout', [FrontpageController::class, 'do_logout']);
 });
 
