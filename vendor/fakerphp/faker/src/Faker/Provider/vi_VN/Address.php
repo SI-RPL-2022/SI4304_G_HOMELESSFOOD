@@ -4,7 +4,7 @@ namespace Faker\Provider\vi_VN;
 
 class Address extends \Faker\Provider\Address
 {
-    protected static $buildingNumber = ['####', '###', '##', '#'];
+    protected static $buildingNumber = ['%###', '%##', '%#', '%'];
     protected static $postcode = ['#####', '######', '#####-####'];
     protected static $province = [
         'An Giang', 'Bà Rịa - Vũng Tàu',
@@ -113,7 +113,7 @@ class Address extends \Faker\Provider\Address
         'Vanuatu', 'Venezuela', 'Vietnam',
         'Wallis and Futuna', 'Western Sahara',
         'Yemen',
-        'Zambia', 'Zimbabwe'
+        'Zambia', 'Zimbabwe',
     ];
 
     public function hamletName()
