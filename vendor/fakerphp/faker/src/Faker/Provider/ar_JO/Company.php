@@ -11,23 +11,24 @@ class Company extends \Faker\Provider\Company
     ];
 
     protected static $bsWords = [
-        []
+        [],
     ];
 
     protected static $catchPhraseWords = [
-        ['الخدمات','الحلول','الانظمة'],
+        ['الخدمات', 'الحلول', 'الانظمة'],
         [
-            'الذهبية','الذكية','المتطورة','المتقدمة', 'الدولية', 'المتخصصه', 'السريعة',
-            'المثلى', 'الابداعية', 'المتكاملة', 'المتغيرة', 'المثالية'
+            'الذهبية', 'الذكية', 'المتطورة', 'المتقدمة', 'الدولية', 'المتخصصه', 'السريعة',
+            'المثلى', 'الابداعية', 'المتكاملة', 'المتغيرة', 'المثالية',
         ],
     ];
 
-    protected static $companyPrefix = ['شركة','مؤسسة','مجموعة','مكتب','أكاديمية','معرض'];
+    protected static $companyPrefix = ['شركة', 'مؤسسة', 'مجموعة', 'مكتب', 'أكاديمية', 'معرض'];
 
     protected static $companySuffix = ['وأولاده', 'للمساهمة المحدودة', ' ذ.م.م', 'مساهمة عامة', 'وشركائه'];
 
     /**
      * @example 'مؤسسة'
+     *
      * @return string
      */
     public function companyPrefix()
@@ -41,6 +42,7 @@ class Company extends \Faker\Provider\Company
     public function catchPhrase()
     {
         $result = [];
+
         foreach (static::$catchPhraseWords as &$word) {
             $result[] = static::randomElement($word);
         }
@@ -54,6 +56,7 @@ class Company extends \Faker\Provider\Company
     public function bs()
     {
         $result = [];
+
         foreach (static::$bsWords as &$word) {
             $result[] = static::randomElement($word);
         }
