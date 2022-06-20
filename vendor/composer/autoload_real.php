@@ -25,6 +25,7 @@ class ComposerAutoloaderInita42667ed77ef206173e1d3935f7c3578
         require __DIR__ . '/platform_check.php';
 
         spl_autoload_register(array('ComposerAutoloaderInita42667ed77ef206173e1d3935f7c3578', 'loadClassLoader'), true, true);
+<<<<<<< HEAD
         self::$loader = $loader = new \Composer\Autoload\ClassLoader(\dirname(\dirname(__FILE__)));
         spl_autoload_unregister(array('ComposerAutoloaderInita42667ed77ef206173e1d3935f7c3578', 'loadClassLoader'));
 
@@ -49,14 +50,17 @@ class ComposerAutoloaderInita42667ed77ef206173e1d3935f7c3578
                 $loader->addClassMap($classMap);
             }
         }
+=======
+        self::$loader = $loader = new \Composer\Autoload\ClassLoader(\dirname(__DIR__));
+        spl_autoload_unregister(array('ComposerAutoloaderInita42667ed77ef206173e1d3935f7c3578', 'loadClassLoader'));
+
+        require __DIR__ . '/autoload_static.php';
+        call_user_func(\Composer\Autoload\ComposerStaticInita42667ed77ef206173e1d3935f7c3578::getInitializer($loader));
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
 
         $loader->register(true);
 
-        if ($useStaticLoader) {
-            $includeFiles = Composer\Autoload\ComposerStaticInita42667ed77ef206173e1d3935f7c3578::$files;
-        } else {
-            $includeFiles = require __DIR__ . '/autoload_files.php';
-        }
+        $includeFiles = \Composer\Autoload\ComposerStaticInita42667ed77ef206173e1d3935f7c3578::$files;
         foreach ($includeFiles as $fileIdentifier => $file) {
             composerRequirea42667ed77ef206173e1d3935f7c3578($fileIdentifier, $file);
         }
@@ -65,11 +69,16 @@ class ComposerAutoloaderInita42667ed77ef206173e1d3935f7c3578
     }
 }
 
+/**
+ * @param string $fileIdentifier
+ * @param string $file
+ * @return void
+ */
 function composerRequirea42667ed77ef206173e1d3935f7c3578($fileIdentifier, $file)
 {
     if (empty($GLOBALS['__composer_autoload_files'][$fileIdentifier])) {
-        require $file;
-
         $GLOBALS['__composer_autoload_files'][$fileIdentifier] = true;
+
+        require $file;
     }
 }

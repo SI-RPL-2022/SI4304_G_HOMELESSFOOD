@@ -26,11 +26,20 @@ echo $translator->trans('Hello World!'); // outputs « Bonjour ! »
 Sponsor
 -------
 
+<<<<<<< HEAD
 The Translation component for Symfony 6.1 is [backed][1] by:
 
  * [Crowdin][2], a cloud-based localization management software helping teams to go global and stay agile.
 
 Help Symfony by [sponsoring][3] its development!
+=======
+The Translation component for Symfony 5.4/6.0 is [backed][1] by:
+
+ * [Crowdin][2], a cloud-based localization management software helping teams to go global and stay agile.
+ * [Lokalise][3], a continuous localization and translation management platform that integrates into your development workflow so you can ship localized products, faster.
+
+Help Symfony by [sponsoring][4] its development!
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
 
 Resources
 ---------
@@ -43,4 +52,9 @@ Resources
 
 [1]: https://symfony.com/backers
 [2]: https://crowdin.com
+<<<<<<< HEAD
 [3]: https://symfony.com/sponsor
+=======
+[3]: https://lokalise.com
+[4]: https://symfony.com/sponsor
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19

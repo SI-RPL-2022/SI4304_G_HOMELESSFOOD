@@ -31,7 +31,11 @@ if (!\function_exists(s::class)) {
      */
     function s(?string $string = ''): AbstractString
     {
+<<<<<<< HEAD
         $string ??= '';
+=======
+        $string = $string ?? '';
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
 
         return preg_match('//u', $string) ? new UnicodeString($string) : new ByteString($string);
     }

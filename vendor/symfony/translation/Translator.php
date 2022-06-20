@@ -52,7 +52,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     private array $resources = [];
 
+<<<<<<< HEAD
     private MessageFormatterInterface $formatter;
+=======
+    private $formatter;
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
 
     private ?string $cacheDir;
 
@@ -60,7 +64,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     private array $cacheVary;
 
+<<<<<<< HEAD
     private ?ConfigCacheFactoryInterface $configCacheFactory;
+=======
+    private $configCacheFactory;
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
 
     private array $parentLocales;
 

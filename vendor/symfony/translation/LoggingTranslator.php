@@ -21,8 +21,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class LoggingTranslator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface
 {
+<<<<<<< HEAD
     private TranslatorInterface $translator;
     private LoggerInterface $logger;
+=======
+    private $translator;
+    private $logger;
+>>>>>>> 0474e45a4433761bea5ab10b4b5118bff9a7bc19
 
     /**
      * @param TranslatorInterface&TranslatorBagInterface&LocaleAwareInterface $translator The translator must implement TranslatorBagInterface
