@@ -9,10 +9,10 @@ class Address extends \Faker\Provider\Address
     protected static $regionSuffix = ['რაიონი'];
     protected static $streetSuffix = [
         'ჩიხი', 'ქ.', 'გამზირი', 'ქუჩა', 'გზატკეცილი', 'მოედანი', 'ბულვარი',
-        'აღმართი', 'ხეივანი'
+        'აღმართი', 'ხეივანი',
     ];
 
-    protected static $buildingNumber = ['##'];
+    protected static $buildingNumber = ['%#'];
     protected static $postcode = ['####'];
     protected static $country = [
         'ავსტრალია', 'ავსტრია', 'ავღანეთი', 'აზერბაიჯანი', 'ალანდის კუნძულები', 'ალბანეთი',
@@ -54,17 +54,17 @@ class Address extends \Faker\Provider\Address
         'შვედეთი', 'შვეიცარია', 'შობის კუნძული', 'შრი-ლანკა', 'ჩადი', 'ჩერნოგორია', 'ჩეხეთი', 'ჩილე', 'ჩინეთი',
         'ჩრდილოეთი კორეა', 'ჩრდილოეთი მარიანას კუნძულები', 'ცენტრალური აფრიკის რესპუბლიკა', 'წმინდა ელენეს კუნძული',
         'წმინდა მარტინი (საფრანგეთის ნაწილი)', 'ხორვატია', 'ჯერზი', 'ჯიბუტი', 'ჰაიტი',
-        'ჰერდი და მაკდონალდის კუნძულები', 'ჰონგ-კონგი', 'ჰონდურასი'
+        'ჰერდი და მაკდონალდის კუნძულები', 'ჰონგ-კონგი', 'ჰონდურასი',
     ];
 
     protected static $region = [
         'აფხაზეთი', 'აჭარა', 'იმერეთი', 'სამეგრელო-ზემო სვანეთი', 'მცხეთა-მთიანეთი', 'სამცხე-ჯავახეთი',
-        'შიდა ქართლი', 'კახეთი', 'რაჭა-ლეჩხუმი და ქვემო სვანეთი', 'გურია', 'ქვემო ქართლი'
+        'შიდა ქართლი', 'კახეთი', 'რაჭა-ლეჩხუმი და ქვემო სვანეთი', 'გურია', 'ქვემო ქართლი',
     ];
 
     protected static $regionGenitiveForm = [
         'აფხაზეთის', 'აჭარის', 'იმერეთის', 'სამეგრელო-ზემო სვანეთის', 'მცხეთა-მთიანეთის', 'სამცხე-ჯავახეთის',
-        'შიდა ქართლის', 'კახეთის', 'რაჭა-ლეჩხუმი და ქვემო სვანეთის', 'გურიის', 'ქვემო ქართლის'
+        'შიდა ქართლის', 'კახეთის', 'რაჭა-ლეჩხუმი და ქვემო სვანეთის', 'გურიის', 'ქვემო ქართლის',
     ];
 
     protected static $city = [
@@ -74,34 +74,33 @@ class Address extends \Faker\Provider\Address
         'თერჯოლა', 'კასპი', 'ლაგოდეხი', 'ლანჩხუთი', 'მარნეული', 'მარტვილი', 'მცხეთა', 'ნინოწმინდა', 'ოზურგეთი',
         'ონი', 'ოჩამჩირე', 'რუსთავი', 'საგარეჯო', 'სამტრედია', 'საჩხერე', 'სენაკი', 'სიღნაღი', 'სოხუმი',
         'ტყვარჩელი', 'ტყიბული', 'ფოთი', 'ქარელი', 'ქობულეთი', 'ქუთაისი', 'ყვარელი', 'ცაგერი', 'ცხინვალი',
-        'წალენჯიხა', 'წალკა', 'წნორი', 'წყალტუბო', 'ჭიათურა', 'ხაშური', 'ხობი', 'ხონი', 'ჯვარი'
+        'წალენჯიხა', 'წალკა', 'წნორი', 'წყალტუბო', 'ჭიათურა', 'ხაშური', 'ხობი', 'ხონი', 'ჯვარი',
     ];
 
     protected static $street = [
         'რუსთაველის', 'ტაბიძის', 'აღმაშენებლის', 'ბარათაშვილის', 'თამარ მეფის', 'სააკაძის', 'ყაზბეგის', 'რობაქიძის',
         'ვაჟა-ფშაველას', 'ნუცუბიძის', 'შეშელიძის', 'სააკაძის', 'სანაპიროს', 'გორგასლის', 'ელიავას', 'ჭონქაძის',
-        'ფანასკერტელის'
+        'ფანასკერტელის',
     ];
 
     protected static $addressFormats = [
-        "საქართველო, {{regionGenitiveForm}} {{regionSuffix}}, {{city}}, {{streetAddress}}, {{postcode}}",
-        "{{regionGenitiveForm}} {{regionSuffix}}, {{city}}, {{streetAddress}}, {{postcode}}",
-        "{{streetAddress}}, {{postcode}}, {{city}}, {{regionGenitiveForm}} {{regionSuffix}}",
-        "{{streetAddress}}, {{postcode}}, {{city}}, {{regionGenitiveForm}} {{regionSuffix}}, საქართველო",
-        "{{city}}, {{streetAddress}}, {{postcode}}",
-        "საქართველო, {{city}}, {{streetAddress}}, {{postcode}}",
-        "{{streetAddress}}, {{postcode}}, {{city}}",
-        "{{streetAddress}}, {{postcode}}, {{city}}, საქართველო",
+        'საქართველო, {{regionGenitiveForm}} {{regionSuffix}}, {{city}}, {{streetAddress}}, {{postcode}}',
+        '{{regionGenitiveForm}} {{regionSuffix}}, {{city}}, {{streetAddress}}, {{postcode}}',
+        '{{streetAddress}}, {{postcode}}, {{city}}, {{regionGenitiveForm}} {{regionSuffix}}',
+        '{{streetAddress}}, {{postcode}}, {{city}}, {{regionGenitiveForm}} {{regionSuffix}}, საქართველო',
+        '{{city}}, {{streetAddress}}, {{postcode}}',
+        'საქართველო, {{city}}, {{streetAddress}}, {{postcode}}',
+        '{{streetAddress}}, {{postcode}}, {{city}}',
+        '{{streetAddress}}, {{postcode}}, {{city}}, საქართველო',
     ];
 
     protected static $streetAddressFormats = [
-        "{{street}} {{streetSuffix}} #{{buildingNumber}}"
+        '{{street}} {{streetSuffix}} #{{buildingNumber}}',
     ];
 
     protected static $cityFormats = [
-        "{{cityPrefix}} {{cityName}}"
+        '{{cityPrefix}} {{cityName}}',
     ];
-
 
     public static function regionSuffix()
     {
