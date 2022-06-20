@@ -7,11 +7,11 @@ class Payment extends \Faker\Provider\Payment
     protected static $bankFormats = [
         '{{localBank}}',
         '{{foreignBank}}',
-        '{{governmentBank}}'
+        '{{governmentBank}}',
     ];
 
     /**
-     * @link http://www.muamalat.com.my/consumer-banking/internet-banking/popup-ibg.html
+     * @see http://www.muamalat.com.my/consumer-banking/internet-banking/popup-ibg.html
      */
     protected static $bankAccountNumberFormats = [
         '##########',
@@ -24,7 +24,7 @@ class Payment extends \Faker\Provider\Payment
     ];
 
     /**
-     * @link https://en.wikipedia.org/wiki/List_of_banks_in_Malaysia
+     * @see https://en.wikipedia.org/wiki/List_of_banks_in_Malaysia
      */
     protected static $localBanks = [
         'Affin Bank',
@@ -34,11 +34,11 @@ class Payment extends \Faker\Provider\Payment
         'Hong Leong Bank ',
         'Maybank',
         'Public Bank',
-        'RHB Bank'
+        'RHB Bank',
     ];
 
     /**
-     * @link https://en.wikipedia.org/wiki/List_of_banks_in_Malaysia#List_of_foreign_banks_(commercial)
+     * @see https://en.wikipedia.org/wiki/List_of_banks_in_Malaysia#List_of_foreign_banks_(commercial)
      */
     protected static $foreignBanks = [
         'Bangkok Bank Berhad',
@@ -59,11 +59,11 @@ class Payment extends \Faker\Provider\Payment
         'Standard Chartered Bank Malaysia Berhad',
         'Sumitomo Mitsui Banking Corporation Malaysia Berhad',
         'The Bank of Nova Scotia Berhad',
-        'United Overseas Bank (Malaysia) Bhd.'
+        'United Overseas Bank (Malaysia) Bhd.',
     ];
 
     /**
-     * @link https://en.wikipedia.org/wiki/List_of_banks_in_Malaysia#Development_Financial_Institutions_(Government-owned_banks)_(full_list)
+     * @see https://en.wikipedia.org/wiki/List_of_banks_in_Malaysia#Development_Financial_Institutions_(Government-owned_banks)_(full_list)
      */
     protected static $governmentBanks = [
         'Agro Bank Malaysia',
@@ -81,7 +81,7 @@ class Payment extends \Faker\Provider\Payment
     ];
 
     /**
-     * @link https://en.wikipedia.org/wiki/List_of_banks_in_Malaysia#Investment-Link_Funds_(Insurance_Companies_-_Takaful_included)
+     * @see https://en.wikipedia.org/wiki/List_of_banks_in_Malaysia#Investment-Link_Funds_(Insurance_Companies_-_Takaful_included)
      */
     protected static $insuranceCompanies = [
         'AIA Malaysia',
@@ -102,44 +102,44 @@ class Payment extends \Faker\Provider\Payment
     ];
 
     /**
-     * @link http://www.bankswiftcode.org/malaysia/
+     * @see http://www.bankswiftcode.org/malaysia/
      */
     protected static $swiftCodes = [
-        'ABNAMY2AXXX','ABNAMYKLPNG','ABNAMYKLXXX','AFBQMYKLXXX','AIBBMYKLXXX',
-        'AISLMYKLXXX','AMMBMYKLXXX','ARBKMYKLXXX',
-        'BIMBMYKLXXX','BISLMYKAXXX','BKCHMYKLXXX','BKKBMYKLXXX','BMMBMYKLXXX',
-        'BNMAMYKLXXX','BNPAMYKAXXX','BOFAMY2XLBN','BOFAMY2XXXX','BOTKMYKAXXX',
+        'ABNAMY2AXXX', 'ABNAMYKLPNG', 'ABNAMYKLXXX', 'AFBQMYKLXXX', 'AIBBMYKLXXX',
+        'AISLMYKLXXX', 'AMMBMYKLXXX', 'ARBKMYKLXXX',
+        'BIMBMYKLXXX', 'BISLMYKAXXX', 'BKCHMYKLXXX', 'BKKBMYKLXXX', 'BMMBMYKLXXX',
+        'BNMAMYKLXXX', 'BNPAMYKAXXX', 'BOFAMY2XLBN', 'BOFAMY2XXXX', 'BOTKMYKAXXX',
         'BOTKMYKXXXX',
-        'CHASMYKXKEY','CHASMYKXXXX','CIBBMYKAXXX','CIBBMYKLXXX','CITIMYKLJOD',
-        'CITIMYKLLAB','CITIMYKLPEN','CITIMYKLXXX','COIMMYKLXXX','CTBBMYKLXXX',
-        'DABEMYKLXXX','DBSSMY2AXXX','DEUTMYKLBLB','DEUTMYKLGMO','DEUTMYKLISB',
+        'CHASMYKXKEY', 'CHASMYKXXXX', 'CIBBMYKAXXX', 'CIBBMYKLXXX', 'CITIMYKLJOD',
+        'CITIMYKLLAB', 'CITIMYKLPEN', 'CITIMYKLXXX', 'COIMMYKLXXX', 'CTBBMYKLXXX',
+        'DABEMYKLXXX', 'DBSSMY2AXXX', 'DEUTMYKLBLB', 'DEUTMYKLGMO', 'DEUTMYKLISB',
         'DEUTMYKLXXX',
-        'EIBBMYKLXXX','EOBBMYKLXXX','EXMBMYKLXXX',
+        'EIBBMYKLXXX', 'EOBBMYKLXXX', 'EXMBMYKLXXX',
         'FEEBMYKAXXX',
-        'HBMBMYKLXXX','HDSBMY2PSEL','HDSBMY2PXXX','HLBBMYKLIBU','HLBBMYKLJBU',
-        'HLBBMYKLKCH','HLBBMYKLPNG','HLBBMYKLXXX','HLIBMYKLXXX','HMABMYKLXXX',
-        'HSBCMYKAXXX','HSTMMYKLGWS','HSTMMYKLXXX',
-        'KAFBMYKLXXX','KFHOMYKLXXX',
-        'MBBEMYKAXXX','MBBEMYKLBAN','MBBEMYKLBBG','MBBEMYKLBWC','MBBEMYKLCSD',
-        'MBBEMYKLIPH','MBBEMYKLJOB','MBBEMYKLKEP','MBBEMYKLKIN','MBBEMYKLKLC',
-        'MBBEMYKLMAL','MBBEMYKLPEN','MBBEMYKLPGC','MBBEMYKLPJC','MBBEMYKLPJY',
-        'MBBEMYKLPKG','MBBEMYKLPSG','MBBEMYKLPUD','MBBEMYKLSAC','MBBEMYKLSBN',
-        'MBBEMYKLSHA','MBBEMYKLSUB','MBBEMYKLWSD','MBBEMYKLXXX','MBBEMYKLYSL',
-        'MFBBMYKLXXX','MHCBMYKAXXX',
-        'NOSCMY2LXXX','NOSCMYKLXXX',
-        'OABBMYKLXXX','OCBCMYKLXXX','OSKIMYKLXXX',
-        'PBBEMYKLXXX','PBLLMYKAXXX','PCGLMYKLXXX','PERMMYKLXXX','PHBMMYKLXXX',
-        'PTRDMYKLXXX','PTROMYKLFSD','PTROMYKLXXX',
-        'RHBAMYKLXXX','RHBBMYKAXXX','RHBBMYKLXXX','RJHIMYKLXXX',
-        'SCBLMYKXLAB','SCBLMYKXXXX','SMBCMYKAXXX',
-        'UIIBMYKLXXX','UOVBMYKLCND','UOVBMYKLXXX',
+        'HBMBMYKLXXX', 'HDSBMY2PSEL', 'HDSBMY2PXXX', 'HLBBMYKLIBU', 'HLBBMYKLJBU',
+        'HLBBMYKLKCH', 'HLBBMYKLPNG', 'HLBBMYKLXXX', 'HLIBMYKLXXX', 'HMABMYKLXXX',
+        'HSBCMYKAXXX', 'HSTMMYKLGWS', 'HSTMMYKLXXX',
+        'KAFBMYKLXXX', 'KFHOMYKLXXX',
+        'MBBEMYKAXXX', 'MBBEMYKLBAN', 'MBBEMYKLBBG', 'MBBEMYKLBWC', 'MBBEMYKLCSD',
+        'MBBEMYKLIPH', 'MBBEMYKLJOB', 'MBBEMYKLKEP', 'MBBEMYKLKIN', 'MBBEMYKLKLC',
+        'MBBEMYKLMAL', 'MBBEMYKLPEN', 'MBBEMYKLPGC', 'MBBEMYKLPJC', 'MBBEMYKLPJY',
+        'MBBEMYKLPKG', 'MBBEMYKLPSG', 'MBBEMYKLPUD', 'MBBEMYKLSAC', 'MBBEMYKLSBN',
+        'MBBEMYKLSHA', 'MBBEMYKLSUB', 'MBBEMYKLWSD', 'MBBEMYKLXXX', 'MBBEMYKLYSL',
+        'MFBBMYKLXXX', 'MHCBMYKAXXX',
+        'NOSCMY2LXXX', 'NOSCMYKLXXX',
+        'OABBMYKLXXX', 'OCBCMYKLXXX', 'OSKIMYKLXXX',
+        'PBBEMYKLXXX', 'PBLLMYKAXXX', 'PCGLMYKLXXX', 'PERMMYKLXXX', 'PHBMMYKLXXX',
+        'PTRDMYKLXXX', 'PTROMYKLFSD', 'PTROMYKLXXX',
+        'RHBAMYKLXXX', 'RHBBMYKAXXX', 'RHBBMYKLXXX', 'RJHIMYKLXXX',
+        'SCBLMYKXLAB', 'SCBLMYKXXXX', 'SMBCMYKAXXX',
+        'UIIBMYKLXXX', 'UOVBMYKLCND', 'UOVBMYKLXXX',
     ];
 
     /**
-     * @link https://en.wikipedia.org/wiki/Malaysian_ringgit
+     * @see https://en.wikipedia.org/wiki/Malaysian_ringgit
      */
     protected static $currencySymbol = [
-        'RM'
+        'RM',
     ];
 
     /**

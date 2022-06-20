@@ -8,7 +8,7 @@ class Address extends \Faker\Provider\Address
     protected static $citySuffix = ['টাউন', 'তলা', 'হাট', 'খানা'];
 
     protected static $streetNames = [
-        'বরকত', 'হাজী', 'করিমউদ্দিন'
+        'বরকত', 'হাজী', 'করিমউদ্দিন',
     ];
 
     protected static $streetSuffix = [
@@ -16,7 +16,7 @@ class Address extends \Faker\Provider\Address
     ];
     protected static $postcode = ['#####', '#####-####'];
     protected static $state = [
-        'খুলনা', 'বরিশাল', 'চিটাগং', 'ঢাকা', 'রাজশাহী', 'সিলেট', 'কুমিল্লা'
+        'খুলনা', 'বরিশাল', 'চিটাগং', 'ঢাকা', 'রাজশাহী', 'সিলেট', 'কুমিল্লা',
     ];
     protected static $country = [
         'অস্ট্রিয়া',
@@ -285,7 +285,7 @@ class Address extends \Faker\Provider\Address
         '{{streetNumber}} {{streetName}}',
     ];
     protected static $addressFormats = [
-        "{{streetAddress}}, {{city}} {{state}}",
+        '{{streetAddress}}, {{city}} {{state}}',
     ];
 
     public static function cityPrefix()
@@ -300,7 +300,7 @@ class Address extends \Faker\Provider\Address
 
     public static function streetNumber()
     {
-        return Utils::getBanglaNumber(static::numberBetween(1, 100));
+        return Utils::getBanglaNumber(self::numberBetween(1, 100));
     }
 
     public static function banglaStreetName()
