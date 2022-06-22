@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v4.1.1">
-    <title>Homless Food</title>
+    <title>Homeless Food</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/assets/css/bootstrap.css" rel="stylesheet">
@@ -45,13 +45,13 @@
           <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/">Home <span class="sr-only">(current)</span></a>
         </li>
 
-        @if(session()->has('user'))
+        <!-- @if(session()->has('user'))
           @if(session()->get('user')->akses == 'user')
             <li class="nav-item">
               <a class="nav-link" href="cari.php">Pilih Makanan Donasi</a>
             </li>
           @endif
-        @endif
+        @endif -->
 
         <li class="nav-item active">
           <a class="nav-link {{ Request::is('/timeline') ? 'active' : '' }}" href="/timeline">Timeline</a>
