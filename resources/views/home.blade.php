@@ -10,7 +10,7 @@
 	            <p class="mt-4">
 	            	<!-- <a class="btn btn-lg btn-outline-warning text-white" style="border:2px solid #fff" href="/select_food" role="button">Pilih Donasi Makanan</a> -->
 
-	            	<a href="/driver_hiring" class="btn btn-ghost text-white">Ingin Menjadi Driver kami ?, Daftar Disini</a>
+	            	<a href="/driver_hiring" class="btn btn-ghost text-white">Ingin Menjadi Driver kami? <u><b>Daftar Disini</u></b></a>
 	            </p>
 	          </div>
 	          <div class="col-4">

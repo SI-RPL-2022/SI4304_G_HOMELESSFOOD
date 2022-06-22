@@ -23,7 +23,7 @@ class FoodController extends Controller
 
         $query = $food->data('food.id', $id);
         if($query->count() == 0){
-            return redirect('food')->with('alert', show_alert('Data tunawisma tidak ditemukan', 'danger'));
+            return redirect('food')->with('alert', show_alert('Data makanan tidak ditemukan', 'danger'));
         }
 
         $data = [
@@ -97,6 +97,6 @@ class FoodController extends Controller
         $food = new Food();
         $food->deletes($id);
 
-        return redirect('food')->with('alert', show_alert('Data tunawisma berhasil dihapus', 'success'));
+        return redirect('food')->with('alert', show_alert('Data makanan berhasil dihapus', 'success'));
     }
 }
